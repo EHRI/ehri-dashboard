@@ -1,11 +1,14 @@
 <template>
-  <div>
+  <div v-if="sortedTypes.length >0">
     <button v-for="v in sortedTypes" :id="v[1]['id']" type="button" data-bs-trigger="hover" data-delay='{"show":0, "hide":1}' data-bs-toggle="tooltip" data-bs-placement="top" :title="v[1]['description']" class="m-3 btn stats-btn position-relative disabled">
       {{v[1]['title']}}
       <span class="stats-span position-absolute top-0 start-100 translate-middle badge rounded-pill">
    {{v[1]['value']}}
       </span>
     </button>
+  </div>
+  <div v-else>
+    <p>There seems to be a problem with our servers. Please try again later.</p>
   </div>
 </template>
 

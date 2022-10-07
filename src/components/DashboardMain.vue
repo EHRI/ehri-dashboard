@@ -47,7 +47,7 @@ export default {
       DigitalEditions: {
         component: 'DigitalEditions',
         value: 0,
-        title: 'Digital Editions '
+        title: 'Online Editions '
       }
         ,
       portalSearchLength: {

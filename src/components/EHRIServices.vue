@@ -40,7 +40,7 @@ export default {
       },
       editions: {
         icon: "book-open",
-        title: "Digital Editions",
+        title: "Online Editions",
         link: "https://www.ehri-project.eu/ehri-online-editions",
         target: "_blank",
         description: "The EHRI Online Editions consist of annotated digitized documents from various sources gathered around a theme, and are a new way of presenting digital archival content."

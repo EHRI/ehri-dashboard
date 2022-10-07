@@ -1,7 +1,7 @@
 <template>
   <div class="blog-section">
     <div class="row g-0 mx-2 justify-content-center">
-      <h4 class="display-4 text-center pt-3 pb-2">EHRI Digital TEI Editions</h4>
+      <h4 class="display-4 text-center pt-3 pb-2">EHRI Online Editions</h4>
       <div class="col-md-6">
         <p class="small">The EHRI Online Editions consist of annotated digitized documents from various sources gathered around a theme, and are a new way of presenting digital archival content.</p>
       </div>

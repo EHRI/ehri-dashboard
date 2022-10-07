@@ -7,7 +7,7 @@
         <div class="bg-image d-flex justify-content-center align-items-center">
            <div class="col-md-5" v-if="!loadingEntities && !loadingGhettos && !loadingCamps">
              <h1 class="mb-0 text-white display-4">EHRI Dashboard</h1>
-             <p class="mb-4 available-resources text-white">Use this service to search for Holocaust-related information across the EHRI Portal, Document Blog and Digital Editions.</p>
+             <p class="mb-4 available-resources text-white">Use this service to search for Holocaust-related information across the EHRI Portal, Document Blog and Online Editions.</p>
               <form class="mb-4" onsubmit="return false">
                 <input
                     class="form-control form-control-lg text-center"
