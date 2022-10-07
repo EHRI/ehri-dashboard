@@ -1,6 +1,6 @@
 <template>
   <div
-      :style="{ 'background-image':`url(${image})`}"
+      :style="{ 'background-image':`url(${bg_photo})`}"
   >
     <div class="mask" style="background-color: rgba(0, 0, 0, 0.6)">
       <div class="row justify-content-center m-0" :style="{'height':'16em', 'position': 'relative'}">
@@ -37,6 +37,7 @@
 
 <script>
 import { ref } from "vue";
+import bg_photo from "@/assets/michael-fousert-l1Kku7W1EdY-unsplash.jpg"
 import {
   fetchCampsDataset,
   fetchEntityMatcherDataset,
@@ -50,7 +51,6 @@ export default {
   components:{LoadingComponent},
   setup(){
     const router = useRouter()
-    const image= `'../images/michael-fousert-l1Kku7W1EdY-unsplash.jpg'`
     const query = ref("")
     const ghettoSuggests = ref([])
     const entitySuggests = ref([])
@@ -135,7 +135,7 @@ export default {
 
 
 
-    return {image, query, redirect,handle, suggestions, loadingEntities,loadingCamps, loadingGhettos,}
+    return {bg_photo, query, redirect,handle, suggestions, loadingEntities,loadingCamps, loadingGhettos,}
   }
 }
 </script>
