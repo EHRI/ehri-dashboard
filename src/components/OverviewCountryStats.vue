@@ -158,6 +158,7 @@ export default {
       }
       map.value = L.map("countriesmapid", {
         preferCanvas: true,
+        minZoom: 2
       }).setView([39.099438, 15.064282], 2);
       tileLayer.value = L.tileLayer(
           "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
