@@ -42,7 +42,7 @@
             <span v-else class="order-switch d-inline small fw-bold"
                   @click="orderDesc = !orderDesc">
           &bigtriangleup; Older to Newer
-        </span>
+          </span>
           </div>
             <div v-for="(post,i) in posts" :key="i">
               <DocumentBlogItem :BlogPost="post"></DocumentBlogItem>
@@ -50,7 +50,7 @@
 
             <EditionsPagination
                 class="justify-content-center mt-4"
-                v-if="posts.length & posts.length>1"
+                v-if="pagination.totalPages > 1"
                 :pagination-object="pagination"
                 :current-page="page"
                 @prev="
@@ -121,7 +121,7 @@ export default {
     const configPagination = (headers) => {
       pagination.value["totalPages"] = +headers['x-wp-totalpages']
       pagination.value["total"] = +headers['x-wp-total']
-      pagination.value["prevPage"] = page.value > 1 ? page.value : "";
+      pagination.value["prevPage"] = page.value > 1 ? page.value - 1 : "";
       pagination.value["nextPage"] =
           page.value < pagination.value.totalPages ? page.value + 1 : "";
     };

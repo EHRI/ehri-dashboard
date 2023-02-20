@@ -1,5 +1,5 @@
 <template>
-  <div class="align-middle row m-0" :style="{'position': 'sticky', 'top': 3.7+'em', 'z-index': 3,'backgroundColor': '#6C003B',
+  <div class="align-middle row m-0" :style="{'position': 'sticky', 'top': 2.7+'em', 'z-index': 3,'backgroundColor': '#6C003B',
   'color': '#FFFFFF'}">
     <div class="resource-tab p-2" v-if="tabComponent.length">
       <ul class="nav nav-pills justify-content-center">

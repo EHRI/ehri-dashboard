@@ -34,13 +34,15 @@ export default {
     const allRepos = ref([]);
     const repoLayer = ref(L.layerGroup());
 
+    const emptyLayer = L.layerGroup().addTo(repoLayer.value); // create an empty layer and add it to repoLayer
+
     try {
       let tempRepos = fetchRepos();
       tempRepos.then((res) => {
         allRepos.value = res.data.repositories.items;
         allRepos.value.forEach((r)=>{
           if(r.latitude && r.longitude ){
-            repoLayer.value.addLayer(L.circleMarker([r.latitude, r.longitude], {radius: 2}).bindPopup(
+            emptyLayer.addLayer(L.circleMarker([r.latitude, r.longitude], {radius: 2}).bindPopup(
             `<strong>
             ${r.descriptions[0].name}
             </strong>
