@@ -1,39 +1,34 @@
-<script setup>
-import NavBar from '@/components/NavBar.vue'
-import SearchBox from '@/components/SearchBox.vue'
-import Footer from "@/components/Footer.vue";
+<script>
+import { RouterView } from 'vue-router'
+import MainSidebar from './components/MainSidebar.vue';
+import { ref } from 'vue';
+
+export default {
+  components: {MainSidebar},
+  setup(){
+    const dataSource = ref()
+
+    const getDataSource = (d) => {
+      dataSource.value = d
+    }
+
+    return { getDataSource, dataSource }
+  }
+};
 </script>
 
 <template>
-  <NavBar></NavBar>
-  <SearchBox></SearchBox>
-  <router-view class="main-view" :key="$route.fullPath"></router-view>
-  <Footer></Footer>
+  <div class="grid grid-cols-12 min-h-screen h-screen lg:max-h-screen lg:overflow-hidden bg-ehri-light-grey">
+    <MainSidebar @data-source-change="(d)=>{getDataSource(d)}" class="col-span-12 sm:col-span-4 md:col-span-3 lg:col-span-3"></MainSidebar>
+    <router-view v-if="dataSource" class="col-span-12 px-4 overflow-scroll lg:overflow-hidden sm:col-span-8 lg:col-span-9 md:col-span-9 lg:pl-9 lg:pr-4" :key="$route.fullPath" :dataSourceValue="dataSource"></router-view>
+    <!-- <router-view v-if="dataSource" class="col-span-12 overflow-scroll lg:overflow-hidden sm:col-span-8 lg:col-span-10 md:col-span-9" :key="$route.fullPath" :dataSourceValue="dataSource"></router-view> -->
+    <div class="w-full bg-ehri-dark bottom-0 absolute">
+        <p class="text-center text-ehri-beige font-light text-xs"><a href="https://www.ehri-project.eu/" target="_blank" rel="noopener noreferrer">&copy; Copyright EHRI Consortium
+            {{new Date().getFullYear()}}</a></p>
+    </div>
+  </div>
 </template>
 
-<style>
-/*@import url("https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");*/
-/*@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");*/
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  padding: 0;
-  margin: 0;
-  background-color: #fff;
-}
+<style scoped>
 
-h1,
-h2,
-h3,
-h4,
-h5
-{
-  color: #6c003b;
-}
-.main-view {
-  min-height: 90vh;
-  background-color: #F5F5F5;
-}
 </style>

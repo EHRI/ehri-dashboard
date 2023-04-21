@@ -1,93 +1,153 @@
 <template>
-  <div class="row g-0 my-3 justify-content-center">
-    <h5 class="display-5 m-0 my-3">
-      Archival Descriptions
-    </h5>
-    <p class="small col-md-8">Electronic descriptions and finding aids of Holocaust-related archival material.</p>
+  <!-- Creating the grid -->
+  <span class="flex justify-center bg-ehri-purple py-2 text-white lg:hidden col-span-12 text-ehri-dark font-sans " @click="toggleFilterBar">
+    <span v-if="!showFilterBar" class="lg:hidden mr-2 cursor-pointer">
+            <span
+          class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
+        >
+          filter_alt
+        </span>
+        Filter Results
+    </span>
+    <span v-else class="lg:hidden mr-2 cursor-pointer">
+            <span
+          class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
+        >
+          close
+        </span>
+        Close
+    </span>
+  </span>
+  <div v-if="filtered && !showFilterBar" class="lg:hidden pt-1 px-2">
+          <h5 class="font-sans text-sm text-ehri-purple block font-medium">Active Filters: </h5>
+            <span class="inline w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="holderFilter" @click="handle('Institutions','holderFilter')">{{holderFilter.length>25?holderFilter.substring(0,25)+'...':holderFilter}}</span>
+            <span class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="langFilter" @click="handle('','langFilter')">{{languageNames.of(langFilter)}}</span>
+            <span class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="countryFilter" @click="handle('','countryFilter')">{{countryNames.of(countryFilter.toUpperCase())}}</span>
+            <span class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="dateFilter" @click="handle('','dateFilter')">{{dateFilter.length>25?dateFilter.substring(0,25)+'...':dateFilter}}</span>
+            <div class="flex items-center mt-1 cursor-pointer text-ehri-purple text-sm" id="remove-filter" @click="(e) => handle(e,'removeAll')">
+              <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
+                close
+              </span>
+              <span>Remove All Filters</span>
+            </div>
   </div>
-  <div class="row mt-2 mx-0" v-if="!loadingDocUnits">
-    <div class="col-md-3 text-start">
-      <h4>Filters</h4>
-      <p>Choose one or more filters:</p>
-      <ArchivalDescriptionFilter
-      filter-name="Countries"
-      :key="countryFilterKey"
-      :filter-object="stats.countries"
-      @filterChange="(e) => {
-        handle(e,'countryFilter')}"
-      >
-      </ArchivalDescriptionFilter>
-      <ArchivalDescriptionFilter
-          filter-name="Institutions"
-          :key="repoFilterKey"
-          :filter-object="stats.holders"
-          @filterChange="(e) => {handle(e,'holderFilter')}"
-      >
-      </ArchivalDescriptionFilter>
-      <ArchivalDescriptionFilter
-          filter-name="Languages"
-          :key="langFilterKey"
-          :filter-object="stats.langs"
-          @filterChange="(e) => {handle(e,'langFilter')}"
-      >
-      </ArchivalDescriptionFilter>
+  <div class="grid grid-cols-12 sm:grid-cols-8 gap-4 h-screen max-w-full">
+    <!-- first column -->
+    <div class="h-screen col-span-12 bg-white shadow-xl lg:h-4/5 lg:col-span-6 overflow-hidden px-7">
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing 
+        <span v-if="pagination.total" class="font-serif font-extrabold">{{pagination.total}}</span>
+        <LoadingComponent v-else></LoadingComponent> 
+        Archival Descriptions</h4>
+      <p class="font-sans text-ehri-dark text-sm">Electronic descriptions and finding aids of Holocaust-related archival material.</p>
+      <hr class="text-ehri-dark border-4 shadow-md mt-3">
+      <div class="pl-3 pr-1 pt-3 pb-0 h-full">
+        <div v-if="!loadingDocUnits" class="h-full">
+          <div :key="listKey" class="h-full">
+              <Suspense>
+                <DocUnitItemsRest :search-term="docUnitQuery" :holder="holderFilter" :country="countryFilter" :language="langFilter" :dates="dateFilter"></DocUnitItemsRest>
+                <template #fallback>
+                  <LoadingComponent></LoadingComponent>
+                </template>
+              </Suspense>
+          </div>
+        </div>
+        <div v-else class="h-full w-full flex justify-center items-center">
+          <LoadingComponent></LoadingComponent>
+        </div>
+      </div>
     </div>
-
-    <div class="col-md-6">
+    <!-- second column -->
+    <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-4/5',]">
       <div v-if="!loadingDocUnits">
-        <h4 class="text-start mb-5">Descriptions</h4>
-        <div v-if="!filtered">
-          <DocUnitItemsRest :items-to-display="docUnits" :total-items="pagination.total"
-                            :total-pages="pagination.totalPages" :page-number="page"
-                            @pageChange="
-                (n) => {
-                  getNewPage(n);
-                }"></DocUnitItemsRest>
+        <div class="px-4 pt-4">
+          <h4 class="uppercase font-serif font-bold lg:text-ehri-dark">Filters</h4>
+          <p class="font-sans text-sm font-light mb-4">Choose one or more filters</p>
+          <EHRIPortalTypeFilter
+          filter-name="ITEM TYPE"
+          :key="typeFilterKey"
+          :selectedType="'DocumentaryUnit'"
+          :filter-array="sortedTypes"
+          @filterChange="(e) => {
+            handle(e,'typeFilter')}"
+          >
+          </EHRIPortalTypeFilter>
+          <ArchivalDescriptionFilter
+          filter-name="Countries"
+          :key="countryFilterKey"
+          :filter-array="stats.countries"
+          @filterChange="(e) => {
+            handle(e,'countryFilter')}"
+          >
+          </ArchivalDescriptionFilter>
+          <ArchivalDescriptionFilter
+              filter-name="Institutions"
+              :key="repoFilterKey"
+              :filter-array="stats.holders"
+              @filterChange="(e) => {handle(e,'holderFilter')}"
+          >
+          </ArchivalDescriptionFilter>
+          <ArchivalDescriptionFilter
+              filter-name="Languages"
+              :key="langFilterKey"
+              :filter-array="stats.langs"
+              @filterChange="(e) => {handle(e,'langFilter')}"
+          >
+          </ArchivalDescriptionFilter>
+          <ArchivalDescriptionFilter
+              filter-name="Dates"
+              :key="dateFilterKey"
+              :filter-array="stats.dates"
+              @filterChange="(e) => {handle(e,'dateFilter')}"
+          >
+          </ArchivalDescriptionFilter>
         </div>
-        <div v-else>
-          <div><span class="badge remove p-sm-1 mb-1" id="remove-filter" @click="(e) => handle(e,'removeAll')">Remove All Filters</span></div>
-          Filters:
-          <span class="badge filter me-1" v-if="holderFilter" @click="handle('','holderFilter')">{{holderFilter.length>40?holderFilter.substring(0,40)+'...':holderFilter}}</span>
-          <span class="badge filter me-1" v-if="langFilter" @click="handle('','langFilter')">{{languageNames.of(langFilter)}}</span>
-          <span class="badge filter me-1" v-if="countryFilter" @click="handle('','countryFilter')">{{countryNames.of(countryFilter.toUpperCase())}}</span>
-          <hr class="my-2">
-          <DocUnitItemsRest :items-to-display="filteredUnits" :total-items="pagination.total"
-                            :total-pages="pagination.totalPages" :page-number="page" @pageChange="
-                                (n) => {
-                                  getNewPage(n);
-                                }">
-          </DocUnitItemsRest>
+        <div v-if="filtered" class="px-4 pt-4">
+          <hr class="py-1 lg:text-ehri-dark">
+          <h5 class="font-serif text-sm font-extralight">Active Filters:</h5>
+            <span class="block w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs" v-if="holderFilter" @click="handle('Institutions','holderFilter')">{{holderFilter.length>25?holderFilter.substring(0,25)+'...':holderFilter}}</span>
+            <span class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs" v-if="langFilter" @click="handle('','langFilter')">{{languageNames.of(langFilter)}}</span>
+            <span class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs" v-if="countryFilter" @click="handle('','countryFilter')">{{countryNames.of(countryFilter.toUpperCase())}}</span>
+            <span class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs" v-if="dateFilter" @click="handle('','dateFilter')">{{dateFilter.length>25?dateFilter.substring(0,25)+'...':dateFilter}}</span>
+            <div class="flex items-center my-2 cursor-pointer lg:text-ehri-wine text-sm" id="remove-filter" @click="(e) => handle(e,'removeAll')">
+              <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
+                close
+              </span>
+              <span>Remove All Filters</span>
+            </div>
+        </div>
+        <div class="px-4 pt-4">
+          <OverviewCountryStats :key="countryFilterKey" class="mb-5" :dataset="stats.countries"></OverviewCountryStats>
         </div>
       </div>
-      <div v-else>
-        <loading-component></loading-component>
+      <div v-else class="">
+        <loading-component class="m-5"></loading-component>
       </div>
     </div>
-    <div class="col-md-3">
-      <chart v-if="stats.countries&& stats.countries.length" :dataset="stats"></chart>
-    </div>
-  </div>
-  <div v-else class="row g-0 justify-content-center">
-    <loading-component class="m-5"></loading-component>
   </div>
 </template>
 
 <script>
-import {toRef, ref } from "vue";
+import {toRef, ref, computed,} from "vue";
 import DocUnitItemsRest from "./DocUnitItemsREST.vue"
 import LoadingComponent from "./LoadingComponent.vue";
-import {fetchFacetedDocUnits, fetchFacetedPortalSearch} from "../services/EHRIGetters";
+import { fetchFacetedDocUnits } from "../services/EHRIGetters";
 import ArchivalDescriptionFilter from "./ArchivalDescriptionFilter.vue";
-import Chart from "./PieChart.vue";
+import EHRIPortalTypeFilter from "./EHRIPortalTypeFilter.vue";
+import OverviewCountryStats from "./OverviewCountryStats.vue";
 
 export default {
   name: "ArchivalDescriptions",
-  components: {Chart, ArchivalDescriptionFilter, DocUnitItemsRest, LoadingComponent},
+  components: { EHRIPortalTypeFilter, ArchivalDescriptionFilter, DocUnitItemsRest, LoadingComponent, OverviewCountryStats },
   props: {
     searchTerm: String,
+    sortedTypes: Array,
   },
-  setup(props) {
+  emits: ["portalType"],
+  setup(props, ctx) {
+
     const docUnitQuery = toRef(props, 'searchTerm')
+    const sortedTypes = toRef(props, 'sortedTypes')
+    const listKey = ref(0)
     const languageNames = new Intl.DisplayNames(['en'], {type: 'language'});
     const countryNames = new Intl.DisplayNames(['en'], {type: 'region'});
     const docUnits = ref([]);
@@ -98,6 +158,7 @@ export default {
       total: null,
     });
     const repoCounts = ref(new Map());
+    const dateCounts = ref(new Map());
     const langCounts = ref(new Map())
     const countryCounts = ref(new Map())
     const filterValue = ref();
@@ -106,50 +167,57 @@ export default {
     const stats = ref({
       holders: null,
       countries: null,
-      langs: null
+      langs: null,
+      dates: null
     })
     const holderFilter = ref(null)
     const countryFilter = ref(null)
     const langFilter = ref(null)
+    const dateFilter = ref(null)
     const facets = ref(new Object())
-    const id_name_dict = ref(new Map())
+    const showFilterBar = ref(false);
+  
 
     // Useful to reload filter components when filters get removed
+    const typeFilterKey = ref(0)
     const countryFilterKey = ref(0)
     const repoFilterKey = ref(0)
     const langFilterKey = ref(0)
-    const reloadingDescs =ref(false)
+    const dateFilterKey = ref(0)
 
     const handle = (val, type) => {
+      filtered.value = false;
+
+      type=="typeFilter"?ctx.emit('portalType',val):null
       type=="holderFilter"&&val!="Institutions"?holderFilter.value=val:val=="Institutions"?holderFilter.value=null:null
       type=="countryFilter"&&val!="Countries"?countryFilter.value=val:val=="Countries"?countryFilter.value=null:null
       type=="langFilter"&&val!="Languages"?langFilter.value=val:val=="Languages"?langFilter.value=null:null
+      type=="dateFilter"&&val!="Dates"?dateFilter.value=val:val=="Dates"?dateFilter.value=null:null
 
-    // the name of the institution clicked
+
     if(type=="removeAll"){
-      filtered.value = false;
       facets.value = new Object()
       holderFilter.value = null
       langFilter.value = null
+      dateFilter.value = null
       countryFilter.value = null
-      countryFilterKey.value+=1
-      langFilterKey.value+=1
-      repoFilterKey.value+=1
+      fetchFacetedDocUnits(docUnitQuery.value, 1, null, 1)
+          .then((res) => {
+            configStats(res.data.meta.facets)
+            docUnits.value = res.data.data
+            page.value = 1
+            configPagination(res.data.meta)
+          })
     }
     if (!holderFilter.value &&
         !countryFilter.value &&
-        !langFilter.value) {
-      filtered.value = false;
-      countryFilterKey.value+=1
-      langFilterKey.value+=1
-      repoFilterKey.value+=1
+        !langFilter.value &&
+        !dateFilter.value) {
       facets.value = new Object()
-      fetchFacetedDocUnits(docUnitQuery.value, 1)
+      fetchFacetedDocUnits(docUnitQuery.value, 1, null, 1)
           .then((res) => {
+            configStats(res.data.meta.facets)
             docUnits.value = res.data.data
-            docUnits.value.map((item) => {
-              item['repoName'] = id_name_dict.value.get(item.relationships.holder.data.id)
-            })
             page.value = 1
             configPagination(res.data.meta)
           })
@@ -158,14 +226,11 @@ export default {
       holderFilter.value ? facets.value['holder']=encodeURIComponent(holderFilter.value) : null
       countryFilter.value ? facets.value['country']= countryFilter.value: null
       langFilter.value ? facets.value['lang']= langFilter.value : null
-
-
-      fetchFacetedDocUnits(docUnitQuery.value, 1, facets.value)
+      dateFilter.value ? facets.value['dates']= dateFilter.value : null
+      fetchFacetedDocUnits(docUnitQuery.value, 1, facets.value, 1)
           .then(res => {
+            configStats(res.data.meta.facets)
             filteredUnits.value = res.data.data
-            filteredUnits.value.map((item) => {
-              item['repoName'] = id_name_dict.value.get(item.relationships.holder.data.id)
-            })
             page.value = 1
             configPagination(res.data.meta)
             filtered.value = true;
@@ -173,17 +238,12 @@ export default {
     }
     }
 
-    const getFacetedUnits = async (pageNo, facets) => {
-      let res = await fetchFacetedDocUnits(docUnitQuery.value, pageNo, facets)
-      const data = res.data.data
-      configPagination(res.data.meta)
-      return data
-    }
 
     const getAllDocUnits = async (pageNo) => {
       repoCounts.value.clear()
       countryCounts.value.clear()
       langCounts.value.clear()
+      dateCounts.value.clear()
       docUnits.value = []
       filteredUnits.value = []
       filterValue.value = ""
@@ -199,6 +259,12 @@ export default {
     const configPagination = (meta) => {
       pagination.value["totalPages"] = meta.pages;
       pagination.value["total"] = meta.total;
+      typeFilterKey.value+=1
+      countryFilterKey.value+=1
+      langFilterKey.value+=1
+      dateFilterKey.value+=1
+      repoFilterKey.value+=1
+      listKey.value +=1
     };
 
     const configStats = (meta) => {
@@ -211,54 +277,11 @@ export default {
       stats.value["langs"] = meta.find(i => {
         return i.param == "lang"
       }).facets;
+      stats.value["dates"] = meta.find(i => {
+        return i.param == "dates"
+      }).facets;
     };
 
-    const getNewPage = (pageNo) => {
-      reloadingDescs.value = true
-      page.value = pageNo
-      if(filtered.value){
-        getFacetedUnits(page.value, facets.value)
-            .then(res => {
-              filteredUnits.value = res
-              filteredUnits.value.map((item) =>{
-                item['repoName']= id_name_dict.value.get(item.relationships.holder.data.id)
-              })
-              reloadingDescs.value = false
-            })
-      } else {
-        fetchFacetedDocUnits(docUnitQuery.value, page.value)
-            .then(res=>{
-                  docUnits.value = res.data.data
-                  docUnits.value.map((item) =>{
-                    item['repoName']= id_name_dict.value.get(item.relationships.holder.data.id)
-                  })
-              reloadingDescs.value = false
-                }
-            )
-      }
-    }
-
-    const getNames = () => {
-      repoCounts.value.forEach((v,k) => {
-        fetchFacetedPortalSearch(k,1, {'type': 'Repository'})
-            .then((res)=>
-                {
-                  try{
-                    let n = res.data.data[0].id
-                    id_name_dict.value.set(n,k)
-                  } catch (error) {
-                    console.log(`Failed to add item to dict.`);
-                  }
-                }
-            ).then(()=>{
-          docUnits.value.map((item) =>{
-            item['repoName']= id_name_dict.value.get(item.relationships.holder.data.id)
-          })
-
-          loadingDocUnits.value = false;
-        })
-      })
-    }
 
     getAllDocUnits(1).then(
         (res) => {
@@ -270,26 +293,45 @@ export default {
                   repoCounts.value.set(i.name,i.count)
                 }
             )
-            getNames()
             stats.value.langs.forEach((l)=>{
               langCounts.value.set(l.name, l.count)
             })
             stats.value.countries.forEach((c)=>{
               countryCounts.value.set(c.name, c.count)
             })
+            stats.value.dates.forEach((c)=>{
+              dateCounts.value.set(c.name, c.count)
+            })
           loadingDocUnits.value=false
         }}
     )
 
+    const filterBarClass = computed(() => {
+            return showFilterBar.value
+            ? "w-full h-max m-0 p-0 bg-ehri-purple lg:w-auto lg:block transition-all ease-in-out duration-600"
+            : "w-full h-0 transition-all ease-in-out overflow-hidden lg:overflow-scroll duration-800 lg:w-auto ";
+        });
+
+   
+    const toggleFilterBar = () => {
+      showFilterBar.value = !showFilterBar.value;
+    };
+
+
     return{
+      filterBarClass,
+      toggleFilterBar,
+      showFilterBar,
+      docUnitQuery,
+      typeFilterKey,
       countryFilterKey,
       repoFilterKey,
       langFilterKey,
+      dateFilterKey,
       stats,
       handle,
       filtered,
       filteredUnits,
-      getNewPage,
       pagination,
       loadingDocUnits,
       docUnits,
@@ -297,22 +339,13 @@ export default {
       holderFilter,
       langFilter,
       countryFilter,
+      dateFilter,
       languageNames,
-      countryNames }
+      countryNames,
+      sortedTypes,
+      facets,
+      listKey
+    }
   }
 }
 </script>
-
-<style scoped>
-.badge {
-  cursor: pointer;
-}
-.remove {
-  background-color: #AE4249!important;
-}
-
-.filter {
-  color: #330033;
-  background-color: #F5B651!important;
-}
-</style>

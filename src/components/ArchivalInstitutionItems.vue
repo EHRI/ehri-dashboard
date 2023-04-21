@@ -1,116 +1,154 @@
 <template>
-  <div class="row m-0 justify-content-center">
-    <div class="col-md-3 item-list">
-      <h4 class="text-start mb-3">Select Item:</h4>
-      <div class="items">
-        <div v-for="item of items" :key="item.id" >
-          <ArchivalInstitutionItemCard :repoObject="item" @click="changeRepoID(item.id)"></ArchivalInstitutionItemCard>
-        </div>
+  <div class="grid grid-cols-12 lg:grid-cols-8 gap-2 lg:gap-4 h-screen max-w-full">
+    <!-- SMALL SCREEN UI -->
+    <div v-if="!isLargeScreen && !expandFocusedItem" class="lg:hidden h-screen col-span-11 shadow-xl bg-white overflow-hidden px-7">
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ total>1?'Archival Institutions':'Archival Institution' }}</h4>
+      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
+      <div class="h-full flex flex-col" >
+        <ul ref="el" class="h-5/6 overflow-scroll">
+          <ArchivalInstitutionItemCard v-for="item of items" :key="item.id" :repoObject="item" :selectedItem="selectedRepoID" @idChange="(id)=>changeRepoID(id)"></ArchivalInstitutionItemCard>
+          <li v-if="loading" class="w-full flex justify-center items-center py-2">
+            <LoadingComponent></LoadingComponent>
+          </li>
+        </ul>
       </div>
-      <EHRIPortalPagination
-          v-if="pagination.total>1"
-          class="justify-content-center pagination"
-          :pagination-object="pagination"
-          :current-page="temp_page"
-          @prev="()=>{
-        --temp_page
-      }"
-          @next="()=>{
-        temp_page++
-      }"
-      >
-      </EHRIPortalPagination>
     </div>
-    <div class="vr mb-3 d-none d-md-block"></div>
-    <div class="col-md-8">
-      <h4 class="text-start mb-3">Item Details:</h4>
-      <ArchivalInstitutionDetails :selectedRepoID="selectedRepoID"></ArchivalInstitutionDetails>
+    <div :class="[focusedItemClass,'flex', 'h-screen', 'lg:hidden', 'shadow-xl', ]">
+      <span v-if="!expandFocusedItem" class="cursor-pointer flex justify-center align-middle items-center" @click="toggleFocusedItemClass">
+        <span
+            class="material-symbols-outlined text-white pointer-events-none"
+        >
+          chevron_left
+        </span>
+      </span>
+      <div v-else class="overflow-hidden">
+        <span class="cursor-pointer bg-ehri-dark text-white px-5 py-1" @click="toggleFocusedItemClass">
+          <span
+            class="pt-3 material-symbols-outlined pointer-events-none align-bottom"
+          >
+            close
+          </span>
+          Close
+        </span>
+        <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
+        <ArchivalInstitutionDetails v-if="selectedRepoID" :selectedRepoID="selectedRepoID"></ArchivalInstitutionDetails>
+      </div>
+    </div>
+
+
+    <!-- LARGE SCREEN UI -->
+    <div v-if="isLargeScreen" class="hidden lg:block shadow-xl bg-white lg:h-4/5 lg:col-span-3 overflow-hidden px-7">
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ total>1?'Archival Institutions':'Archival Institution' }}</h4>
+      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
+      <div class="h-4/6 flex flex-col" >
+        <ul ref="el" class="hidden lg:block overflow-y-scroll">
+          <ArchivalInstitutionItemCard v-for="item of items" :key="item.id" :repoObject="item" :selectedItem="selectedRepoID" @idChange="(id)=>changeRepoID(id)"></ArchivalInstitutionItemCard>
+          <li v-if="loading" class="w-full flex justify-center items-center py-2">
+            <LoadingComponent></LoadingComponent>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="hidden lg:block lg:col-span-5 bg-white shadow-xl h-4/5 pb-7 px-7">
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
+      <ArchivalInstitutionDetails v-if="selectedRepoID" :selectedRepoID="selectedRepoID"></ArchivalInstitutionDetails>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, toRef, watch } from "vue";
-import EHRIPortalPagination from "./EHRIPortalPagination.vue";
+import { ref, toRef, onMounted, computed } from "vue";
 import ArchivalInstitutionDetails from "./ArchivalInstitutionDetails.vue";
 import ArchivalInstitutionItemCard from "./ArchivalInstitutionItemCard.vue";
+import { useInfiniteScroll } from '@vueuse/core'
+import {fetchFacetedPortalSearch} from "../services/EHRIGetters";
+import LoadingComponent from "./LoadingComponent.vue";
 
 export default {
   name: "ArchivalInstitutionItems",
   components: {
     ArchivalInstitutionItemCard,
-    ArchivalInstitutionDetails, EHRIPortalPagination,},
+    ArchivalInstitutionDetails, LoadingComponent },
   props: {
-    itemsToDisplay: Array,
-    totalPages: Number,
-    totalItems: Number,
-    pageNumber: Number
+    searchTerm: String,
+    holder: String,
+    type: String,
+    desc: String
   },
-  emits: ["pageChange"],
-  setup(props, ctx) {
-    const items = toRef(props, "itemsToDisplay");
-    const page = toRef(props, "pageNumber")
-    const temp_page = ref(1)
-    const pagination = ref({
-      totalPages: null,
-      total: null,
-      prevPage: null,
-      nextPage: null,
+  setup(props) {
+    const items = ref([])
+    const repoQuery = toRef(props, 'searchTerm')
+    const holderFilter = toRef(props, 'holder')
+    const typeFilter = toRef(props, 'type')
+    const desc = toRef(props, 'desc')
+    const page = ref(1)
+    const el = ref(null)
+    const filters = ref(new Object())
+    const total = ref()
+    const loading = ref(false)
+    const expandFocusedItem = ref(false);
+    const screenWidth = ref(window.innerWidth);
+
+    const isLargeScreen = computed(() => {
+      return screenWidth.value >= 1024;
     });
-    const selectedRepoID = ref(items.value[0].id)
+
+    window.addEventListener('resize', () => {
+      screenWidth.value = window.innerWidth;
+    });
+
+
+    holderFilter.value ? filters.value['holder']=encodeURIComponent(holderFilter.value) : null
+    typeFilter.value ? filters.value['type']= typeFilter.value: null
+
+    const selectedRepoID = ref("")
+
+    const focusedItemClass = computed(() => {
+            return expandFocusedItem.value
+            ? "w-full h-screen bg-white text-ehri-purple px-7 overflow-y-scroll col-span-12 m-0 transition-all ease-in-out duration-800 pb-3"
+            : "w-full bg-ehri-dark col-span-1 transition-all ease-in-out  duration-800";
+        });
+
+   
+    const toggleFocusedItemClass = () => {
+      expandFocusedItem.value = !expandFocusedItem.value;
+    };
+
     const changeRepoID = (id)=> {
       selectedRepoID.value = id
+      expandFocusedItem.value = true
     }
-    const emitPageChange = (n) => {
-      ctx.emit("pageChange", n);
-    };
 
-    // Pagination configuration credit: https://gist.github.com/itzikbenh/90918f44b3f871d206e6f5dddaabcc49
-    const configPagination = () => {
-      pagination.value["totalPages"] = toRef(props,"totalPages");
-      pagination.value["total"] =  toRef(props,"totalItems");
-      pagination.value["prevPage"] = temp_page.value > 1 ? temp_page.value : ""
-      pagination.value["nextPage"] = temp_page.value < pagination.value.totalPages ? temp_page.value + 1 : "";
-    };
 
-    configPagination();
+    const getUnitsOnScroll = async () => {
+      loading.value = true;
+      const newUnits = await fetchFacetedPortalSearch(repoQuery.value, page.value, filters.value, 25)
+      newUnits.data.data.forEach(newItem => {
+        if (!items.value.some(item => item.id === newItem.id)) {
+          items.value.push(newItem)
+        }
+      })
+      total.value = newUnits.data.meta.total
+      page.value++
+      loading.value = false;
+    }
 
-    watch(temp_page, ()=>{
-      emitPageChange(temp_page.value)
-      configPagination();
+    useInfiniteScroll(
+      el,
+      async () => {
+        await getUnitsOnScroll()
+      },
+      { distance: 300 }
+    )
+
+
+    onMounted(()=>{
+      getUnitsOnScroll()
+      .then(()=>{
+        selectedRepoID.value = items.value.length>0?items.value[0].id:null
+      })
     })
-    watch(page, ()=>{
-      if(page.value === 1){
-        temp_page.value = 1
-      } else {
-        temp_page.value = page.value
-      }
-      configPagination();
-    })
-    watch(items, () => {
-      configPagination();
-    });
-
-    return { pagination, temp_page, items, selectedRepoID, changeRepoID };
+    return { isLargeScreen, expandFocusedItem, focusedItemClass, toggleFocusedItemClass, total, items, el,  loading, desc, selectedRepoID, changeRepoID };
   },
 };
 </script>
-
-<style scoped>
-.vr {
-  border-radius: 10px;
-  padding: 0.15em;
-}
-.item-list {
-  height: 22em;
-  position: relative;
-}
-
-.pagination {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0
-}
-
-</style>

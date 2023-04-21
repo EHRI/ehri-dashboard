@@ -1,41 +1,76 @@
 <template>
-  <div class="blog-section">
-    <div class="row g-0 mx-2 justify-content-center">
-      <h4 class="display-4 text-center pt-3 pb-2">EHRI Online Editions</h4>
-      <div class="col-md-6">
-        <p class="small">The EHRI Online Editions consist of annotated digitized documents from various sources gathered around a theme, and are a new way of presenting digital archival content.</p>
+    <span class="flex justify-center bg-ehri-purple py-2 text-white lg:hidden col-span-12 text-ehri-dark font-sans " @click="toggleFilterBar">
+      <span v-if="!showFilterBar" class="lg:hidden mr-2 cursor-pointer">
+              <span
+            class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
+          >
+            filter_alt
+          </span>
+          Filter Results
+      </span>
+      <span v-else class="lg:hidden mr-2 cursor-pointer">
+              <span
+            class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
+          >
+            close
+          </span>
+          Close
+      </span>
+  </span>
+  <div v-if="!loading && !showFilterBar && selectedEdition.isFiltered()" class="lg:hidden pt-1 px-2">
+            <h5 class="font-sans text-sm text-ehri-purple block font-medium">Active Filters:</h5>
+              <div class="" v-for="f in Object.entries(selectedEdition['filters'])">
+                <span v-if="f[1]!==''" class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs"
+                  @click="handleFilter('',f[0],selectedEdition['edition'])">{{f[1]}}</span>
+              </div>
+              <div class="flex items-center mt-1 cursor-pointer text-ehri-purple text-sm" id="remove-filter" @click="() => handleFilter('','removeAll',selectedEdition['edition'])">
+                <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
+                  close
+                </span>
+                <span>Remove All Filters</span>
+              </div>
+  </div>
+  <div class="grid grid-cols-12 sm:grid-cols-8 gap-4 h-screen max-w-full"  v-if="!loading">
+    <div class="h-screen col-span-12 bg-white shadow-xl lg:h-4/5 lg:col-span-6 overflow-hidden px-7">
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing 
+        <span v-if="selectedEdition.pagination.total" class="font-serif font-extrabold">{{selectedEdition.pagination.total}}</span>
+        <LoadingComponent v-else></LoadingComponent> <span>{{ selectedEdition.pagination.total>1?' results':' result' }}</span>
+        from the {{ selectedEdition['title'] }}</h4>
+      <p class="font-sans text-ehri-dark text-sm">{{ selectedEdition['description'] }}</p>
+      <hr class="text-ehri-dark border-4 shadow-md mt-3">
+      <div class="pl-3 pr-1 pt-3 pb-0 h-full">
+        <div class="h-5/6">
+          <div class="h-full flex flex-col">
+            <ul  v-if="selectedEdition && !selectedEdition.isFiltered()" ref="el" class="h-5/6 overflow-scroll">
+              <DigitalEditionItem v-for="item of selectedEdition['items']" :key="item.id" :editionObject="item" :edition-string="selectedEdition['edition']"></DigitalEditionItem>
+              <li v-if="selectedEdition.loading" class="w-full flex justify-center items-center py-2">
+                <LoadingComponent></LoadingComponent>
+              </li>
+            </ul>
+            <ul v-else ref="el" class="h-full overflow-scroll">
+              <DigitalEditionItem v-for="item of selectedEdition['filteredItems']" :key="item.id" :editionObject="item" :edition-string="selectedEdition['edition']"></DigitalEditionItem>
+              <li v-if="selectedEdition.loading" class="w-full flex justify-center items-center py-2">
+                <LoadingComponent></LoadingComponent>
+              </li>
+            </ul>
+        </div>
       </div>
     </div>
-    <div class="row g-0 justify-content-center"
-       v-if="sortedDEResultsNonNull.length">
-      <div v-for="i in sortedDEResultsNonNull"
-           class="buttons m-0"
-           @click="selectEdition(i[0])"
-      >
-        <button v-if="i[1]['pagination']['total']>0"
-                type="button"
-                class="mx-4 my-2 btn-sm stats-btn position-relative"
-                :class="
-{ active:i[1]['title']==selectedEdition['title'],}"
-        >
-          {{i[1]['title']}}
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill stats-span">
- {{i[1]['pagination']['total']}}{{i[1].isFiltered()?' (Filtered)':null}}
-      </span>
-        </button>
-      </div>
-      <div class="row p-4">
-        <div class="row g-0 my-3 justify-content-center">
-          <h4 class="display-5 mb-4">{{selectedEdition['title']}}</h4>
-          <p class="small col-md-8">{{ selectedEdition['description']}}</p>
-        </div>
-        <div class="col-md-3 text-start">
-          <h4>Filters</h4>
-          <p>Choose one or more filters:</p>
+    </div>
+      <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-4/5',]">
+        <div class="h-full px-4 pt-4">
+          <h4 class="uppercase font-serif font-bold text lg:text-ehri-dark">Filters</h4>
+          <p class="font-sans text-sm font-light mb-4">Choose one or more filters</p>
+          <div class="overflow-scroll h-full">
+            <h5 class="mt-3 uppercase font-serif font-bold text-sm lg:text-ehri-dark">ONLINE EDITION</h5>
+          <select v-if="sortedDEResultsNonNull" @change="(e)=>selectEdition(e)" class="text-ehri-dark font-sans text-xs p-1 font-light border border-[1.5px] border-ehri-dark w-full" size="1" aria-label="Online Edition Filter">
+            <option v-for="i in sortedDEResultsNonNull" :key="i[0]" :value="i[0]" :selected="selectedEdition['edition'] === i[0]">{{ i[1]['title']+" (" +i[1]['pagination']['total']+")" }} </option>
+          </select>
           <div
               v-for="f in Object.entries(selectedEdition['facets'])">
             <DigitalEditionsFilter
                 v-if="Object.keys(f[1]).length!==0&&f[0]!=='Featured'"
+                :key="filterKey"
                 :filter-name="f[0]"
                 :filter-object="f[1]"
                 @filterChange="(e) => {
@@ -44,84 +79,63 @@
             >
             </DigitalEditionsFilter>
           </div>
-
-        </div>
-        <div class="col-md-6">
-          <h4 class="text-start mb-3">Documents</h4>
-          <div v-if="selectedEdition.isFiltered()">
-           <div> <span class="badge remove p-sm-1 mb-1" id="remove-filter" @click="handleFilter('','removeAll',selectedEdition['edition'])">Remove All Filters</span></div>
-          Filters:
-          <div class="filter-div" v-for="f in Object.entries(selectedEdition['filters'])">
-            <span v-if="f[1]!==''" class="badge filter me-1"  @click="handleFilter('',f[0],selectedEdition['edition'])">{{f[1]}}</span>
+          <div v-if="selectedEdition.isFiltered()" class="px-4 pt-4">
+            <hr class="py-1 lg:text-ehri-dark">
+            <h5 class="font-serif text-sm font-extralight">Active Filters:</h5>
+              <div class="" v-for="f in Object.entries(selectedEdition['filters'])">
+                <span v-if="f[1]!==''" class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs"
+                  @click="handleFilter('',f[0],selectedEdition['edition'])">{{f[1]}}</span>
+              </div>
+              <div class="flex items-center my-2 cursor-pointer lg:text-ehri-wine text-sm" id="remove-filter" @click="() => handleFilter('','removeAll',selectedEdition['edition'])">
+                <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
+                  close
+                </span>
+                <span>Remove All Filters</span>
+              </div>
           </div>
-
-          <hr class="my-2">
-          </div>
-
-          <DigitalEditionItems
-              :editionItemsArray="selectedEdition.isFiltered()?selectedEdition['filteredItems']:selectedEdition['items']"
-              :headlineString="selectedEdition['title']" :edition="selectedEdition['edition']"></DigitalEditionItems>
-          <EditionsPagination
-              class="justify-content-center"
-              v-if="selectedEdition.isFiltered()?selectedEdition['filteredItems'].length&&selectedEdition['filteredItems'].length>1:selectedEdition['items'].length&&selectedEdition['items'].length>1"
-              :pagination-object="selectedEdition['pagination']"
-              :current-page="selectedEdition['page']"
-              @prev="
-        --selectedEdition['page'];
-        selectedEdition.getItems();
-      "
-              @next="
-        selectedEdition['page']++;
-        selectedEdition.getItems();
-      "
-          ></EditionsPagination>
-        </div>
-        <div class="col-md-3">
-          <Chart
+          <div class="h-2/3">
+            <Chart
+          class="w-full pb-2"
               :key="chartKey"
               v-if="selectedEdition.isFiltered()?selectedEdition['filteredItems'].length:selectedEdition['items'].length"
               :dataset="selectedEdition['facets']['Subject']">
           </Chart>
+          </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="row g-0 justify-content-center" v-else>
-      <LoadingComponent class="m-5 g-0"></LoadingComponent>
-    </div>
-  </div>
-
+    <LoadingComponent v-else></LoadingComponent>
 </template>
 
 <script>
-import { toRef, ref, watch } from "vue";
+import { toRef, ref, watch, computed } from "vue";
 import {
   fetchETEitems,
   fetchDRitems,
   fetchBGFitems,
 } from "../services/EHRIGetters.js";
-import DigitalEditionItems from "./DigitalEditionItems.vue";
-import EditionsPagination from "./EditionsPagination.vue";
 import LoadingComponent from "./LoadingComponent.vue";
 import DigitalEditionsFilter from "./DigitalEditionsFilter.vue";
 import Chart from "./DigitalEditionsChart.vue";
+import { useInfiniteScroll } from '@vueuse/core'
+import DigitalEditionItem from "./DigitalEditionItem.vue"
 
 export default {
   name: "DigitalEditions",
   props: {
     searchTerm: String,
   },
-  components: {Chart, EditionsPagination, DigitalEditionItems, LoadingComponent, DigitalEditionsFilter},
+  components: {Chart, DigitalEditionItem, LoadingComponent, DigitalEditionsFilter},
   setup(props) {
     const searchTerm = toRef(props, "searchTerm");
-    const per_page = ref(5)
     const sortedDEResults = ref([])
     const sortedDEResultsNonNull = ref([])
     const selectedEdition = ref({})
-    const selectEdition = (key)=>{
-      selectedEdition.value = DigitalEditionsData.value[key]
-      chartRerender()
-    }
     const chartKey = ref(0)
+    const el = ref(null)
+    const filterKey = ref(0)
+    const showFilterBar = ref(false);
 
     const DigitalEditionsData = ref({
       ETE: {
@@ -129,10 +143,7 @@ export default {
         title: "Early Holocaust Testimony Edition",
         description: "This edition, for the first time, brings together samples of early testmonies of Jewish witnesses and survivors taken before the 1960s.",
         pagination:{
-          totalPages: null,
           total: null,
-          prevPage: null,
-          nextPage: null,
         },
         page: 1,
         items: [],
@@ -146,26 +157,29 @@ export default {
           Organisation: "",
           Place: ""
         },
-        loading: true,
-        configPagination: () => {
-          DigitalEditionsData.value.ETE.pagination["totalPages"] = (Math.floor(DigitalEditionsData.value.ETE.pagination['total']/per_page.value) + (DigitalEditionsData.value.ETE.pagination['total']%per_page.value?1:0));
-          DigitalEditionsData.value.ETE.pagination["prevPage"] = DigitalEditionsData.value.ETE.page > 1 ? DigitalEditionsData.value.ETE.page : "";
-          DigitalEditionsData.value.ETE.pagination["nextPage"] =
-              DigitalEditionsData.value.ETE.page < DigitalEditionsData.value.ETE.pagination["totalPages"] ? DigitalEditionsData.value.ETE.page + 1 : "";
-        },
-        getItems: () => {
-          fetchETEitems(searchTerm.value,DigitalEditionsData.value.ETE.page, 5, DigitalEditionsData.value.ETE.filters)
-              .then((res) => {
-            if(Object.entries(DigitalEditionsData.value.ETE.filters).map(v=>v[0]).some(v=> DigitalEditionsData.value.ETE.filters[v]!=="")){
-              DigitalEditionsData.value.ETE.filteredItems = res.data.records;
+        loading: false,
+        getUnitsOnScroll: () => {
+          DigitalEditionsData.value.ETE.loading = true;
+          fetchETEitems(searchTerm.value, DigitalEditionsData.value.ETE.page, 10, DigitalEditionsData.value.ETE.filters)
+          .then((newUnits)=>{
+            if(Object.values(DigitalEditionsData.value.ETE.filters).map(v=>v).some(v=> v!=="")){
+              newUnits.data.records.forEach(newItem => {
+              if (!DigitalEditionsData.value.ETE.filteredItems.some(item => item.id === newItem.id)) {
+                DigitalEditionsData.value.ETE.filteredItems.push(newItem)
+              }
+            })
             } else {
-              DigitalEditionsData.value.ETE.items = res.data.records;
-            }
-            DigitalEditionsData.value.ETE.facets = res.data.facets
-            DigitalEditionsData.value.ETE.pagination['total'] = +res.data.total
-            DigitalEditionsData.value.ETE.configPagination()
-            DigitalEditionsData.value.ETE.loading = false;
-          });
+              newUnits.data.records.forEach(newItem => {
+              if (!DigitalEditionsData.value.ETE.items.some(item => item.id === newItem.id)) {
+                DigitalEditionsData.value.ETE.items.push(newItem)
+              }
+            })
+              }
+          DigitalEditionsData.value.ETE.facets = newUnits.data.facets
+          DigitalEditionsData.value.ETE.pagination['total'] = newUnits.data.total
+          DigitalEditionsData.value.ETE.page++
+          DigitalEditionsData.value.ETE.loading = false
+          })
         },
         isFiltered: () => {
           if(Object.entries(DigitalEditionsData.value.ETE.filters).map(v=>v[0]).some(v=> DigitalEditionsData.value.ETE.filters[v]!=="")){
@@ -180,10 +194,7 @@ export default {
         title: "Diplomatic Reports Edition",
         description: "The online edition \"Diplomatic Reports\" focuses on how diplomatic staff reported the persecution and murder of European Jews during World War II.",
         pagination:{
-          totalPages: null,
           total: null,
-          prevPage: null,
-          nextPage: null,
         },
         page: 1,
         items: [],
@@ -197,25 +208,29 @@ export default {
           Person: "",
           Organisation: ""
         },
-        loading: true,
-        configPagination: () => {
-          DigitalEditionsData.value.DRE.pagination["totalPages"] = (Math.floor(DigitalEditionsData.value.DRE.pagination['total']/per_page.value) + (DigitalEditionsData.value.DRE.pagination['total']%per_page.value?1:0));
-          DigitalEditionsData.value.DRE.pagination["prevPage"] = DigitalEditionsData.value.DRE.page > 1 ? DigitalEditionsData.value.DRE.page : "";
-          DigitalEditionsData.value.DRE.pagination["nextPage"] =
-              DigitalEditionsData.value.DRE.page < DigitalEditionsData.value.DRE.pagination["totalPages"] ? DigitalEditionsData.value.DRE.page + 1 : "";
-        },
-        getItems: () => {
-          fetchDRitems(searchTerm.value,DigitalEditionsData.value.DRE.page,5, DigitalEditionsData.value.DRE.filters).then((res) => {
+        loading: false,
+        getUnitsOnScroll: () => {
+          DigitalEditionsData.value.DRE.loading = true;
+          fetchDRitems(searchTerm.value, DigitalEditionsData.value.DRE.page, 10, DigitalEditionsData.value.DRE.filters)
+          .then((newUnits)=>{
             if(Object.values(DigitalEditionsData.value.DRE.filters).map(v=>v).some(v=> v!=="")){
-              DigitalEditionsData.value.DRE.filteredItems = res.data.records;
+              newUnits.data.records.forEach(newItem => {
+              if (!DigitalEditionsData.value.DRE.filteredItems.some(item => item.id === newItem.id)) {
+                DigitalEditionsData.value.DRE.filteredItems.push(newItem)
+              }
+            })
             } else {
-              DigitalEditionsData.value.DRE.items = res.data.records;
-            }
-            DigitalEditionsData.value.DRE.facets = res.data.facets
-            DigitalEditionsData.value.DRE.pagination['total'] = +res.data.total
-            DigitalEditionsData.value.DRE.configPagination()
-            DigitalEditionsData.value.DRE.loading = false;
-          });
+              newUnits.data.records.forEach(newItem => {
+              if (!DigitalEditionsData.value.DRE.items.some(item => item.id === newItem.id)) {
+                DigitalEditionsData.value.DRE.items.push(newItem)
+              }
+            })
+              }
+          DigitalEditionsData.value.DRE.facets = newUnits.data.facets
+          DigitalEditionsData.value.DRE.pagination['total'] = newUnits.data.total
+          DigitalEditionsData.value.DRE.page++
+          DigitalEditionsData.value.DRE.loading = false
+          })
         },
         isFiltered: () => {
           if(Object.entries(DigitalEditionsData.value.DRE.filters).map(v=>v[0]).some(v=> DigitalEditionsData.value.DRE.filters[v]!=="")){
@@ -230,10 +245,8 @@ export default {
         title: "BeGrenzte Flucht Edition",
         description: "The Austrian refugees on the border with Czechoslovakia in the crisis year 1938. (Edition available in German)",
         pagination:{
-          totalPages: null,
+
           total: null,
-          prevPage: null,
-          nextPage: null,
         },
         page: 1,
         items: [],
@@ -248,25 +261,29 @@ export default {
           Organisation: "",
           Place: ""
         },
-        loading: true,
-        configPagination: () => {
-          DigitalEditionsData.value.BGFE.pagination["totalPages"] = (Math.floor(DigitalEditionsData.value.BGFE.pagination['total']/per_page.value) + (DigitalEditionsData.value.BGFE.pagination['total']%per_page.value?1:0));
-          DigitalEditionsData.value.BGFE.pagination["prevPage"] = DigitalEditionsData.value.BGFE.page > 1 ? DigitalEditionsData.value.BGFE.page : "";
-          DigitalEditionsData.value.BGFE.pagination["nextPage"] =
-              DigitalEditionsData.value.BGFE.page < DigitalEditionsData.value.BGFE.pagination["totalPages"] ? DigitalEditionsData.value.BGFE.page + 1 : "";
-        },
-        getItems: () => {
-          fetchBGFitems(searchTerm.value, DigitalEditionsData.value.BGFE.page, 5, DigitalEditionsData.value.BGFE.filters).then((res) => {
+        loading: false,
+        getUnitsOnScroll: () => {
+          DigitalEditionsData.value.BGFE.loading = true;
+          fetchBGFitems(searchTerm.value, DigitalEditionsData.value.BGFE.page, 10, DigitalEditionsData.value.BGFE.filters)
+          .then((newUnits)=>{
             if(Object.values(DigitalEditionsData.value.BGFE.filters).map(v=>v).some(v=> v!=="")){
-              DigitalEditionsData.value.BGFE.filteredItems = res.data.records;
+              newUnits.data.records.forEach(newItem => {
+              if (!DigitalEditionsData.value.BGFE.filteredItems.some(item => item.id === newItem.id)) {
+                DigitalEditionsData.value.BGFE.filteredItems.push(newItem)
+              }
+            })
             } else {
-              DigitalEditionsData.value.BGFE.items = res.data.records;
-            }
-            DigitalEditionsData.value.BGFE.facets = res.data.facets
-            DigitalEditionsData.value.BGFE.pagination['total'] = res.data.total
-            DigitalEditionsData.value.BGFE.configPagination()
-            DigitalEditionsData.value.BGFE.loading = false
-          });
+              newUnits.data.records.forEach(newItem => {
+              if (!DigitalEditionsData.value.BGFE.items.some(item => item.id === newItem.id)) {
+                DigitalEditionsData.value.BGFE.items.push(newItem)
+              }
+            })
+              }
+          DigitalEditionsData.value.BGFE.facets = newUnits.data.facets
+          DigitalEditionsData.value.BGFE.pagination['total'] = newUnits.data.total
+          DigitalEditionsData.value.BGFE.page++
+          DigitalEditionsData.value.BGFE.loading = false
+          })
         },
         isFiltered: () => {
           if(Object.entries(DigitalEditionsData.value.BGFE.filters).map(v=>v[0]).some(v=> DigitalEditionsData.value.BGFE.filters[v]!=="")){
@@ -276,7 +293,7 @@ export default {
           }
         },
       },
-    })
+      })
 
     const handleFilter = (val, type, edition) => {
       if (type ==='removeAll'){
@@ -285,34 +302,67 @@ export default {
               DigitalEditionsData.value[edition].filters[k]=''
             }
         )
-        DigitalEditionsData.value[edition].getItems()
+        DigitalEditionsData.value[edition].page = 1
+        DigitalEditionsData.value[edition].items = []
+        DigitalEditionsData.value[edition].filteredItems = []
+        filterKey.value+=1
+        DigitalEditionsData.value[edition].getUnitsOnScroll()
       }
-      else if(val!==type) {
+      else if(val.length && val!==type) {
+        DigitalEditionsData.value[edition].page = 1
+        DigitalEditionsData.value[edition].items = []
+        DigitalEditionsData.value[edition].filteredItems = []
         DigitalEditionsData.value[edition].filters[type]=val
-        DigitalEditionsData.value[edition].getItems()
+        filterKey.value+=1
+        DigitalEditionsData.value[edition].getUnitsOnScroll()
       }
-      else {
+      else if(!val.length && val!==type) {
         DigitalEditionsData.value[edition].filters[type]=""
-        DigitalEditionsData.value[edition].getItems()
+        DigitalEditionsData.value[edition].page = 1
+        DigitalEditionsData.value[edition].items = []
+        DigitalEditionsData.value[edition].filteredItems = []
+        filterKey.value+=1
+        DigitalEditionsData.value[edition].getUnitsOnScroll()
       }
+      chartRerender()
     }
 
-    DigitalEditionsData.value.ETE.getItems()
-    DigitalEditionsData.value.DRE.getItems()
-    DigitalEditionsData.value.BGFE.getItems()
+    const selectEdition = (key)=>{
+      selectedEdition.value = {}
+      selectedEdition.value.page = 1
+      selectedEdition.value = DigitalEditionsData.value[key.target.value]
+      selectedEdition.value.getUnitsOnScroll()
+      chartRerender()
+    }
+
     const chartRerender = () => {
       chartKey.value+=1
     }
+
+    const filterBarClass = computed(() => {
+            return showFilterBar.value
+            ? "w-full h-max m-0 p-0 bg-ehri-purple lg:w-auto lg:block transition-all ease-in-out duration-600"
+            : "w-full h-0 transition-all ease-in-out overflow-hidden lg:overflow-scroll duration-800 lg:w-auto ";
+        });
+
+   
+    const toggleFilterBar = () => {
+      showFilterBar.value = !showFilterBar.value;
+    };
+
     watch(searchTerm, () => {
-      DigitalEditionsData.value.ETE.getItems()
-      DigitalEditionsData.value.DRE.getItems()
-      DigitalEditionsData.value.BGFE.getItems()
+      DigitalEditionsData.value.ETE.getUnitsOnScroll()
+      DigitalEditionsData.value.DRE.getUnitsOnScroll()
+      DigitalEditionsData.value.BGFE.getUnitsOnScroll()
     });
+
+    const loading = ref(true)
 
     watch([DigitalEditionsData.value], ()=>{
       if (Object.values(DigitalEditionsData.value).map(v => v).every(v => !v.loading)
           && (!selectedEdition.value || (selectedEdition.value && !selectedEdition.value['isFiltered']))
       ){
+        loading.value = true
         let entries = Object.entries(DigitalEditionsData.value).map(v => v);
         sortedDEResults.value = entries.sort((a, b) => b[1]['pagination']['total'] - a[1]['pagination']['total'])
         sortedDEResultsNonNull.value = sortedDEResults.value.filter(i => {
@@ -326,68 +376,38 @@ export default {
         } else {
           selectedEdition.value = DigitalEditionsData.value[sortedDEResultsNonNull.value[0][0]]
         }
+        loading.value = false
       }
-      chartRerender()
     })
 
+    useInfiniteScroll(
+      el,
+      async () => {
+        await selectedEdition.value.getUnitsOnScroll()
+      },
+      { distance: 300 }
+    )
+    DigitalEditionsData.value.ETE.getUnitsOnScroll()
+    DigitalEditionsData.value.DRE.getUnitsOnScroll()
+    DigitalEditionsData.value.BGFE.getUnitsOnScroll()
+
     return {
+      loading,
       sortedDEResultsNonNull,
       selectEdition,
       selectedEdition,
       handleFilter,
-      chartKey
+      chartKey,
+      el,
+      filterKey,
+      showFilterBar,
+      toggleFilterBar,
+      filterBarClass
     };
   },
 };
 </script>
 
 <style scoped>
-.buttons {
-  display: inline-flex!important;
-  width: fit-content;
-}
-.stats-btn {
-  background-color: #330033;
-  color: #FFFFFF;
-  opacity: 1!important;
-  width:fit-content!important;
-}
-.stats-btn:hover {
-  border: 3px solid #47817E;
-}
 
-.stats-btn:focus {
-  box-shadow: none;
-}
-
-.stats-span {
-  background-color: #47817E;
-  color: #FFF;
-}
-.btn-sm {
-  border: 3px solid transparent;
-}
-.active {
-  background-color: #47817E;
-  color: #FFFFFF;
-}
-.active .stats-span {
-  background-color: #330033;
-  color: #FFFFFF;
-}
-.badge {
-  cursor: pointer;
-}
-.remove {
-  background-color: #AE4249!important;
-}
-
-.filter-div {
-  display: inline-flex;
-}
-
-.filter {
-  color: #330033;
-  background-color: #F5B651!important;
-}
 </style>

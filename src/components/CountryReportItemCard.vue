@@ -1,24 +1,36 @@
 <template>
-  <div class="card doc-item-card">
-    <div class="card-body p-0 mb-1">
-      <h6 v-if="countryObject.attributes.name" class="card-title mb-0 text-truncate">{{countryObject.attributes.name}}</h6>
+    <li>
+    <div class="flex items-center">
+      <h6 v-if="countryObject.attributes.name" @click="changeCountryID(countryObject.id)" :class="classes">{{countryObject.attributes.name}}</h6>
     </div>
-    <hr class="my-2">
-  </div>
+  </li>
+  <hr class="my-2 text-ehri-light-grey">
 </template>
 
 <script>
-import {toRef } from "vue";
+import {toRef, computed } from "vue";
 
 export default {
   name: "CountryReportItemCard",
   props: {
-    countryObject: Object
+    countryObject: Object,
+    selectedItem: String
   },
-  setup(props){
+  emits: ["idChange"],
+  setup(props, ctx){
     const countryObject = toRef(props, 'countryObject')
+    const selected = toRef(props, 'selectedItem')
 
-    return {countryObject}
+    const changeCountryID = (id)=> {
+      ctx.emit('idChange', id)
+    }
+
+    const classes = computed(() => {
+      return ['cursor-pointer font-sans font-semibold text-sm mb-0 pb-0 overflow-hidden line-clamp-1', countryObject.value.id === selected.value ? 'text-ehri-wine' : 'text-ehri-dark']
+    });
+
+
+    return {countryObject, changeCountryID, classes}
   }
 }
 </script>

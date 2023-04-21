@@ -1,5 +1,12 @@
 <template>
-  <div class="row" v-if="viz.length" v-html="viz"></div>
+  <div class="h-full w-full">
+    <button @click="openPopup" class="fixed text-ehri-dark hover:text-ehri-wine">
+    <span class="material-symbols-outlined align-top">
+    open_in_new
+    </span> Open in new window
+  </button>
+  <div v-if="viz.length" v-html="viz" class="w-screen"></div>
+  </div>
 </template>
 
 <script>
@@ -58,9 +65,14 @@ export default {
       viz.value = Tree(vizData.value, {
         label: (d) => d.name,
         event: (d) => d.event,
-        // link: (d) => d.link,
         identifier: (d) => d.identifier,
       }).outerHTML;
+    };
+
+    const openPopup = () => {
+      const newWindow = window.open("","","width=screen,height=screen");
+      newWindow.document.write(viz.value);
+      newWindow.document.title = selectedCamp.value.descriptions[0].name + " Hierarchy Visualisation";
     };
 
     createViz();
@@ -87,7 +99,7 @@ export default {
         identifier,
         link, // given a node d, its link (if any)
         linkTarget = "_blank", // the target attribute for links (if any)
-        width = 1000, // outer width, in pixels
+        width = 800, // outer width, in pixels
         height, // outer height, in pixels
         r = 3, // radius of nodes
         padding = 5, // horizontal padding for first and last column
@@ -177,13 +189,13 @@ export default {
         .attr("target", link == null ? null : linkTarget)
         .attr("transform", (d) => `translate(${d.y},${d.x})`)
         .attr("fill", (d) =>
-          d.data.identifier === selectedCamp.value.id ? "#6C003B" : "#000"
+          d.data.identifier === selectedCamp.value.id ? "#83004c" : "#3b3b34"
         );
 
       node
         .append("circle")
         .attr("fill", (d) =>
-          d.data.identifier === selectedCamp.value.id ? "#6C003B" : fill
+          d.data.identifier === selectedCamp.value.id ? "#83004c" : fill
         )
         .attr("r", r);
 
@@ -207,6 +219,7 @@ export default {
 
     return {
       viz,
+      openPopup
     };
   },
 };

@@ -33,7 +33,7 @@ const ehriPortalREST = axios.create({
 });
 
 const ehriPortalRESTstage = axios.create({
-  baseURL: "https://portal.ehri-project-stage.eu/api/v1",
+  baseURL: "https://portal.ehri-project.eu/api/v1",
 });
 
 // EHRI GHETTO NAMES
@@ -52,6 +52,14 @@ const ehriEntityMatcher = axios.create({
 
 
 export default {
+  getRepoName(query){
+    return ehriPortalRESTstage.get(`search?`, {
+      params: {
+        q: query,
+        limit: 1,
+      },
+    })
+  },
   generalPortalTypeSearch(query){
     return ehriPortalRESTstage.get(`search?&facet=type`, {
       params: {
@@ -82,7 +90,7 @@ export default {
       mapf.forEach((k,v)=> {
       filters += `&${v}=${k}`
     })
-    return ehriPortalRESTstage.get(`search?&facet=type&facet=holder&facet=country&facet=lang${filters}`, {
+    return ehriPortalREST.get(`search?&facet=type&facet=holder&facet=country&facet=lang&facet=dates${filters}`, {
       params: {
         q: query,
         page: page,
@@ -120,29 +128,29 @@ export default {
     })
   },
 
-  getFacetedDocUnitResults(query, page, facets){
+  getFacetedDocUnitResults(query, page, facets, limit){
     if(facets){
       const mapf = new Map(Object.entries(facets))
       var filters = ""
       mapf.forEach((k,v)=> {
         filters += `&${v}=${k}`
       })
-      return ehriPortalRESTstage.get(`search?&facet=type&facet=holder&facet=country&facet=lang${filters}`, {
+      return ehriPortalRESTstage.get(`search?&facet=type&facet=holder&facet=country&facet=lang&facet=dates${filters}`, {
         params: {
           q: query,
           type: 'DocumentaryUnit',
           page: page,
-          limit: 5,
+          limit: limit?limit:5,
         },
       })
     } else {
      let filters = ""
-      return ehriPortalRESTstage.get(`search?&facet=type&facet=holder&facet=country&facet=lang${filters}`, {
+      return ehriPortalRESTstage.get(`search?&facet=type&facet=holder&facet=country&facet=lang&facet=dates${filters}`, {
         params: {
           q: query,
           type: 'DocumentaryUnit',
           page: page,
-          limit: 5,
+          limit: limit?limit:5,
         },
       })
     }
@@ -368,10 +376,10 @@ export default {
       variables: { id: id },
     });
   },
-  getCvovConceptInfo(query) {
+  getCvocConceptInfo(query) {
     return ehriPortal.post("graphql", {
       query: `
-        query CvovConceptInfo($id: ID!) {
+        query CvocConceptInfo($id: ID!) {
           CvocConcept(id: $id) {
             id
             identifier
@@ -550,7 +558,7 @@ export default {
       mapf.forEach((k,v)=> {
         filters += `&${v}=${k}`
       })
-      return ehriPortalRESTstage.get(`${id}/related?&facet=type&facet=holder&facet=country&facet=lang${filters}`, {
+      return ehriPortalREST.get(`${id}/related?&facet=type&facet=holder&facet=country&facet=lang${filters}`, {
         params: {
           q: query,
           page: page,
@@ -559,7 +567,7 @@ export default {
       })
     } else {
       let filters = ""
-      return ehriPortalRESTstage.get(`${id}/related?&facet=type&facet=holder&facet=country&facet=lang${filters}`, {
+      return ehriPortalREST.get(`${id}/related?&facet=type&facet=holder&facet=country&facet=lang${filters}`, {
         params: {
           page: page,
           limit: 5,

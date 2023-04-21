@@ -1,6 +1,6 @@
 <template>
-  <div class="p-0 m-0 resource-view" v-if="component">
-    <component :is="component" v-bind="{'searchTerm': searchTerm}"></component>
+  <div class="col-span-8 h-screen" v-if="component">
+    <component :is="component" v-bind="{'searchTerm': searchTerm,}"></component>
   </div>
 </template>
 
@@ -44,14 +44,13 @@ export default {
       component.value = componentMap[currentTab.value['component']]
     })
     return {
-      component
+      component,
+      currentTab
     }
   }
 }
 </script>
 
 <style scoped>
-.resource-view {
-  min-height: 100vh;
-}
+
 </style>

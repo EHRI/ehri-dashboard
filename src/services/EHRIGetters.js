@@ -9,6 +9,15 @@ export const fetchPortalTypeResults = async (query)=>{
   }
 }
 
+export const fetchRepoName = async (query)=>{
+  try {
+    let res = await EHRIServices.getRepoName(query)
+    return res.data.data[0].attributes.name
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 export const fetchHistoricalAgentStats = async (query)=>{
   try {
     let res = await EHRIServices.getHistoricalAgentStats(query)
@@ -79,7 +88,7 @@ export const fetchRepos = async () => {
 
 export const fetchCvocConceptInfo = async (id) => {
   try {
-    let res = await EHRIServices.getCvovConceptInfo(id);
+    let res = await EHRIServices.getCvocConceptInfo(id);
     return res.data;
   } catch (err) {
     // Handle Error Here
@@ -166,9 +175,9 @@ export const fetchDocUnitsStatsREST = async (query, page) => {
   }
 };
 
-export const fetchFacetedDocUnits = async (query, page, facets) => {
+export const fetchFacetedDocUnits = async (query, page, facets, limit) => {
   try {
-    let res = await EHRIServices.getFacetedDocUnitResults(query, page, facets);
+    let res = await EHRIServices.getFacetedDocUnitResults(query, page, facets, limit);
     return res;
   } catch (err) {
     // Handle Error Here

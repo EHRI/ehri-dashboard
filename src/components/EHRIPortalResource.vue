@@ -1,16 +1,10 @@
 <template>
-  <div class="row g-0 mx-2 justify-content-center">
-    <h4 id="portal-search-section" class="display-4 text-center pt-3 pb-2 mb-0">EHRI Portal</h4>
-    <div class="col-md-6">
-      <p class="small">The EHRI portal offers access to information on Holocaust-related archival material held in institutions across Europe and beyond.</p>
+  <div class="grid grid-cols-8 gap-4">
+    <div class="col-span-8" v-if="selectedType">
+      <component :is="portalTypeMappings[selectedType]" v-bind="{'searchTerm': searchTerm, 'sortedTypes': sortedTypes}" @portalType="(t) => { getPortalType(t) }"></component>
     </div>
-  </div>
-  <div class="portal-resources">
-    <SelectPortalType :search-term="searchTerm" @portalType="(t) => {getPortalType(t)}"></SelectPortalType>
-    <div v-if="selectedType">
-      <component :is="portalTypeMappings[selectedType]" v-bind="{'searchTerm': searchTerm}"></component>
-    </div>
-    <LoadingComponent v-else></LoadingComponent>
+    <LoadingComponent class="col-span-8" v-else></LoadingComponent>
+    <SelectPortalType :search-term="searchTerm" @portalType="(t) => { getPortalType(t) }" @sortedTypes="(s) => { getSortedTypes(s) }"></SelectPortalType>
   </div>
 </template>
 
@@ -52,24 +46,19 @@ export default {
       EHRIGhettos: EHRIGhettos,
       EHRIKeywords: EHRITerms,
     }
-
+    const sortedTypes = ref([]) 
     const getPortalType = (t) => {
       selectedType.value = t
     }
-    return {searchTerm, getPortalType, portalTypeMappings, selectedType}
+
+    const getSortedTypes = (s) => {
+      sortedTypes.value = s
+    }
+
+    return {searchTerm, getPortalType, getSortedTypes, portalTypeMappings, selectedType, sortedTypes}
   }
 }
 </script>
 
 <style scoped>
-.portal-resources {
-  background-color: #F5F5F5;
-  color: #330033;
-  min-height: 100vh;
-}
-
-a, a:hover {
-  text-decoration: none;
-  color: inherit;
-}
 </style>

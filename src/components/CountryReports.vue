@@ -1,80 +1,90 @@
 <template>
-  <div class="row g-0 my-3 justify-content-center">
-    <h5 class="display-5 mx-0 my-3">
-      Country Reports
-    </h5>
-    <p class="small col-md-8">
-      EHRI national reports provide an overview of the Second World War and Holocaust history as well as of the archival situation in the covered countries.
-    </p>
-  </div>
-  <div v-if="loadingData">
-    <LoadingComponent class="m-5"></LoadingComponent>
-  </div>
-  <div v-else>
-    <CountryReportItems :items-to-display="countries" :total-items="pagination.total"
-                      :total-pages="pagination.totalPages" :page-number="page" @pageChange="
-                                (n) => {
-                                  getNewPage(n);
-                                }">
+<span class="flex justify-center bg-ehri-purple py-2 text-white lg:hidden col-span-12 text-ehri-dark font-sans " @click="toggleFilterBar">
+    <span v-if="!showFilterBar" class="lg:hidden mr-2 cursor-pointer">
+            <span
+          class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
+        >
+          filter_alt
+        </span>
+        Filter Results
+    </span>
+    <span v-else class="lg:hidden mr-2 cursor-pointer">
+            <span
+          class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
+        >
+          close
+        </span>
+        Close
+    </span>
+</span>
+<div class="grid grid-cols-12 sm:grid-cols-8 gap-2 lg:gap-4 h-screen max-w-full">
+  <div class="h-full col-span-12 lg:h-4/5 lg:col-span-6 overflow-hidden lg:px-3">
+    <CountryReportItems :search-term="countryQuery" :holder="facets.holder" :type="facets.type" :desc="facets.desc">
     </CountryReportItems>
   </div>
+  <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-4/5']">
+    <div class="" :key="typeFilterKey">
+      <div class="px-4 pt-4">
+        <h4 class="uppercase font-serif font-bold text lg:text-ehri-dark">Filters</h4>
+        <p class="font-sans text-sm font-light mb-4">Choose one or more filters</p>
+        <EHRIPortalTypeFilter
+        filter-name="ITEM TYPE"
+        :key="typeFilterKey"
+        :selectedType="'Country'"
+        :filter-array="sortedTypes"
+        @filterChange="(e) => {
+          handle(e,'typeFilter')}"
+        >
+        </EHRIPortalTypeFilter>
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
 import LoadingComponent from "./LoadingComponent.vue";
-import {toRef,ref} from "vue";
-import {fetchFacetedPortalSearch} from "../services/EHRIGetters";
+import { toRef, ref, computed } from "vue";
 import CountryReportItems from "./CountryReportItems.vue";
+import EHRIPortalTypeFilter from "./EHRIPortalTypeFilter.vue";
+
 
 export default {
   name: "CountryReports",
-  components: {CountryReportItems, LoadingComponent },
+  components: {CountryReportItems, LoadingComponent, EHRIPortalTypeFilter},
   props: {
     searchTerm: String,
+    sortedTypes: Array,
   },
-  setup(props){
+  emits: ['portalType'],
+  setup(props, ctx){
     const countryQuery = toRef(props, 'searchTerm')
-    const loadingData = ref(true)
+    const sortedTypes = toRef(props, 'sortedTypes')
     const facets = ref({
       type: "Country",
+      desc: "EHRI national reports provide an overview of the Second World War and Holocaust history as well as of the archival situation in the covered countries."
     })
-    const page = ref(1)
-    const pagination = ref({
-      totalPages: null,
-      total: null,
-    });
-    const countries = ref()
+    const showFilterBar = ref(false);
 
-    const configPagination = (meta) => {
-      pagination.value["totalPages"] = meta.pages;
-      pagination.value["total"] = meta.total;
+    const typeFilterKey = ref(0)
+
+    const handle = (val, type) => {
+      type=="typeFilter"?ctx.emit('portalType',val):null
+      typeFilterKey.value+=1
+    }
+
+    const filterBarClass = computed(() => {
+            return showFilterBar.value
+            ? "w-full h-max m-0 p-0 bg-ehri-purple lg:w-auto lg:block transition-all ease-in-out duration-600 pb-3"
+            : "w-full h-0 transition-all ease-in-out overflow-hidden lg:overflow-scroll duration-800 lg:w-auto ";
+        });
+
+   
+    const toggleFilterBar = () => {
+      showFilterBar.value = !showFilterBar.value;
     };
 
-    const getCountries = async (pageNo) => {
-      const response = await fetchFacetedPortalSearch(countryQuery.value, pageNo,facets.value, 6)
-      const data = response.data
-      return data
-    }
-
-    const getNewPage = (pageNo) => {
-      page.value = pageNo
-      getCountries(page.value)
-        .then(res => {
-          countries.value = res.data
-          configPagination(res.meta)
-          loadingData.value = false
-        })
-    }
-
-    getCountries(page.value)
-      .then(
-        (res) =>{
-          countries.value = res.data
-          configPagination(res.meta)
-          loadingData.value = false
-        }
-    )
-    return {countries, page, pagination, loadingData, getNewPage}
+    return { showFilterBar, filterBarClass, toggleFilterBar, countryQuery, facets, sortedTypes, typeFilterKey, handle}
   }
 }
 </script>

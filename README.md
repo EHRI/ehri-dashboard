@@ -1,9 +1,14 @@
-# EHRI Dashboard
-#### Stage: *Alpha*
+# ehri-dashboard-redesign
 
-Currently in its Alpha version, the EHRI Dashboard allows users to input a search term or phrase into a search field and get presented with related information derived from different EHRI services, as well as the summary statistics of the retrieved results. When applicable, links, previews, maps, and other visualisations of the retrieved results are also displayed. Future work will focus on delivering the Beta version, adding more data sources and allowing user customisation of the EHRI Dashboard.
+This template should help get you started developing with Vue 3 in Vite.
 
-[Demo Link](https://ehri.github.io/ehri-dashboard/)
+## Recommended IDE Setup
+
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+
+## Customize configuration
+
+See [Vite Configuration Reference](https://vitejs.dev/config/).
 
 ## Project Setup
 

@@ -1,25 +1,38 @@
 <template>
-  <div class="card doc-item-card">
-    <div class="card-body p-0 mb-1">
-      <h6 v-if="AuthObject.attributes.name" class="card-title mb-0 text-truncate">{{AuthObject.attributes.name}}</h6>
+  <li>
+    <div class="flex items-center">
+      <h6 v-if="AuthObject.attributes.name" @click="changeAuthID(AuthObject.id)" :class="classes">{{AuthObject.attributes.name}}</h6>
     </div>
-    <hr class="my-2">
-  </div>
+  </li>
+  <hr class="my-2 text-ehri-light-grey">
 </template>
 
 <script>
-import {toRef,} from "vue";
+import {toRef, computed} from "vue";
 
 export default {
   name: "AuthoritySetItemCard",
   props: {
-    AuthObject: Object
+    AuthObject: Object,
+    selectedItem: String
   },
-  setup(props){
+  emits: ["idChange"],
+  setup(props, ctx){
     const AuthObject = toRef(props, 'AuthObject')
+    const selected = toRef(props, 'selectedItem')
+
+    const classes = computed(() => {
+      return ['cursor-pointer font-sans font-semibold text-sm mb-0 pb-0 overflow-hidden line-clamp-1', AuthObject.value.id === selected.value ? 'text-ehri-wine' : 'text-ehri-dark']
+    });
+
+    const changeAuthID = (id)=> {
+      console.log("clicked" +id)
+      ctx.emit('idChange', id)
+    }
 
 
-    return {AuthObject}
+
+    return {AuthObject, changeAuthID, classes}
   }
 }
 </script>
@@ -27,18 +40,5 @@ export default {
 <style scoped>
 
 
-.doc-item-card {
-  background-color: rgba(0,0,0,0)!important;
-  border: none;
-  cursor: pointer;
-}
 
-.doc-item-card a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.doc-item-card a:hover {
-  text-decoration: underline;
-}
 </style>

@@ -1,17 +1,8 @@
 <template>
-  <div>
-    <div v-if="Object.values(badgesLoading).find((item) => item === true)"
-         class="align-middle row m-0" :style="{'position': 'sticky', 'top': 3.7+'em', 'z-index': 3,'backgroundColor': '#6C003B',
-  'color': '#FFFFFF'}">
-      <div class="resource-tab p-2"
-      >
-        <LoadingComponent class="p-1"> </LoadingComponent>
-      </div>
-    </div>
-    <ResourceTabs v-else-if="Object.values(badgesLoading).every((item) => !item)" :tabs="sortedResultsNonNull" :search-term="searchTerm"></ResourceTabs>
-  </div>
-</template>
-
+      <ResourceTabs v-if="Object.values(badgesLoading).every((item) => !item)" :tabs="sortedResultsNonNull" @data-source-change="(d)=>emitDataSourceChange(d)" :search-term="searchTerm"></ResourceTabs>
+      <LoadingComponent :color="'text-white'" v-else></LoadingComponent>
+  </template>
+  
 <script>
 import { toRef,ref, watch } from "vue";
 import {
@@ -24,41 +15,48 @@ import DigitalEditions from "./DigitalEditions.vue";
 import ResourceTabs from "./ResourceTabs.vue";
 
 export default {
-  name: "DashboardMain",
+  name: "LoadResources",
   components: {
     ResourceTabs,
     LoadingComponent,
     DocumentBlog,
     DigitalEditions,
-  },
+},
   props: {
     queryValue: String
   },
-  setup(props) {
+  emits: ["dataSourceChange"],
+  setup(props, ctx) {
     const searchTerm = toRef(props,"queryValue");
-
+    const emitDataSourceChange = (dataSource) =>{
+        ctx.emit("dataSourceChange", (dataSource))
+        }
     const badgesLoading = ref({
       DBLoading: true,
       portalSearchLoading: true,
       digitalEditionsLoading: true
     });
 
+
     const resultStats = ref({
       DigitalEditions: {
         component: 'DigitalEditions',
         value: 0,
-        title: 'Online Editions '
+        title: 'Online Editions',
+        description: 'The EHRI Online Editions consist of annotated digitized documents from various sources gathered around a theme, and are a new way of presenting digital archival content.'
       }
         ,
       portalSearchLength: {
         component: "EHRIPortalResource",
         value: 0,
-        title: 'EHRI Portal '
+        title: 'EHRI Portal',
+        description: 'The EHRI portal offers access to information on Holocaust-related archival material held in institutions across Europe and beyond.'
       },
       DBLength: {
         component: 'EHRIDocumentBlog',
         value: 0,
-        title: 'Document Blog '
+        title: 'Document Blog',
+        description: 'The EHRI Document Blog is a space to share ideas about Holocaust-related archival documents, and their presentation and interpretation using digital tools.'
       }
     })
 
@@ -114,10 +112,11 @@ export default {
     const sortedResultStats = ref([])
     const sortedResultsNonNull = ref([])
 
-    const getPortalSearchLength=(n)=>{
-      resultStats.value.portalSearchLength['value'] = +n
-      badgesLoading.value.portalSearchLoading = false
-    }
+    const getPortalSearchLength = (n) => {
+      resultStats.value.portalSearchLength['value'] = +n;
+      badgesLoading.value.portalSearchLoading = false;
+    };
+    
     const getDBLength = (n) => {
       resultStats.value.DBLength['value'] = +n;
       badgesLoading.value.DBLoading = false;
@@ -129,7 +128,6 @@ export default {
     };
 
     const loadData = async () => {
-
       Object.keys(badgesLoading.value).every(
           (key) => (badgesLoading.value[key] = true)
       );
@@ -226,15 +224,25 @@ export default {
             }) ? authorityStats.facets.find(h => {
               return h.value == portalResourceTypes.value.personalities.title
             }).count : 0
+            portalResourceTypes.value.everything.value = 0
             portalResourceTypes.value.everything.value = Object.values(portalResourceTypes.value).reduce((a, b) => {
               return (a + b['value'])
             }, 0)
             getPortalSearchLength(portalResourceTypes.value.everything.value)
-
           })
     }
 
     loadData()
+    // This refreshes the count numbers every time there's a change to the input
+    watch(searchTerm, () => {
+      loadData();
+    });
+
+    watch(sortedResultsNonNull, () => {
+      if(sortedResultsNonNull.value.length){
+          emitDataSourceChange(sortedResultsNonNull.value[0][1])
+      }
+    });
 
     // This refreshes the count numbers every time there's a change to the input
     watch(badgesLoading.value, ()=>{
@@ -247,29 +255,22 @@ export default {
         }
         }
         )
+        if(sortedResultsNonNull.value.length){
+          emitDataSourceChange(sortedResultsNonNull.value[0][1])
+        }
       }
     })
+
 
     return {
       searchTerm,
       sortedResultsNonNull,
-      badgesLoading
+      badgesLoading,
+      emitDataSourceChange,
     };
   },
 };
 </script>
-
+  
 <style scoped>
-
-.btn-portal span,.btn-db span,.btn-portal-search span, .btn-bgf span, .btn-dr span, .btn-et span {
-  background-color: #330033!important;
-  color: #fff;
-}
-
-
-a, a:hover {
-  text-decoration: none;
-  color: inherit;
-}
-
 </style>

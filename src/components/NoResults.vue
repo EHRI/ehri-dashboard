@@ -1,23 +1,11 @@
 <template>
-  <div class="row m-0">
-    <h4 class="display-5 m-0 my-3">
-      No Results
-    </h4>
-  </div>
-  <div class="row g-0 mt-3 justify-content-center">
-    <div class="col-6">
-      <p>Unfortunately, we couldn't find any items related to <span
-          style="
-          color: #FFFFFF;
-          background-color: #6C003B;
-          padding: 2px 4px;
-          font-size: 1.1em;
-          border-radius: 5px;
-">
+<h3 class="font-sans text-ehri-dark font-thin text-3xl mt-4">No Results</h3>
+  <div class="mt-3 font-sans text-ehri-dark text-sm">
+      <p>Unfortunately, we couldn't find any items related to 
+        <span class="bg-ehri-wine px-2 py-0.5 text-lg align-middle text-white">
         {{query}}
       </span>. <br />Please, try again.</p>
     </div>
-  </div>
 </template>
 
 <script>

@@ -1,18 +1,3 @@
-<template>
-  <template v-for="v in sortedTypes" :key="v">
-    <button v-if="v[1]['value']>0" :id="v[1]['id']"
-            type="button" @click="emitPortalType(v[1]['id'])"
-            class="mx-3 my-2 btn-sm stats-btn position-relative"
-            :class="{active:v[1]['id']==selectedType}"
-    >
-      {{v[1]['title']}}
-      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill stats-span">
- {{v[1]['value']}}
-    </span>
-    </button>
-  </template>
-</template>
-
 <script>
 import {toRef, ref } from "vue";
 import { fetchFacetedPortalSearch } from "../services/EHRIGetters.js";
@@ -25,7 +10,7 @@ export default {
   props: {
     searchTerm: String,
   },
-  emits: ["portalType"],
+  emits: ["portalType", "sortedTypes"],
   setup(props,ctx){
     const searchTerm = toRef(props, "searchTerm")
     const portalResourceTypes = ref({
@@ -162,44 +147,14 @@ export default {
       }).count : 0
 
       let entries = Object.entries(portalResourceTypes.value);
+      entries = entries.filter(([, value]) => value.value !== 0);
       sortedTypes.value = entries.sort((a, b) => b[1]['value'] - a[1]['value']);
       selectedType.value = sortedTypes.value[0][1]['id']
-      ctx.emit("portalType", (selectedType.value));
+      ctx.emit("portalType", selectedType.value);
+      ctx.emit("sortedTypes", sortedTypes.value);
     })
 
     return { sortedTypes,emitPortalType, selectedType}
   }
 }
 </script>
-
-<style scoped>
-.stats-btn {
-  background-color: #330033;
-  color: #FFFFFF;
-  opacity: 1!important;
-}
-.stats-btn:hover {
-  border: 3px solid #47817E;
-}
-
-.stats-btn:focus {
-  box-shadow: none;
-}
-
-.stats-span {
-  background-color: #47817E;
-  color: #FFF;
-}
-.btn-sm {
-  border: 3px solid transparent;
-}
-.active {
-  background-color: #47817E;
-  color: #FFFFFF;
-}
-.active .stats-span {
-  background-color: #330033;
-  color: #FFFFFF;
-}
-
-</style>

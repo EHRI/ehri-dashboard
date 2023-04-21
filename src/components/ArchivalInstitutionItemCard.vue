@@ -1,41 +1,36 @@
 <template>
-  <div class="card doc-item-card">
-    <div class="card-body p-0 mb-1">
-      <h6 v-if="repoObject.attributes.name" class="card-title mb-0 text-truncate">{{repoObject.attributes.name}}</h6>
+  <li>
+    <div class="flex items-center">
+      <h6 v-if="repoObject.attributes.name" @click="changeRepoID(repoObject.id)" :class="classes">{{repoObject.attributes.name}}</h6>
     </div>
-    <hr class="my-2">
-  </div>
+  </li>
+  <hr class="my-2 text-ehri-light-grey">
 </template>
 
 <script>
-import {toRef } from "vue";
+import {toRef, computed } from "vue";
 
 export default {
   name: "ArchivalInstitutionItemCard",
   props: {
-    repoObject: Object
+    repoObject: Object,
+    selectedItem: String
   },
-  setup(props){
+  emits: ["idChange"],
+  setup(props, ctx){
     const repoObject = toRef(props, 'repoObject')
-    return {repoObject}
+    const selected = toRef(props, 'selectedItem')
+
+    const changeRepoID = (id)=> {
+      ctx.emit('idChange', id)
+    }
+
+    const classes = computed(() => {
+      return ['cursor-pointer font-sans font-semibold text-sm mb-0 pb-0 overflow-hidden line-clamp-1', repoObject.value.id === selected.value ? 'text-ehri-wine' : 'text-ehri-dark']
+    });
+
+
+    return {repoObject, changeRepoID, classes}
   }
 }
 </script>
-
-<style scoped>
-
-.doc-item-card {
-  background-color: rgba(0,0,0,0)!important;
-  border: none;
-  cursor: pointer;
-}
-
-.doc-item-card a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.doc-item-card a:hover {
-  text-decoration: underline;
-}
-</style>

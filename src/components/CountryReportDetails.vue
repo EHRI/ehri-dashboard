@@ -1,88 +1,93 @@
 <template>
-<div v-if="CountryDetails" class="country-details row m-0">
-  <div>
-    <h4 class="text-start mb-3">Item Details:</h4>
-    <h5
-        class="mt-2 name">
-      {{CountryDetails.name}}
-    </h5>
-    <span
-        v-if="CountryDetails.history"
-        class="badge card-badge-desc m-1"
-        @click="showDesc('history')"
-    >
-      History
-    </span>
-    <span
-        v-if="CountryDetails.summary"
-        class="badge card-badge-desc m-1"
-        @click="showDesc('summary')"
-    >
-    Summary
-    </span>
-    <span
-          v-if="CountryDetails.extensive"
-          class="badge card-badge-desc m-1"
-          @click="showDesc('extensive')"
-      >
-      Extensive Summary
-    </span>
-    <span
-          v-if="CountryDetails.situation"
-          class="badge card-badge-desc m-1"
-          @click="showDesc('situation')"
-      >
-      Archival Situation
-    </span>
-    <span v-if="CountryDetails.history && clickedDesc==='history'">
-      <h6 class="mt-1 mb-0">History:</h6>
-      <p class="card-text m-0">
-        {{CountryDetails.history}}
-      </p>
-    </span>
-    <span v-if="CountryDetails.summary && clickedDesc==='summary'">
-      <h6 class="mt-1 mb-0">Summary:</h6>
-      <p class="card-text m-0">
-      {{CountryDetails.summary}}
-      </p>
-    </span>
-    <span v-if="CountryDetails.extensive && clickedDesc==='extensive'">
-      <h6 class="mt-1 mb-0">Extensive Summary:</h6>
-      <p class="card-text m-0">
-      {{CountryDetails.extensive}}
-      </p>
-    </span>
-    <span v-if="CountryDetails.situation && clickedDesc==='situation'">
-      <h6 class="mt-1 mb-0">Archival Situation:</h6>
-      <p class="card-text m-0">
-      {{CountryDetails.situation}}
-      </p>
-    </span>
-    <span class="text-muted small d-block">Total Linked Archival Institutions on the Portal: {{relatedItemsTotal}}</span>
+  <div class="flex flex-col h-fit h-max-full">
+    <div v-if="countryDetails && !loading" class="flex flex-col h-fit h-max-full">
+      <div class="flex flex-col flex-1 h-fit h-max-full">
+        <h5 class="font-sans font-semibold text-ehri-wine line-clamp-1">{{countryDetails.name}}</h5>
+      </div>
+<div class="flex-1">
+  <div class="flex mt-3 mb-1 grid-flow-col auto-cols-max justify-center divide-x-2 divide-ehri-light-grey">
+      <button v-if="countryDetails.history"
+              :class="tabClasses('history')"
+              @click="showDesc('history')">
+        <span>
+          History
+        </span>
+      </button>
+      <button v-if="countryDetails.summary"
+              :class="tabClasses('summary')"
+              @click="showDesc('summary')">
+        <span>
+          Summary
+        </span>
+      </button>
+      <button v-if="countryDetails.extensive"
+              :class="tabClasses('extensive')"
+              @click="showDesc('extensive')">
+        <span>
+          Extensive Summary
+        </span>
+      </button>
+      <button v-if="countryDetails.situation"
+            :class="tabClasses('situation')"
+              @click="showDesc('situation')">
+        <span>
+          Archival Situation
+        </span>
+      </button>
+    </div>
+    <div v-if="clickedDesc && clickedDesc.length>1" class="flex-1 h-80 max-h-80 p-1 mt-4 overflow-auto border-2 border-ehri-light-grey">
+        <!-- Show history content if clickedDesc is 'history' -->
+        <div v-if="countryDetails.history && clickedDesc === 'history'">
+          <p class="text-base font-sans text-ehri-dark ">{{ countryDetails.history }}</p>
+        </div>
+        <div v-if="countryDetails.summary && clickedDesc === 'summary'">
+          <p class="text-base font-sans text-ehri-dark">{{ countryDetails.summary }}</p>
+        </div>
+        <div v-if="countryDetails.extensive && clickedDesc === 'extensive'">
+          <p class="text-base font-sans text-ehri-dark">{{ countryDetails.extensive }}</p>
+        </div>
+        <div v-if="countryDetails.situation && clickedDesc === 'situation'">
+          <p class="text-base font-sans text-ehri-dark">{{ countryDetails.situation }}</p>
+        </div>
+    </div>
   </div>
-  <span class="portal-span" v-if="portalLink" >
-    <a :href="portalLink" class="portal-link" target="_blank" rel="noopener">
-      <span style="margin: 0 0.2em">
-        <font-awesome-icon icon="database"/>
+      <div class="flex flex-col overflow-hidden items-start mt-auto">
+        <span class="mt-2 text-sm font-medium text-ehri-dark block mb-2">
+          <span
+                class="mr-1 material-symbols-outlined w-5 h-5 text-ehri-dark align-top"
+              >
+              link
+        </span> Total Linked Archival Institutions on the Portal: {{relatedItemsTotal}}</span>
+        <span class="inline-block cursor-pointer border-2 text-ehri-wine font-semibold py-1 px-2 rounded border-ehri-wine hover:bg-ehri-wine hover:bg-opacity-10 " v-if="portalLink" >
+      <a :href="portalLink" class="uppercase" target="_blank" rel="noopener">
+        <span
+                class="mx-1 material-symbols-outlined w-5 h-5 align-top"
+              >
+              database
+        </span>
+        Go to EHRI Portal
+        </a>
       </span>
-      EHRI Portal Link
-    </a>
-  </span>
+      </div>
+    </div>
+    <LoadingComponent v-else></LoadingComponent>
 </div>
 </template>
 
 <script>
 import {toRef, ref, watch} from "vue";
 import {fetchFacetedPortalSearch } from "../services/EHRIGetters.js";
+import LoadingComponent from "./LoadingComponent.vue";
 
 export default {
   name: "CountryReportDetails",
+  components: { LoadingComponent},
   props: {
     selectedCountryID: String
   },
   setup(props) {
     const countryID = toRef(props,"selectedCountryID")
-    const CountryDetails = ref()
+    const countryDetails = ref()
     const clickedDesc = ref("")
     const showDesc = (d) => {
       clickedDesc.value = d
@@ -95,19 +100,27 @@ export default {
     const facets = ref({
       type: "Country",
     })
+    const loading = ref(true)
 
     configData()
+
+    const tabClasses = (d) => {
+      // Dynamically apply Tailwind CSS classes to context tab based on clickedDesc value
+      return ['px-1.5 pb-1 text-xs font-medium text-ehri-dark hover:text-ehri-wine', clickedDesc.value === d ? 'text-ehri-wine' : 'text-ehri-dark']
+    };
+    
 
     fetchFacetedPortalSearch(countryID.value, 1, facets.value)
         .then(
             (res)=> {
-              CountryDetails.value = res.data.data[0].attributes
-              CountryDetails.value.history?
-                  clickedDesc.value="history":CountryDetails.value["summary"]?
-                      clickedDesc.value="summary":CountryDetails.value["situation"]?
-                          clickedDesc.value="situation":CountryDetails.value["extensive"]?
+              countryDetails.value = res.data.data[0].attributes
+              countryDetails.value.history?
+                  clickedDesc.value="history":countryDetails.value["summary"]?
+                      clickedDesc.value="summary":countryDetails.value["situation"]?
+                          clickedDesc.value="situation":countryDetails.value["extensive"]?
                               clickedDesc.value="extensive":""
               relatedItemsTotal.value = res.data.data[0].meta.subitems
+              loading.value=false
             }
         )
 
@@ -117,60 +130,19 @@ export default {
       fetchFacetedPortalSearch(countryID.value, 1, facets.value)
           .then(
               (res)=> {
-                CountryDetails.value = res.data.data[0].attributes
-                CountryDetails.value.history?
-                    clickedDesc.value="history":CountryDetails.value["summary"]?
-                        clickedDesc.value="summary":CountryDetails.value["situation"]?
-                            clickedDesc.value="situation":CountryDetails.value["extensive"]?
+                loading.value=true
+                countryDetails.value = res.data.data[0].attributes
+                countryDetails.value.history?
+                    clickedDesc.value="history":countryDetails.value["summary"]?
+                        clickedDesc.value="summary":countryDetails.value["situation"]?
+                            clickedDesc.value="situation":countryDetails.value["extensive"]?
                                 clickedDesc.value="extensive":""
                 relatedItemsTotal.value = res.data.data[0].meta.subitems
+                loading.value=false
               }
           )
     })
-    return {relatedItemsTotal, portalLink, CountryDetails, showDesc, clickedDesc}
+    return {relatedItemsTotal, portalLink, countryDetails, showDesc, clickedDesc, loading, tabClasses}
   }
 }
 </script>
-
-<style scoped>
-.card-badge-desc{
-  background-color: #330033;
-  color: #FFFFFF;
-  cursor: pointer;
-}
-.name {
-  -webkit-line-clamp: 2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.country-details {
-  text-align: justify;
-  margin-left: 0.5em;
-  height: 22em;
-  position: relative;
-}
-.card-text {
-  border: 0.1em dotted #330033;
-  background-color: #FFFFFF;
-  padding: 0.3em;
-  height: 12em;
-  max-height: 12em;
-  overflow: scroll;
-}
-
-.icon-details span {
-  display: inline-block;
-  padding: 0.1em;
-}
-.portal-link {
-  text-decoration: none!important;
-  color: #FFFFFF;
-  text-align: center;
-  display: flex;
-  background-color: #330033;
-  padding: 0.3em 0.6em;
-  border-radius: 5px;
-  width: fit-content;
-}
-</style>

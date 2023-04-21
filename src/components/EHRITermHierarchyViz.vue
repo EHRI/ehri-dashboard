@@ -1,5 +1,12 @@
 <template>
-  <div class="hierarchy" v-if="viz.length" v-html="viz"></div>
+  <div class="h-full w-full">
+    <button @click="openPopup" class="fixed text-ehri-dark hover:text-ehri-wine">
+    <span class="material-symbols-outlined align-top">
+    open_in_new
+    </span> Open in new window
+    </button>
+    <div v-if="viz.length" v-html="viz" class="w-screen"></div>
+  </div>
 </template>
 
 <script>
@@ -91,6 +98,12 @@ export default {
       }
     };
 
+    const openPopup = () => {
+      const newWindow = window.open("","","width=screen,height=screen");
+      newWindow.document.write(viz.value);
+      newWindow.document.title = selected.value.name + " term hierarchy visualisation";
+    };
+
 
     const createViz = () => {
       getVizData();
@@ -124,10 +137,10 @@ export default {
           identifier,
           link, // given a node d, its link (if any)
           linkTarget = "_blank", // the target attribute for links (if any)
-          width =1000, // outer width, in pixels
+          width =2000, // outer width, in pixels
           height, // outer height, in pixels
           r = 3, // radius of nodes
-          padding = 3, // horizontal padding for first and last column
+          padding = 2, // horizontal padding for first and last column
           fill = "#999", // fill for nodes
           fillOpacity, // fill opacity for nodes
           stroke = "#555", // stroke for links
@@ -158,12 +171,12 @@ export default {
       if (sort != null) root.sort(sort);
 
       // Compute the layout.
-      const dx = 10;
+      const dx =  10;
       const dy = width / (root.height + padding);
       tree().nodeSize([dx+2, dy])(root);
 
       // Center the tree.
-      let x0 = Infinity;
+      let x0 = 10;
       let x1 = -x0;
       root.each((d) => {
         if (d.x > x1) x1 = d.x;
@@ -176,9 +189,9 @@ export default {
       const svg = d3
           .create("svg")
           .attr("viewBox", [(-dy * padding) / 2, x0 - dx, width, height])
-          .attr("width", width)
-          .attr("height", height)
-          .attr("style", "max-width: 100%; height:19em; ")
+          .attr("width", '100%')
+          .attr("height", '100%')
+          .attr("style", "max-width: 100%; height:15rem; ")
           .attr("font-family", "sans-serif")
           .attr("font-size", 13)
 
@@ -244,16 +257,8 @@ export default {
 
     return {
       viz,
+      openPopup
     };
   },
 };
 </script>
-
-<style>
-.hierarchy {
-  border: 0.1em dotted #330033;
-  background-color: #FFFFFF;
-  padding: 0.3em;
-  overflow: scroll;
-}
-</style>

@@ -1,142 +1,140 @@
 <template>
-<div v-if="descInLang" class="repo-details row m-0">
-  <div class="col-md-9">
-    <span class="badge card-badge me-1"
-            v-for="description in langs"
-            :key="description"
-            @click="changeLang(description)"
-      >{{languageNames.of(description)}}
-    </span>
-    <h5 v-if="descInLang"
-        class="mt-2 name">
-      {{descInLang.name}}
-    </h5>
-    <h6 v-if="otherNames.length"
-        class="mt-2 text-muted other-names text-truncate">{{
-        otherNames.join(', ')
-      }}</h6>
-    <span class="icon-details" v-if="descInLang.datesOfDescription">
-      <span ><font-awesome-icon icon="calendar"/>
+  <div class="flex flex-col h-fit h-max-full">
+    <div v-if="descInLang && !loading" class="flex flex-col h-fit h-max-full">
+      <div class="flex flex-col flex-1 h-fit h-max-full">
+        <h5 v-if="descInLang" class="font-sans font-semibold text-ehri-wine line-clamp-1">{{descInLang.name}}</h5>
+        <h6 v-if="otherNames.length"
+            class="text-ehri-dark font-sans font-medium opacity-90 text-sm line-clamp-1">{{
+          otherNames.join(', ')
+        }}</h6>
+        <div v-if="langs&&langs.length >1">
+          <select @change="(e)=>changeLang(e.target.value)" class="font-sans text-xs p-1 font-light border border-[1.5px] border-ehri-dark w-full" size="1" :aria-label="'Choose Language'">
+            <option selected disabled>{{ languageNames.of(descInLang.languageCode) }}</option>
+            <option v-for="description in langs" :key="description" :value="description">{{languageNames.of(description)}}</option>
+          </select>
+        </div>
+        <div v-if="descInLang.addresses[0].webpage.length">
+          <span class="block mt-1 line-clamp-1 text-sm text-ehri-dark" v-for="webpage in descInLang.addresses[0].webpage">
+            <span
+                  class="material-symbols-outlined text-sm w-5 h-5 align-top"
+                >
+                link
+            </span>
+            <a
+              :href="webpage" target="_blank" rel="noopener"
+              class="text-ehri-wine"
+            >{{ webpage }}
+            </a>
+        </span>
+        </div>
+        <span class="block mt-1 line-clamp-1 text-sm text-ehri-dark" v-if="descInLang.addresses.length &&
+            descInLang.addresses[0].street">
+            <span
+                  class="material-symbols-outlined text-sm w-5 h-5 align-top "
+                >
+                location_on
+            </span>
+            {{descInLang.addresses[0].street}}{{descInLang.addresses[0].municipality?', '+descInLang.addresses[0].municipality:null}}{{descInLang.addresses[0].firstdem?', ' + descInLang.addresses[0].firstdem:null}}{{descInLang.addresses[0].postalCode?', '+descInLang.addresses[0].postalCode: null}}{{descInLang.addresses[0].countryCode?', '+countryNames.of(descInLang.addresses[0].countryCode):null}}
+        </span>
+      </div>
+<div class="flex-1">
+  <div class="flex mt-3 mb-1 grid-flow-col auto-cols-max justify-center divide-x-2 divide-ehri-light-grey">
+      <button v-if="descInLang.history"
+              :class="tabClasses('history')"
+              @click="showDesc('history')">
+        <span>
+          History
+        </span>
+      </button>
+      <button v-if="descInLang.geoculturalContext"
+              :class="tabClasses('context')"
+              @click="showDesc('context')">
+        <span>
+          Context
+        </span>
+      </button>
+      <button v-if="descInLang.holdings"
+              :class="tabClasses('holdings')"
+              @click="showDesc('holdings')">
+        <span>
+          Holdings
+        </span>
+      </button>
+      <button v-if="descInLang.findingAids"
+            :class="tabClasses('findingAids')"
+              @click="showDesc('findingAids')">
+        <span>
+          Finding Aids
+        </span>
+      </button>
+      <button v-if="descInLang.conditions"
+              :class="tabClasses('conditions')"
+              @click="showDesc('conditions')">
+        <span>
+          Conditions of Access
+        </span>
+      </button>
+      <button v-if="descInLang.openingTimes"
+              :class="tabClasses('times')"
+              @click="showDesc('times')">
+        <span>
+          Opening Times
+        </span>
+      </button>
+    </div>
+    <div v-if="clickedDesc && clickedDesc.length>1" class="flex-1 h-64 max-h-64 p-1 mt-4 overflow-y-auto border-2 border-ehri-light-grey">
+        <!-- Show history content if clickedDesc is 'history' -->
+        <div v-if="descInLang.history && clickedDesc === 'history'">
+          <p class="text-base font-sans text-ehri-dark ">{{ descInLang.history }}</p>
+        </div>
+        <div v-if="descInLang.geoculturalContext && clickedDesc === 'context'">
+          <p class="text-base font-sans text-ehri-dark">{{ descInLang.geoculturalContext }}</p>
+        </div>
+        <div v-if="descInLang.holdings && clickedDesc === 'holdings'">
+          <p class="text-base font-sans text-ehri-dark">{{ descInLang.holdings }}</p>
+        </div>
+        <div v-if="descInLang.findingAids && clickedDesc === 'findingAids'">
+          <p class="text-base font-sans text-ehri-dark" v-html="descInLang.findingAids"></p>
+        </div>
+        <div v-if="descInLang.conditions && clickedDesc === 'conditions'">
+          <p class="text-base font-sans text-ehri-dark">{{ descInLang.conditions }}</p>
+        </div>
+        <div v-if="descInLang.openingTimes && clickedDesc === 'times'">
+          <p class="text-base font-sans text-ehri-dark" v-html="descInLang.openingTimes"></p>
+        </div>
+    </div>
+    <div class="flex flex-col overflow-hidden items-start mt-auto">
+        <span class="mt-2 text-sm font-medium text-ehri-dark block mb-2">
+          <span
+                class="mr-1 material-symbols-outlined w-5 h-5 text-ehri-dark align-top"
+              >
+              link
+        </span> Total Linked Items on the Portal: {{relatedItemsTotal}}</span>
+        <span class="inline-block cursor-pointer border-2 text-ehri-wine font-semibold py-1 px-2 rounded border-ehri-wine hover:bg-ehri-wine hover:bg-opacity-10 " v-if="portalLink" >
+      <a :href="portalLink" class="uppercase" target="_blank" rel="noopener">
+        <span
+                class="mx-1 material-symbols-outlined w-5 h-5 align-top"
+              >
+              database
+        </span>
+        Go to EHRI Portal
+        </a>
       </span>
-      {{descInLang.datesOfDescription}}
-    </span>
-    <span class="icon-details"
-          v-if="descInLang.addresses.length &&
-            descInLang.addresses[0].street" >
-      <span ><font-awesome-icon icon="location-dot"/>
-      </span>
-      {{descInLang.addresses[0].street}}{{descInLang.addresses[0].municipality?', '+descInLang.addresses[0].municipality:null}}{{descInLang.addresses[0].firstdem?', ' + descInLang.addresses[0].firstdem:null}}{{descInLang.addresses[0].postalCode?', '+descInLang.addresses[0].postalCode: null}}{{descInLang.addresses[0].countryCode?', '+countryNames.of(descInLang.addresses[0].countryCode):null}}
-    </span>
-    <span
-        v-if="descInLang.history"
-        class="badge card-badge-desc m-1"
-        @click="showDesc('history')"
-    >
-      History
-    </span>
-    <span
-        v-if="descInLang.geoculturalContext"
-        class="badge card-badge-desc m-1"
-        @click="showDesc('context')"
-    >
-    Context
-    </span>
-    <span
-          v-if="descInLang.holdings"
-          class="badge card-badge-desc m-1"
-          @click="showDesc('holdings')"
-      >
-      Holdings
-    </span>
-    <span
-          v-if="descInLang.findingAids"
-          class="badge card-badge-desc m-1"
-          @click="showDesc('findingAids')"
-      >
-      Finding Aids
-    </span>
-    <span
-        v-if="descInLang.conditions"
-        class="badge card-badge-desc m-1"
-        @click="showDesc('conditions')"
-    >
-      Conditions of Access
-    </span>
-    <span
-        v-if="descInLang.openingTimes"
-        class="badge card-badge-desc m-1"
-        @click="showDesc('times')"
-    >
-      Opening Times
-    </span>
-    <span v-if="descInLang.history && clickedDesc==='history'">
-      <h6 class="mt-1 mb-0">History:</h6>
-      <p class="card-text m-0">
-        {{descInLang.history}}
-      </p>
-    </span>
-    <span v-if="descInLang.geoculturalContext && clickedDesc==='context'">
-      <h6 class="mt-1 mb-0">Context:</h6>
-      <p class="card-text m-0">
-      {{descInLang.geoculturalContext}}
-      </p>
-    </span>
-    <span v-if="descInLang.holdings && clickedDesc==='holdings'">
-      <h6 class="mt-1 mb-0">Holdings:</h6>
-      <p class="card-text m-0">
-      {{descInLang.holdings}}
-      </p>
-    </span>
-    <span v-if="descInLang.findingAids && clickedDesc==='findingAids'">
-      <h6 class="mt-1 mb-0">Finding Aids:</h6>
-      <p class="card-text m-0" v-html="descInLang.findingAids">
-
-      </p>
-    </span>
-    <span v-if="descInLang.conditions && clickedDesc==='conditions'">
-      <h6 class="mt-1 mb-0">Conditions of Access:</h6>
-      <p class="card-text m-0" v-html="descInLang.conditions">
-
-      </p>
-    </span>
-    <span v-if="descInLang.openingTimes && clickedDesc==='times'">
-      <h6 class="mt-1 mb-0">Opening Times:</h6>
-      <p class="card-text m-0" v-html="descInLang.openingTimes">
-
-      </p>
-    </span>
-    <span class="text-muted small d-block">Total Linked Items on the Portal: {{relatedItemsTotal}}</span>
-    <span class="portal-span" v-if="portalLink" >
-    <a :href="portalLink" class="portal-link" target="_blank" rel="noopener">
-      <span style="margin: 0 0.2em">
-        <font-awesome-icon icon="database"/>
-      </span>
-      EHRI Portal Link
-    </a>
-  </span>
+      </div>
   </div>
-  <div class="col-md-3 mt-4">
-    <span class="icon-details" v-if="descInLang.addresses[0].webpage.length">
-      <span ><font-awesome-icon icon="computer-mouse"/>
-      </span>
-      <a
-        v-for="webpage in descInLang.addresses[0].webpage"
-        :href="webpage" target="_blank" rel="noopener"
-        class="website-link m-0"
-      >
-        <p class="text-truncate">{{webpage}}</p>
-      </a>
-    </span>
-  </div>
+    </div>
+    <LoadingComponent v-else></LoadingComponent>
 </div>
 </template>
 
 <script>
-import {toRef, ref, watch} from "vue";
+import {toRef, ref, watch } from "vue";
 import {fetchRepositoryInfo, fetchRelatedItems} from "../services/EHRIGetters.js";
+import LoadingComponent from "./LoadingComponent.vue";
 
 export default {
   name: "ArchivalInstitutionDetails",
+  components: { LoadingComponent},
   props: {
     selectedRepoID: String
   },
@@ -145,139 +143,94 @@ export default {
     const repoDetails = ref()
     const languageNames = new Intl.DisplayNames(['en'], {type: 'language'});
     const countryNames = new Intl.DisplayNames(['en'], {type: 'region'});
-    const langs = ref()
+    const langs = ref([])
     const descInLang = ref()
     const otherNames = ref([])
+    const loading = ref(true)
+
     const changeLang = (lang) => {
+      loading.value = true
       descInLang.value = repoDetails.value.find(d => {
         return d.languageCode === lang
       })
+      loading.value = false
     }
+
     const clickedDesc = ref("")
     const showDesc = (d) => {
       clickedDesc.value = d
     }
+
+    const tabClasses = (d) => {
+      // Dynamically apply Tailwind CSS classes to context tab based on clickedDesc value
+      return ['px-1.5 pb-1 text-xs font-medium text-ehri-dark hover:text-ehri-wine', clickedDesc.value === d ? 'text-ehri-wine' : 'text-ehri-dark']
+    };
+
+
     const portalLink = ref()
+    const relatedItemsTotal = ref()
+
     const configData = () => {
       portalLink.value = `https://portal.ehri-project.eu/institutions/${repoID.value}`
     }
-    const relatedItemsTotal = ref()
-
+    
     configData()
 
     fetchRepositoryInfo(repoID.value)
-    .then(
-      (res)=> {
-        fetchRelatedItems(repoID.value).then(
-          (relatedRes) => {
-            otherNames.value=[]
-            repoDetails.value = res.data.Repository.descriptions
-            langs.value = repoDetails.value.map(l => l.languageCode)
-            descInLang.value = repoDetails.value[0]
+.then(
+              (res)=> {
+                fetchRelatedItems(repoID.value).then(
+                    (relatedRes) => {
+                      otherNames.value=[]
+                      repoDetails.value = res.data.Repository.descriptions
+                      langs.value = repoDetails.value.map(l => l.languageCode)
+                      descInLang.value = repoDetails.value[0]
             descInLang.value.history?
-                clickedDesc.value="history":descInLang.value.geoculturalContext?
-                    clickedDesc.value="context":descInLang.value.holdings?
-                        clickedDesc.value="holdings":""
-            descInLang.value.parallelFormsOfName.length?
-                descInLang.value.parallelFormsOfName.forEach(n => {otherNames.value.push(n)}):null
-            descInLang.value.otherFormsOfName.length?
-                descInLang.value.otherFormsOfName.forEach(n => {otherNames.value.push(n)}):null
-            relatedItemsTotal.value = relatedRes.meta.total
-          }
-        )
-      }
-    )
+                          clickedDesc.value="history":descInLang.value.geoculturalContext?
+                              clickedDesc.value="context":descInLang.value.holdings?
+                                  clickedDesc.value="holdings":descInLang.value.findingAids?clickedDesc.value="findingAids":descInLang.value.conditions?
+                                  clickedDesc.value="conditions":descInLang.value.openingTimes?clickedDesc.value="times":""
+                      descInLang.value.parallelFormsOfName.length?
+                          descInLang.value.parallelFormsOfName.forEach(n => {otherNames.value.push(n)}):null
+                      descInLang.value.otherFormsOfName.length?
+                          descInLang.value.otherFormsOfName.forEach(n => {otherNames.value.push(n)}):null
+                      relatedItemsTotal.value = relatedRes.meta.total
+                      loading.value = false
+                    }
+                )
+              }
+          )
 
     watch(repoID, ()=> {
       configData()
-
+      loading.value=true
+      clickedDesc.value = ""
       fetchRepositoryInfo(repoID.value)
           .then(
               (res)=> {
                 fetchRelatedItems(repoID.value).then(
                     (relatedRes) => {
                       otherNames.value=[]
-                      console.log(res)
                       repoDetails.value = res.data.Repository.descriptions
                       langs.value = repoDetails.value.map(l => l.languageCode)
                       descInLang.value = repoDetails.value[0]
-                      descInLang.value.history?
+            descInLang.value.history?
                           clickedDesc.value="history":descInLang.value.geoculturalContext?
                               clickedDesc.value="context":descInLang.value.holdings?
-                                  clickedDesc.value="holdings":""
+                                  clickedDesc.value="holdings":descInLang.value.findingAids?clickedDesc.value="findingAids":descInLang.value.conditions?
+                                  clickedDesc.value="conditions":descInLang.value.openingTimes?clickedDesc.value="times":""
                       descInLang.value.parallelFormsOfName.length?
                           descInLang.value.parallelFormsOfName.forEach(n => {otherNames.value.push(n)}):null
                       descInLang.value.otherFormsOfName.length?
                           descInLang.value.otherFormsOfName.forEach(n => {otherNames.value.push(n)}):null
                       relatedItemsTotal.value = relatedRes.meta.total
+                      loading.value = false
                     }
                 )
               }
           )
     })
-    return { langs, relatedItemsTotal, portalLink, languageNames, changeLang, descInLang, otherNames, countryNames, showDesc, clickedDesc}
+    return { langs, relatedItemsTotal, portalLink, languageNames, changeLang, descInLang, otherNames, countryNames, showDesc, clickedDesc, loading, tabClasses }
   }
 }
 </script>
-
-<style scoped>
-.card-badge {
-  background-color: #F5B651;
-  color: #330033;
-  cursor: pointer;
-}
-.card-badge-desc{
-  background-color: #330033;
-  color: #FFFFFF;
-  cursor: pointer;
-}
-.name {
-  -webkit-line-clamp: 2;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.other-names {
-  font-size: 0.85em;
-}
-.repo-details {
-  text-align: justify;
-  margin-left: 0.5em;
-  height: 22em;
-  position: relative;
-}
-.card-text {
-  border: 0.1em dotted #330033;
-  background-color: #FFFFFF;
-  padding: 0.3em;
-  height: 5.5em;
-  max-height: 12em;
-  overflow: scroll;
-}
-.icon-details {
-  display: block;
-}
-.icon-details span {
-  display: inline-block;
-  padding: 0.1em;
-}
-.portal-link {
-  text-decoration: none!important;
-  color: #FFFFFF;
-  text-align: center;
-  display: flex;
-  background-color: #330033;
-  padding: 0.3em 0.6em;
-  border-radius: 5px;
-  width: fit-content;
-}
-.website-link {
-  text-decoration: none;
-  color: #330033;
-  font-style: italic;
-  display: block;
-}
-
-
-</style>
