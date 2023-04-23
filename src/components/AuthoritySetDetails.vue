@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col h-fit h-max-full">
-    <div v-if="descInLang" class="flex flex-col h-fit h-max-full">
-      <div class="flex flex-col flex-1 h-fit h-max-full">
+  <div class="flex flex-col h-full h-max-full">
+    <div v-if="descInLang" class="flex flex-col">
+      <div class="flex flex-col flex-1">
         <h5 v-if="descInLang" class="font-sans font-semibold text-ehri-wine line-clamp-1">{{descInLang.name}}</h5>
         <h6 v-if="otherNames.length"
             class="text-ehri-dark font-sans font-medium opacity-90 text-sm line-clamp-1">{{
@@ -40,7 +40,7 @@
               Context
             </button>
           </div>
-          <div class="mt-2 flex-1 max-h-72 p-3 overflow-auto border-2 border-ehri-light-grey">
+          <div v-if="descInLang.biographicalHistory||descInLang.generalContext" class="mt-2 h-56 h-max-56 flex-1 p-3 overflow-auto border-2 border-ehri-light-grey">
             <!-- Show history content if clickedDesc is 'history' -->
             <div v-if="descInLang.biographicalHistory && clickedDesc === 'history'">
               <p class="text-base font-sans text-ehri-dark ">{{ descInLang.biographicalHistory }}</p>
@@ -52,7 +52,7 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-col items-start mt-auto">
+      <div class="flex flex-col flex-1 w-fit">
         <span class="mt-2 text-sm font-medium text-ehri-dark block mb-2">
           <span
                 class="mr-1 material-symbols-outlined w-5 h-5 text-ehri-dark align-top"

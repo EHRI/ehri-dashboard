@@ -36,7 +36,7 @@
     </div>
 
     <!-- LARGE SCREEN UI -->
-    <div v-if="isLargeScreen" class="hidden lg:block shadow-xl bg-white lg:h-4/5 lg:col-span-3 overflow-hidden px-7">
+    <div v-if="isLargeScreen" class="hidden lg:block shadow-xl bg-white lg:h-3/4 lg:col-span-3 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ holder }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
       <div class="h-4/6 flex flex-col" >
@@ -48,7 +48,7 @@
         </ul>
       </div>
     </div>
-    <div v-if="isLargeScreen" class="hidden lg:block lg:col-span-5 bg-white shadow-xl h-4/5 pb-7 px-7">
+    <div v-if="isLargeScreen" class="hidden lg:block lg:col-span-5 bg-white shadow-xl h-3/4 pb-7 px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
       <VocabularyItemDetails v-if="selectedVocConceptId" :selectedVocConceptID="selectedVocConceptId"></VocabularyItemDetails>
     </div>

@@ -22,7 +22,7 @@
     <EHRITermItems :search-term="termQuery" :holder="facets.holder" :type="facets.type" :desc="facets.desc">
     </EHRITermItems>
   </div>
-  <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-4/5']">
+  <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-3/4']">
     <div :key="typeFilterKey">
       <div class="px-4 pt-4">
         <h4 class="uppercase font-serif font-bold text lg:text-ehri-dark">Filters</h4>
@@ -30,7 +30,7 @@
         <EHRIPortalTypeFilter
         filter-name="ITEM TYPE"
         :key="typeFilterKey"
-        :selectedType="'EHRICamps'"
+        :selectedType="'EHRIKeywords'"
         :filter-array="sortedTypes"
         @filterChange="(e) => {
           handle(e,'typeFilter')}"

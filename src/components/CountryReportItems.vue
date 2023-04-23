@@ -4,7 +4,7 @@
     <div v-if="!isLargeScreen && !expandFocusedItem" class="lg:hidden h-screen col-span-11 shadow-xl bg-white overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ total>1?'Country Reports':'Country Report' }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
-      <div class="h-full flex flex-col" >
+      <div class="h-5/6 flex flex-col" >
         <ul ref="el" class="h-5/6 overflow-scroll">
           <CountryReportItemCard v-for="item of items" :key="item.id" :countryObject="item" :selectedItem="selectedCountryID" @idChange="(id)=>changeCountryID(id)"></CountryReportItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
@@ -37,11 +37,11 @@
 
 
     <!-- LARGE SCREEN UI -->
-    <div v-if="isLargeScreen" class="hidden lg:block shadow-xl bg-white lg:h-4/5 lg:col-span-3 overflow-hidden px-7">
+    <div v-if="isLargeScreen" class="hidden lg:block shadow-xl bg-white lg:h-3/4 lg:col-span-3 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ total>1?'Country Reports':'Country Report' }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
-      <div class="h-4/6 flex flex-col" >
-        <ul ref="el" class="hidden lg:block overflow-y-scroll">
+      <div class="h-5/6 max-h-5/6 flex flex-col" >
+        <ul ref="el" class="hidden lg:block h-4/6 overflow-y-scroll">
           <CountryReportItemCard v-for="item of items" :key="item.id" :countryObject="item" :selectedItem="selectedCountryID" @idChange="(id)=>changeCountryID(id)"></CountryReportItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
             <LoadingComponent></LoadingComponent>
@@ -49,7 +49,7 @@
         </ul>
       </div>
     </div>
-    <div class="hidden lg:block lg:col-span-5 bg-white shadow-xl h-4/5 pb-7 px-7">
+    <div class="hidden lg:block lg:col-span-5 bg-white shadow-xl h-3/4 pb-7 px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
       <CountryReportDetails v-if="selectedCountryID" :selectedCountryID="selectedCountryID"></CountryReportDetails>
     </div>
@@ -98,8 +98,11 @@ export default {
       screenWidth.value = window.innerWidth;
     });
 
+
     holderFilter.value ? filters.value['holder']=encodeURIComponent(holderFilter.value) : null
     typeFilter.value ? filters.value['type']= typeFilter.value: null
+
+    filters.value['sort'] = 'name'
 
     const selectedCountryID = ref("")
 
@@ -120,7 +123,7 @@ export default {
 
     const getUnitsOnScroll = async () => {
       loading.value = true;
-      const newUnits = await fetchFacetedPortalSearch(countryQuery.value, page.value, filters.value, 25)
+      const newUnits = await fetchFacetedPortalSearch(countryQuery.value, page.value, filters.value, 17)
       newUnits.data.data.forEach(newItem => {
         if (!items.value.some(item => item.id === newItem.id)) {
           items.value.push(newItem)

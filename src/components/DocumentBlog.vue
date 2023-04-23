@@ -29,7 +29,7 @@
             </div>
         </div>
   <div class="grid grid-cols-12 sm:grid-cols-8 gap-4 h-screen max-w-full"  v-if="!loadingCategories && pagination.total > 0">
-    <div class="h-screen col-span-12 bg-white shadow-xl lg:h-4/5 lg:col-span-6 overflow-hidden px-7">
+    <div class="h-screen col-span-12 bg-white shadow-xl lg:h-3/4 lg:col-span-6 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing 
         <span v-if="pagination.total" class="font-serif font-extrabold">{{pagination.total}}</span>
         <LoadingComponent v-else></LoadingComponent> <span>{{ pagination.total>1?' results':' result' }}</span>
@@ -61,11 +61,11 @@
       </div>
     </div>
     </div>
-      <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-4/5',]">
+      <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-3/4',]">
         <div class="px-4 pt-4">
           <h4 class="uppercase font-serif font-bold text lg:text-ehri-dark">Filters</h4>
           <p class="font-sans text-sm font-light mb-4">Choose one or more filters</p>
-          <div v-if="!loadingCategories" class="overflow-scroll h-4/5">
+          <div v-if="!loadingCategories" class="overflow-scroll h-3/4">
             <DocumentBlogFilter :key="filterKey" :filterName="'Categories'" :filterArray="DBCategories"
                             @filterChange="(e) => {
                 handleFilter(e)

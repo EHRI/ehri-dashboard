@@ -29,7 +29,7 @@
         </span>
       </button>
     </div>
-    <div class="flex-1 h-72 max-h-72 mt-4 overflow-auto border-2 border-ehri-light-grey">
+    <div class="flex-1 h-56 max-h-56 mt-4 overflow-auto border-2 border-ehri-light-grey">
       <div v-if="clickedDesc === 'hierarchy'">
         <EHRITermHierarchyViz
             v-if="narrowerInLang.length||broaderInLang.length"

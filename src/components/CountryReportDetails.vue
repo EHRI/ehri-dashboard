@@ -35,7 +35,7 @@
         </span>
       </button>
     </div>
-    <div v-if="clickedDesc && clickedDesc.length>1" class="flex-1 h-80 max-h-80 p-1 mt-4 overflow-auto border-2 border-ehri-light-grey">
+    <div v-if="clickedDesc && clickedDesc.length>1" class="flex-1 h-56 max-h-56 p-1 mt-4 overflow-auto border-2 border-ehri-light-grey">
         <!-- Show history content if clickedDesc is 'history' -->
         <div v-if="countryDetails.history && clickedDesc === 'history'">
           <p class="text-base font-sans text-ehri-dark ">{{ countryDetails.history }}</p>

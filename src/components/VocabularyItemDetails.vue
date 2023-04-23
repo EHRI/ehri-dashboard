@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col h-full h-max-full">
     <div v-if="descInLang && !loading" class="flex flex-col">
-      <div class="flex flex-col flex-grow">
+      <div class="flex flex-col flex-1">
         <h5 v-if="descInLang" class="font-sans font-semibold text-ehri-wine line-clamp-1">{{descInLang.name}}</h5>
         <h6 v-if="otherNames.length"
             class="text-ehri-dark font-sans font-medium opacity-90 text-sm line-clamp-1">{{
@@ -14,10 +14,10 @@
           </select>
         </div>
       </div>
-      <VocabularyItemDetailsViz v-if="(vocObject.broader.length||vocObject.narrower.length)|| (lat&&long)"
+      <VocabularyItemDetailsViz class="h-72" v-if="(vocObject.broader.length||vocObject.narrower.length)|| (lat&&long)"
                   :voc-object="vocObject" :long="long" :lat="lat">
       </VocabularyItemDetailsViz>
-      <div class="flex flex-col overflow-hidden items-start mt-auto">
+      <div class="flex flex-col flex-1 w-fit">
         <span class="mt-2 text-sm font-medium text-ehri-dark block mb-2">
           <span
                 class="mr-1 material-symbols-outlined w-5 h-5 text-ehri-dark align-top"

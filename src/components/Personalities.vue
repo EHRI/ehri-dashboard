@@ -18,11 +18,11 @@
     </span>
 </span>
 <div class="grid grid-cols-12 sm:grid-cols-8 gap-2 lg:gap-4 h-screen max-w-full">
-    <div class="h-full col-span-12 lg:h-4/5 lg:col-span-6 overflow-hidden lg:px-3">
+  <div class="h-full col-span-12 lg:h-full lg:col-span-6 overflow-hidden lg:px-3">
       <AuthoritySetItems :search-term="personalityQuery" :holder="facets.holder" :type="facets.type" :desc="facets.desc">
       </AuthoritySetItems>
     </div>
-    <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-4/5']">
+    <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-3/4']">
       <div :key="typeFilterKey">
         <div class="px-4 pt-4">
           <h4 class="uppercase font-serif font-bold text lg:text-ehri-dark">Filters</h4>
