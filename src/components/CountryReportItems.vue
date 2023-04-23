@@ -102,7 +102,9 @@ export default {
     holderFilter.value ? filters.value['holder']=encodeURIComponent(holderFilter.value) : null
     typeFilter.value ? filters.value['type']= typeFilter.value: null
 
-    filters.value['sort'] = 'name'
+    if(!countryQuery.value.length){
+      filters.value['sort'] = 'name'
+    }
 
     const selectedCountryID = ref("")
 

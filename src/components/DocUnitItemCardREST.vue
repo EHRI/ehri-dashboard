@@ -6,8 +6,6 @@
         <h6 v-if="docUnit.repoName" class="text-ehri-dark font-sans font-medium opacity-90 text-sm line-clamp-1">{{docUnit.repoName}}</h6>
         <p v-if="docUnit.attributes.descriptions[0].scopeAndContent" class="text-sm overflow-hidden line-clamp-2">{{ docUnit.attributes.descriptions[0].scopeAndContent }}</p>
         <p v-if="docUnit.attributes.descriptions[0].extentAndMedium" class="capitalize text-ehri-dark font-sans opacity-80 text-xs line-clamp-1">{{docUnit.attributes.descriptions[0].extentAndMedium}}</p>
-        <!-- <span v-if="docUnit.attributes.localId" class="border border-ehri-wine bg-ehri-wine text-white px-2 text-xs truncate">{{docUnit.attributes.localId}}</span> -->
-        <!-- <vr class="border border-ehri-wine mx-2 text-xs"></vr> -->
         <span v-if="docUnit.attributes.descriptions[0].language.length" :key="docUnit.attributes.localId" class="border border-ehri-wine rounded-full bg-ehri-wine text-white mr-1 px-2 font-sans text-xs">{{docUnit.attributes.descriptions[0].language}}</span>
         
       </div>

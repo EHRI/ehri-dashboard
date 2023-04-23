@@ -63,44 +63,44 @@
           <p class="font-sans text-sm font-light mb-4">Choose one or more filters</p>
           <div class="overflow-scroll h-full">
             <h5 class="mt-3 uppercase font-serif font-bold text-sm lg:text-ehri-dark">ONLINE EDITION</h5>
-          <select v-if="sortedDEResultsNonNull" @change="(e)=>selectEdition(e)" class="text-ehri-dark font-sans text-xs p-1 font-light border border-[1.5px] border-ehri-dark w-full" size="1" aria-label="Online Edition Filter">
-            <option v-for="i in sortedDEResultsNonNull" :key="i[0]" :value="i[0]" :selected="selectedEdition['edition'] === i[0]">{{ i[1]['title']+" (" +i[1]['pagination']['total']+")" }} </option>
-          </select>
-          <div
-              v-for="f in Object.entries(selectedEdition['facets'])">
-            <DigitalEditionsFilter
-                v-if="Object.keys(f[1]).length!==0&&f[0]!=='Featured'"
-                :key="filterKey"
-                :filter-name="f[0]"
-                :filter-object="f[1]"
-                @filterChange="(e) => {
-                  handleFilter(e, f[0], selectedEdition['edition'])
-                }"
-            >
-            </DigitalEditionsFilter>
-          </div>
-          <div v-if="selectedEdition.isFiltered()" class="px-4 pt-4">
-            <hr class="py-1 lg:text-ehri-dark">
-            <h5 class="font-serif text-sm font-extralight">Active Filters:</h5>
-              <div class="" v-for="f in Object.entries(selectedEdition['filters'])">
-                <span v-if="f[1]!==''" class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs"
-                  @click="handleFilter('',f[0],selectedEdition['edition'])">{{f[1]}}</span>
-              </div>
-              <div class="flex items-center my-2 cursor-pointer lg:text-ehri-wine text-sm" id="remove-filter" @click="() => handleFilter('','removeAll',selectedEdition['edition'])">
-                <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
-                  close
-                </span>
-                <span>Remove All Filters</span>
-              </div>
-          </div>
-          <div class="h-2/3">
-            <Chart
-          class="w-full pb-2"
-              :key="chartKey"
-              v-if="selectedEdition.isFiltered()?selectedEdition['filteredItems'].length:selectedEdition['items'].length"
-              :dataset="selectedEdition['facets']['Subject']">
-          </Chart>
-          </div>
+            <select v-if="sortedDEResultsNonNull" @change="(e)=>selectEdition(e)" class="text-ehri-dark font-sans text-xs p-1 font-light border border-[1.5px] border-ehri-dark w-full" size="1" aria-label="Online Edition Filter">
+              <option v-for="i in sortedDEResultsNonNull" :key="i[0]" :value="i[0]" :selected="selectedEdition['edition'] === i[0]">{{ i[1]['title']+" (" +i[1]['pagination']['total']+")" }} </option>
+            </select>
+            <div
+                v-for="f in Object.entries(selectedEdition['facets'])">
+              <DigitalEditionsFilter
+                  v-if="Object.keys(f[1]).length!==0&&f[0]!=='Featured'"
+                  :key="filterKey"
+                  :filter-name="f[0]"
+                  :filter-object="f[1]"
+                  @filterChange="(e) => {
+                    handleFilter(e, f[0], selectedEdition['edition'])
+                  }"
+              >
+              </DigitalEditionsFilter>
+            </div>
+            <div v-if="selectedEdition.isFiltered()" class="px-4 pt-4">
+              <hr class="py-1 lg:text-ehri-dark">
+              <h5 class="font-serif text-sm font-extralight">Active Filters:</h5>
+                <div class="" v-for="f in Object.entries(selectedEdition['filters'])">
+                  <span v-if="f[1]!==''" class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs"
+                    @click="handleFilter('',f[0],selectedEdition['edition'])">{{f[1]}}</span>
+                </div>
+                <div class="flex items-center my-2 cursor-pointer lg:text-ehri-wine text-sm" id="remove-filter" @click="() => handleFilter('','removeAll',selectedEdition['edition'])">
+                  <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
+                    close
+                  </span>
+                  <span>Remove All Filters</span>
+                </div>
+            </div>
+            <div class="h-2/3">
+              <Chart
+            class="w-full pb-2"
+                :key="chartKey"
+                v-if="selectedEdition.isFiltered()?selectedEdition['filteredItems'].length:selectedEdition['items'].length"
+                :dataset="selectedEdition['facets']['Subject']">
+            </Chart>
+            </div>
           </div>
         </div>
       </div>
