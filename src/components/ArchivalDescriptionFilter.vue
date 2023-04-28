@@ -1,5 +1,5 @@
 <template>
-  <h5 class="mt-3 uppercase font-serif font-bold text-sm lg:text-ehri-dark">{{ filterName }}</h5>
+  <h5 class="mt-3 uppercase font-serif font-bold text-sm xl:text-ehri-dark">{{ filterName }}</h5>
   <select :key="itemKey" v-if="nonNullCategories" @change="(e)=>onChange(e)" class="text-ehri-dark font-sans text-xs p-1 font-light border border-[1.5px] border-ehri-dark w-full" size="1" :aria-label="filterName + ' Filter'">
     <option v-if="nonNullCategories.length > 1" :value="filterName" :selected="!checkedVal">All {{filterName}}</option>
     <option v-for="(c,i) in nonNullCategories" :key="i" :value="c.value" :selected="checkedVal === c.value">{{ c.name.length > 25? c.name.substring(0,25)+'...':c.name }} ({{c.count}})</option>
@@ -35,9 +35,15 @@ export default {
     return c.count > 0
     })
 
-    nonNullCategories.value?nonNullCategories.value.sort((a, b) => {
+    if(filterName.value=="Dates"){
+        nonNullCategories.value?nonNullCategories.value.sort((a, b) => {
+        return  a.value-b.value;
+      }):null
+    } else {
+      nonNullCategories.value?nonNullCategories.value.sort((a, b) => {
       return b.count - a.count;
-    }):null
+      }):null
+    }
 
     return {filterArray, itemKey, nonNullCategories, filterName, onChange, checkedVal}
   }

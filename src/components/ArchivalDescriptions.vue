@@ -1,6 +1,6 @@
 <template>
-  <span class="flex justify-center bg-ehri-purple py-2 text-white lg:hidden col-span-12 text-ehri-dark font-sans " @click="toggleFilterBar">
-    <span v-if="!showFilterBar" class="lg:hidden mr-2 cursor-pointer">
+  <span class="flex justify-center bg-ehri-purple py-2 text-white xl:hidden col-span-12 text-ehri-dark font-sans " @click="toggleFilterBar">
+    <span v-if="!showFilterBar" class="xl:hidden mr-2 cursor-pointer">
             <span
           class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
         >
@@ -8,7 +8,7 @@
         </span>
         Filter Results
     </span>
-    <span v-else class="lg:hidden mr-2 cursor-pointer">
+    <span v-else class="xl:hidden mr-2 cursor-pointer">
             <span
           class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
         >
@@ -17,7 +17,7 @@
         Close
     </span>
   </span>
-  <div v-if="filtered && !showFilterBar" class="lg:hidden pt-1 px-2">
+  <div v-if="filtered && !showFilterBar" class="xl:hidden pt-1 px-2">
           <h5 class="font-sans text-sm text-ehri-purple block font-medium">Active Filters: </h5>
             <span class="inline w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="holderFilter" @click="handle('Institutions','holderFilter')">{{holderFilter.length>25?holderFilter.substring(0,25)+'...':holderFilter}}</span>
             <span class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="langFilter" @click="handle('','langFilter')">{{languageNames.of(langFilter)}}</span>
@@ -33,14 +33,14 @@
   <!-- Creating the grid -->
   <div class="grid grid-cols-12 sm:grid-cols-8 gap-4 h-screen max-w-full">
     <!-- first column -->
-    <div class="h-screen col-span-12 bg-white shadow-xl lg:h-3/4 lg:col-span-6 overflow-hidden px-7">
+    <div class="h-screen col-span-12 bg-white shadow-xl xl:h-3/4 xl:col-span-6 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing 
         <span v-if="pagination.total" class="font-serif font-extrabold">{{pagination.total}}</span>
         <LoadingComponent v-else></LoadingComponent> 
         Archival Descriptions</h4>
       <p class="font-sans text-ehri-dark text-sm">Electronic descriptions and finding aids of Holocaust-related archival material.</p>
       <hr class="text-ehri-dark border-4 shadow-md mt-3">
-      <div class="pl-3 pr-1 pt-3 pb-0 h-full">
+      <div class="pt-3 pb-0 h-full">
         <div v-if="!loadingDocUnits" class="h-full">
           <div :key="listKey" class="h-full">
               <Suspense>
@@ -57,12 +57,12 @@
       </div>
     </div>
     <!-- second column -->
-    <div :class="[filterBarClass, 'bg-ehri-purple', 'text-white', 'lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-3/4',]">
+    <div :class="[filterBarClass, 'bg-ehri-purple', 'text-white', 'xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4',]">
       <div v-if="!loadingDocUnits">
         <div class="h-full px-4 pt-4">
-          <h4 class="uppercase font-serif font-bold lg:text-ehri-dark">Filters</h4>
-          <p class="font-sans text-sm font-light mb-4">Choose one or more filters</p>
-          <div class="overflow-y-scroll h-full">
+          <h4 class="uppercase font-serif font-bold xl:text-ehri-dark">Filters</h4>
+          <p class="font-sans text-sm font-light">Choose one or more filters</p>
+          <div class="overflow-y-auto h-full">
             <EHRIPortalTypeFilter
             filter-name="ITEM TYPE"
             :key="typeFilterKey"
@@ -103,20 +103,20 @@
             </ArchivalDescriptionFilter>
           
           <div v-if="filtered" class="px-4 pt-4">
-            <hr class="py-1 lg:text-ehri-dark">
+            <hr class="py-1 xl:text-ehri-dark">
             <h5 class="font-serif text-sm font-extralight">Active Filters:</h5>
-              <span class="block w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs" v-if="holderFilter" @click="handle('Institutions','holderFilter')">{{holderFilter.length>25?holderFilter.substring(0,25)+'...':holderFilter}}</span>
-              <span class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs" v-if="langFilter" @click="handle('','langFilter')">{{languageNames.of(langFilter)}}</span>
-              <span class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs" v-if="countryFilter" @click="handle('','countryFilter')">{{countryNames.of(countryFilter.toUpperCase())}}</span>
-              <span class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs" v-if="dateFilter" @click="handle('','dateFilter')">{{dateFilter.length>25?dateFilter.substring(0,25)+'...':dateFilter}}</span>
-              <div class="flex items-center my-2 cursor-pointer lg:text-ehri-wine text-sm" id="remove-filter" @click="(e) => handle(e,'removeAll')">
+              <span class="block w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="holderFilter" @click="handle('Institutions','holderFilter')">{{holderFilter.length>25?holderFilter.substring(0,25)+'...':holderFilter}}</span>
+              <span class="block mt-1 w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="langFilter" @click="handle('','langFilter')">{{languageNames.of(langFilter)}}</span>
+              <span class="block mt-1 w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="countryFilter" @click="handle('','countryFilter')">{{countryNames.of(countryFilter.toUpperCase())}}</span>
+              <span class="block mt-1 w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="dateFilter" @click="handle('','dateFilter')">{{dateFilter.length>25?dateFilter.substring(0,25)+'...':dateFilter}}</span>
+              <div class="flex items-center my-2 cursor-pointer xl:text-ehri-wine text-sm" id="remove-filter" @click="(e) => handle(e,'removeAll')">
                 <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
                   close
                 </span>
                 <span>Remove All Filters</span>
               </div>
           </div>
-          <div class="px-4 pt-4">
+          <div class="pt-2">
             <OverviewCountryStats :key="countryFilterKey" class="mb-5" :dataset="stats.countries"></OverviewCountryStats>
           </div>
         </div>
@@ -311,8 +311,8 @@ export default {
 
     const filterBarClass = computed(() => {
             return showFilterBar.value
-            ? "w-full h-max m-0 p-0 bg-ehri-purple lg:w-auto lg:block transition-all ease-in-out duration-600"
-            : "w-full h-0 transition-all ease-in-out overflow-scroll duration-800 lg:w-auto ";
+            ? "w-full h-max m-0 p-0 bg-ehri-purple xl:w-auto xl:block transition-all ease-in-out duration-600"
+            : "w-full h-0 transition-all ease-in-out overflow-y-auto duration-800 xl:w-auto ";
         });
 
    

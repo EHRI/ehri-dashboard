@@ -1,5 +1,5 @@
 <template>
-  <h5 class="mt-3 uppercase font-serif font-bold text-sm lg:text-ehri-dark">{{ filterName }}</h5>
+  <h5 class="mt-3 uppercase font-serif font-bold text-sm xl:text-ehri-dark">{{ filterName }}</h5>
   <select v-if="nonNullCategories" @change="(e)=>onChange(e)" class="text-ehri-dark font-sans text-xs p-1 font-light border border-[1.5px] border-ehri-dark w-full" size="1" :aria-label="filterName + ' Filter'">
     <option v-if="nonNullCategories.length > 1" :value="filterName" :selected="!checkedVal">All</option>
     <option v-for="c in nonNullCategories" :key="c.id" :value="c.id" :selected="checkedVal === c.id">{{

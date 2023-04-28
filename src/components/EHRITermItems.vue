@@ -5,7 +5,7 @@
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ holder }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
       <div class="h-full flex flex-col" >
-        <ul ref="el" class="h-5/6 overflow-scroll">
+        <ul ref="el" class="h-5/6 overflow-y-auto">
           <VocabularyItemCard v-for="item of items" :key="item.id" :vocObject="item" :selectedItem="selectedVocConceptId" @idChange="(id)=> changeVocConceptId(id)"></VocabularyItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
             <LoadingComponent></LoadingComponent>
@@ -107,7 +107,7 @@ export default {
 
     const focusedItemClass = computed(() => {
             return expandFocusedItem.value
-            ? "w-full h-screen bg-white text-ehri-purple px-7 overflow-scroll col-span-12 m-0 transition-all ease-in-out duration-800 pb-3"
+            ? "w-full h-screen bg-white text-ehri-purple px-7 overflow-y-auto col-span-12 m-0 transition-all ease-in-out duration-800 pb-3"
             : "w-full bg-ehri-dark col-span-1 overflow-hidden transition-all ease-in-out overflow-hidden duration-800";
         });
 

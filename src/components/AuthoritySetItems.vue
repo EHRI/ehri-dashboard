@@ -1,7 +1,7 @@
 <template>
-  <div class="grid grid-cols-12 lg:grid-cols-8 gap-2 lg:gap-4 h-screen max-w-full overflow-hidden">
+  <div class="grid grid-cols-12 xl:grid-cols-8 gap-2 xl:gap-4 h-screen max-w-full overflow-hidden">
     <!-- SMALL SCREEN UI -->
-    <div v-if="!isLargeScreen && !expandFocusedItem" class="lg:hidden h-screen col-span-11 shadow-xl bg-white overflow-hidden px-7">
+    <div v-if="!isLargeScreen && !expandFocusedItem" class="xl:hidden h-screen col-span-11 shadow-xl bg-white overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ holder }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
       <div class="h-full flex flex-col" >
@@ -13,7 +13,7 @@
         </ul>
       </div>
     </div>
-    <div :class="[focusedItemClass,'flex', 'h-screen', 'lg:hidden', 'shadow-xl', ]">
+    <div :class="[focusedItemClass,'flex', 'h-screen', 'xl:hidden', 'shadow-xl', ]">
       <span v-if="!expandFocusedItem" class="cursor-pointer flex justify-center align-middle items-center" @click="toggleFocusedItemClass">
         <span
             class="material-symbols-outlined text-white pointer-events-none"
@@ -36,7 +36,7 @@
     </div>
 
     <!-- LARGE SCREEN UI -->
-    <div v-if="isLargeScreen" class="hidden lg:block shadow-xl bg-white lg:h-3/4 lg:col-span-3 overflow-hidden px-7">
+    <div v-if="isLargeScreen" class="hidden xl:block shadow-xl bg-white xl:h-3/4 xl:col-span-3 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ holder }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
       <div class="h-4/6 flex flex-col" >
@@ -48,7 +48,7 @@
         </ul>
       </div>
     </div>
-    <div class="hidden lg:block lg:col-span-5 bg-white shadow-xl h-3/4 pb-7 px-7">
+    <div class="hidden xl:block xl:col-span-5 bg-white shadow-xl h-3/4 pb-7 px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
       <AuthoritySetDetails v-if="selectedAuthID" :selectedAuthID="selectedAuthID"></AuthoritySetDetails>
     </div>
@@ -87,7 +87,7 @@ export default {
     const screenWidth = ref(window.innerWidth);
 
     const isLargeScreen = computed(() => {
-      return screenWidth.value >= 1024;
+      return screenWidth.value >= 1280;
     });
 
     window.addEventListener('resize', () => {

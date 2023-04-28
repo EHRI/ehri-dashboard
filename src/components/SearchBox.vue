@@ -1,5 +1,5 @@
 <template>
-  <form class="w-5/6 max-w-md flex mx-auto text-white" @submit.prevent>
+  <form class="max-w-md flex text-white" @submit.prevent>
     <div class="flex-1 relative">
       <span
         class="absolute h-5 pt-2 material-symbols-outlined pointer-events-none text-white left-0 ml-2"

@@ -7,7 +7,7 @@
             @click="emitDataSourceChange(tab)"
         >
         <a 
-        class="grid grid-cols-4 py-1 pr-3 text-white hover:bg-white hover:text-ehri-purple text-sm font-sans font-light cursor-pointer" 
+        class="grid grid-cols-5 py-1 text-white px-1 hover:bg-white hover:text-ehri-purple text-sm font-sans font-light cursor-pointer" 
         :class="{
           'bg-black': tab['title']===currentTab['title'],
           'bg-opacity-30': tab['title']===currentTab['title'],
@@ -17,8 +17,8 @@
           }"
           
         >
-          <p class="col-span-3 pl-6">{{ tab['title'] }}</p>
-          <span class="hover:text-ehri-purple text-end col-span-1 font-medium">{{ tab['value'].toLocaleString('en-GB') }}</span>
+          <p class="col-span-3">{{ tab['title'] }}</p>
+          <span class="hover:text-ehri-purple text-end col-span-2 font-medium">{{ tab['value'].toLocaleString('en-GB') }}</span>
         </a>
         </li>
       </ul>
@@ -26,9 +26,9 @@
     <div v-else>
       <ul class="mx-0">
         <li
-        class="grid grid-cols-4 py-1 pr-3 hover:bg-white hover:text-ehri-purple text-white text-sm font-sans font-light cursor-pointer" 
+        class="grid grid-cols-4 py-1 hover:bg-white hover:text-ehri-purple text-white text-sm font-sans font-light cursor-pointer" 
         >
-          <p class="col-span-3 pl-6">Results</p>
+          <p class="col-span-3">Results</p>
           <span class="text-end col-span-1 font-medium">0</span>
         </li>
       </ul>

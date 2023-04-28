@@ -1,6 +1,6 @@
 <template>
-    <span class="flex justify-center bg-ehri-purple py-2 text-white lg:hidden col-span-12 text-ehri-dark font-sans " @click="toggleFilterBar">
-      <span v-if="!showFilterBar" class="lg:hidden mr-2 cursor-pointer">
+    <span class="flex justify-center bg-ehri-purple py-2 text-white xl:hidden col-span-12 text-ehri-dark font-sans " @click="toggleFilterBar">
+      <span v-if="!showFilterBar" class="xl:hidden mr-2 cursor-pointer">
               <span
             class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
           >
@@ -8,7 +8,7 @@
           </span>
           Filter Results
       </span>
-      <span v-else class="lg:hidden mr-2 cursor-pointer">
+      <span v-else class="xl:hidden mr-2 cursor-pointer">
               <span
             class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
           >
@@ -17,7 +17,7 @@
           Close
       </span>
   </span>
-  <div v-if="!loading && !showFilterBar && selectedEdition.isFiltered()" class="lg:hidden pt-1 px-2">
+  <div v-if="!loading && !showFilterBar && selectedEdition.isFiltered()" class="xl:hidden pt-1 px-2">
             <h5 class="font-sans text-sm text-ehri-purple block font-medium">Active Filters:</h5>
               <div class="" v-for="f in Object.entries(selectedEdition['filters'])">
                 <span v-if="f[1]!==''" class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs"
@@ -30,24 +30,24 @@
                 <span>Remove All Filters</span>
               </div>
   </div>
-  <div class="grid grid-cols-12 sm:grid-cols-8 gap-4 h-screen max-w-full"  v-if="!loading">
-    <div class="h-screen col-span-12 bg-white shadow-xl lg:h-3/4 lg:col-span-6 overflow-hidden px-7">
+  <div class="grid grid-cols-12 sm:grid-cols-8 gap-8 h-screen max-w-full"  v-if="!loading">
+    <div class="h-screen col-span-12 bg-white shadow-xl xl:h-3/4 xl:col-span-6 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing 
         <span v-if="selectedEdition.pagination.total" class="font-serif font-extrabold">{{selectedEdition.pagination.total}}</span>
         <LoadingComponent v-else></LoadingComponent> <span>{{ selectedEdition.pagination.total>1?' results':' result' }}</span>
-        from the {{ selectedEdition['title'] }}</h4>
+        from the <span class="font-serif font-extrabold">{{ selectedEdition['title'] }}</span></h4>
       <p class="font-sans text-ehri-dark text-sm">{{ selectedEdition['description'] }}</p>
       <hr class="text-ehri-dark border-4 shadow-md mt-3">
-      <div class="pl-3 pr-1 pt-3 pb-0 h-full">
+      <div class="pr-1 pt-3 pb-0 h-full">
         <div class="h-5/6">
           <div class="h-full flex flex-col">
-            <ul  v-if="selectedEdition && !selectedEdition.isFiltered()" ref="el" class="h-5/6 overflow-scroll">
+            <ul  v-if="selectedEdition && !selectedEdition.isFiltered()" ref="el" class="h-5/6 overflow-y-auto">
               <DigitalEditionItem v-for="item of selectedEdition['items']" :key="item.id" :editionObject="item" :edition-string="selectedEdition['edition']"></DigitalEditionItem>
               <li v-if="selectedEdition.loading" class="w-full flex justify-center items-center py-2">
                 <LoadingComponent></LoadingComponent>
               </li>
             </ul>
-            <ul v-else ref="el" class="h-full overflow-scroll">
+            <ul v-else ref="el" class="h-full overflow-y-auto">
               <DigitalEditionItem v-for="item of selectedEdition['filteredItems']" :key="item.id" :editionObject="item" :edition-string="selectedEdition['edition']"></DigitalEditionItem>
               <li v-if="selectedEdition.loading" class="w-full flex justify-center items-center py-2">
                 <LoadingComponent></LoadingComponent>
@@ -57,12 +57,12 @@
       </div>
     </div>
     </div>
-      <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-scroll', 'text-white','lg:text-ehri-dark', 'lg:col-span-2', 'col-span-12', 'lg:order-last', 'order-first', 'lg:bg-white', 'shadow-xl', 'lg:h-3/4',]">
+      <div :class="[filterBarClass, 'bg-ehri-purple','overflow-hidden', 'text-white','xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4',]">
         <div class="h-full px-4 pt-4">
-          <h4 class="uppercase font-serif font-bold text lg:text-ehri-dark">Filters</h4>
+          <h4 class="uppercase font-serif font-bold text xl:text-ehri-dark">Filters</h4>
           <p class="font-sans text-sm font-light mb-4">Choose one or more filters</p>
-          <div class="overflow-scroll h-full">
-            <h5 class="mt-3 uppercase font-serif font-bold text-sm lg:text-ehri-dark">ONLINE EDITION</h5>
+          <div class="overflow-y-auto h-full">
+            <h5 class="mt-3 uppercase font-serif font-bold text-sm xl:text-ehri-dark">ONLINE EDITION</h5>
             <select v-if="sortedDEResultsNonNull" @change="(e)=>selectEdition(e)" class="text-ehri-dark font-sans text-xs p-1 font-light border border-[1.5px] border-ehri-dark w-full" size="1" aria-label="Online Edition Filter">
               <option v-for="i in sortedDEResultsNonNull" :key="i[0]" :value="i[0]" :selected="selectedEdition['edition'] === i[0]">{{ i[1]['title']+" (" +i[1]['pagination']['total']+")" }} </option>
             </select>
@@ -80,22 +80,22 @@
               </DigitalEditionsFilter>
             </div>
             <div v-if="selectedEdition.isFiltered()" class="px-4 pt-4">
-              <hr class="py-1 lg:text-ehri-dark">
+              <hr class="py-1 xl:text-ehri-dark">
               <h5 class="font-serif text-sm font-extralight">Active Filters:</h5>
                 <div class="" v-for="f in Object.entries(selectedEdition['filters'])">
-                  <span v-if="f[1]!==''" class="block mt-1 w-fit cursor-pointer border rounded-full lg:border-ehri-dark bg-white text-ehri-dark lg:bg-ehri-dark lg:text-white mr-1 px-2 py-0.5 text-xs"
+                  <span v-if="f[1]!==''" class="block mt-1 w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs"
                     @click="handleFilter('',f[0],selectedEdition['edition'])">{{f[1]}}</span>
                 </div>
-                <div class="flex items-center my-2 cursor-pointer lg:text-ehri-wine text-sm" id="remove-filter" @click="() => handleFilter('','removeAll',selectedEdition['edition'])">
+                <div class="flex items-center my-2 cursor-pointer xl:text-ehri-wine text-sm" id="remove-filter" @click="() => handleFilter('','removeAll',selectedEdition['edition'])">
                   <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
                     close
                   </span>
                   <span>Remove All Filters</span>
                 </div>
             </div>
-            <div class="h-2/3">
+            <div class="xl:h-2/3">
               <Chart
-            class="w-full pb-2"
+            class="w-1/4 xl:w-full mx-auto pb-2 z-0"
                 :key="chartKey"
                 v-if="selectedEdition.isFiltered()?selectedEdition['filteredItems'].length:selectedEdition['items'].length"
                 :dataset="selectedEdition['facets']['Subject']">
@@ -341,8 +341,8 @@ export default {
 
     const filterBarClass = computed(() => {
             return showFilterBar.value
-            ? "w-full h-max m-0 p-0 bg-ehri-purple lg:w-auto lg:block transition-all ease-in-out duration-600"
-            : "w-full h-0 transition-all ease-in-out overflow-hidden lg:overflow-scroll duration-800 lg:w-auto ";
+            ? "w-full h-max m-0 p-0 bg-ehri-purple xl:w-auto xl:block transition-all ease-in-out duration-600"
+            : "w-full h-0 transition-all ease-in-out overflow-hidden duration-800 xl:w-auto ";
         });
 
    

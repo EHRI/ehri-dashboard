@@ -1,39 +1,39 @@
 <template>
-<div class="bg-ehri-purple">
+<div class="bg-ehri-purple z-10 sm:z-0">
     <div class="flex flex-row place-content-between items-center">
         <img :src="logo" class="h-16 ml-2 sm:hidden cursor-pointer" alt="EHRI logo" @click="handle"/>
-        <h1 class="mt-2 sm:hidden text-white font-serif font-bold text-center text-base cursor-pointer" @click="handle">EHRI DASHBOARD</h1>
+        <h1 class="mt-2 sm:hidden text-white font-serif font-bold text-center text-xl cursor-pointer" @click="handle">EHRI DASHBOARD</h1>
         <span @click="toggleSidebar" class="sm:hidden mr-2 text-white cursor-pointer">
             <span
-          class="material-symbols-outlined pointer-events-none"
+          class="material-symbols-outlined pointer-events-none align-bottom"
         >
-          menu
+          search
         </span>
         </span>
     </div>
-    <div class="flex-grow-0 flex-shrink-0 sm:hidden overflow-hidden">
+    <div class="flex-grow-0 px-6 flex-shrink-0 shadow-xl sm:hidden overflow-hidden">
         <div :class="sidebarClass">
-            <div class="sm:hidden bg-ehri-purple mt-2 px-4 pb-3">
-                <p class="break font-sans font-light text-xs text-justify text-white mx-auto p-2">
+            <div class="sm:hidden bg-ehri-purple mt-2 pb-3">
+                <p class="break font-sans font-light text-base text-justify text-white mx-auto py-2">
                 Search for Holocaust-related information across the EHRI Portal, Document Blog and Online Editions.
                 </p>
                 <SearchBox :key="key" class="pt-4" @queryChange="(t) => {getQueryValue(t)}"></SearchBox>
-                <h5 class="font-serif text-white font-medium mt-5 pl-6">DATA SOURCES</h5>
+                <h5 class="font-serif text-white font-medium mt-5">DATA SOURCES</h5>
                 <LoadResources @data-source-change="(d)=>{emitDataSourceChange(d)}"
                 :query-value="routeQuery?routeQuery:query"></LoadResources>
             </div>
         </div>
     </div>
-    <div class="hidden sm:block sm:min-h-screen sm:h-full sm:overflow-hidden sm:bg-ehri-purple">
+    <div class="hidden px-6 sm:block sm:min-h-screen sm:h-full sm:overflow-hidden sm:bg-ehri-purple">
         <img :src="logo" class="h-24 mt-2 mx-auto cursor-pointer" alt="EHRI logo" @click="handle"/>
-        <h1 class="mt-2 text-white font-serif font-bold text-center text-base">EHRI DASHBOARD</h1>
-        <p class="break font-sans font-light text-xs text-justify text-white mx-auto p-2 mb-5">
+        <h1 class="mt-2 text-white font-serif font-bold text-center text-xl">EHRI DASHBOARD</h1>
+        <p class="break font-sans font-light text-base text-left text-white mx-auto mb-5">
             Search for Holocaust-related information across the EHRI Portal, Document Blog and Online Editions.
         </p>
         <SearchBox :key="key" class="pt-4" @queryChange="(t) => {getQueryValue(t)}"></SearchBox>
-            <h5 class="font-serif text-white font-medium mt-5 pl-6">DATA SOURCES</h5>
-            <LoadResources @data-source-change="(d)=>{emitDataSourceChange(d)}"
-             :query-value="routeQuery?routeQuery:query"></LoadResources>
+        <h5 class="font-serif text-white font-medium mt-5">DATA SOURCES</h5>
+        <LoadResources @data-source-change="(d)=>{emitDataSourceChange(d)}"
+            :query-value="routeQuery?routeQuery:query"></LoadResources>
     </div>
 </div>
 </template>
