@@ -4,7 +4,7 @@
       <div class="col-span-8 sm:col-span-5">
         <h6 v-if="docUnit.attributes.descriptions[0].name" class="text-ehri-wine font-sans font-semibold text-sm mb-0 pb-0 overflow-hidden line-clamp-1"><a :href="portalLink" target="_blank" rel="noopener">{{docUnit.attributes.descriptions[0].name}}</a></h6>
         <h6 v-if="docUnit.repoName" class="text-ehri-dark font-sans font-medium opacity-90 text-sm line-clamp-1">{{docUnit.repoName}}</h6>
-        <p v-if="docUnit.attributes.descriptions[0].scopeAndContent" class="text-sm overflow-hidden line-clamp-2">{{ docUnit.attributes.descriptions[0].scopeAndContent }}</p>
+        <p v-if="docUnit.attributes.descriptions[0].scopeAndContent" class="text-sm overflow-hidden line-clamp-2">{{ strip(docUnit.attributes.descriptions[0].scopeAndContent) }}</p>
         <p v-if="docUnit.attributes.descriptions[0].extentAndMedium" class="capitalize text-ehri-dark font-sans opacity-80 text-xs line-clamp-1">{{docUnit.attributes.descriptions[0].extentAndMedium}}</p>
         <span v-if="docUnit.attributes.descriptions[0].language.length" :key="docUnit.attributes.localId" class="border border-ehri-wine rounded-full bg-ehri-wine text-white mr-1 px-2 font-sans text-xs">{{docUnit.attributes.descriptions[0].language}}</span>
         
@@ -42,6 +42,11 @@ export default {
 
     }
 
+    function strip(html){
+      let doc = new DOMParser().parseFromString(html, 'text/html');
+      return doc.body.textContent || "";
+    }
+
     const configData = () => {
       portalLink.value = `https://portal.ehri-project.eu/units/${docUnit.value.id}`
     }
@@ -54,7 +59,7 @@ export default {
       configData()
     })
 
-    return {docUnit,portalLink}
+    return {docUnit,portalLink, strip}
   }
 }
 </script>
