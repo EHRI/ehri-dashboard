@@ -146,6 +146,16 @@ export const fetchBGFitems = async (query, page, per_page, filters) => {
   }
 };
 
+export const fetchVWINitems = async (query, page, per_page, filters) => {
+  try {
+    let res = await EHRIServices.getVWINitems(query, page, per_page, filters);
+    return res;
+  } catch (err) {
+    // Handle Error Here
+    console.error(err);
+  }
+};
+
 export const fetchDocUnit = async (id) => {
   try {
     let res = await EHRIServices.getDocUnit(id);

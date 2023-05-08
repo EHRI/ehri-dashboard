@@ -20,6 +20,11 @@ const BGFApiClient = axios.create({
   baseURL: "https://begrenzte-flucht.ehri-project.eu/api/",
 });
 
+// VON WIEN INS NIRGENDWO REST API
+const VWINApiClient = axios.create({
+  baseURL: "https://nisko-transports.ehri-project.eu/api/",
+});
+
 // for graphql queries
 const ehriPortal = axios.create({
   baseURL: "https://portal.ehri-project.eu/api/",
@@ -248,6 +253,33 @@ export default {
     } else {
       let filterParams = ""
       return BGFApiClient.get(`search?${filterParams}`, {
+        params: {
+          q: query,
+          page: page,
+          per_page: per_page?per_page:5,
+          details: 1
+        },
+      })
+    }
+  },
+  getVWINitems(query, page, per_page, filters) {
+    if(filters){
+      const mapf = new Map(Object.entries(filters))
+      let filterParams = ""
+      mapf.forEach((k,v)=> {
+        filterParams += `&f[]=${v}:${k}`
+      })
+      return VWINApiClient.get(`search?${filterParams}`, {
+        params: {
+          q: query,
+          page: page,
+          per_page: per_page?per_page:5,
+          details: 1
+        },
+      })
+    } else {
+      let filterParams = ""
+      return VWINApiClient.get(`search?${filterParams}`, {
         params: {
           q: query,
           page: page,

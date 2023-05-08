@@ -114,6 +114,7 @@ import {
   fetchETEitems,
   fetchDRitems,
   fetchBGFitems,
+  fetchVWINitems,
 } from "../services/EHRIGetters.js";
 import LoadingComponent from "./LoadingComponent.vue";
 import DigitalEditionsFilter from "./DigitalEditionsFilter.vue";
@@ -293,6 +294,59 @@ export default {
           }
         },
       },
+      VWIN: {
+        edition: "VWIN",
+        title: "Die Nisko-Deportationen 1939",
+        description: "This edition brings together documents from several archives on the deportation and the fate of the almost 1,600 Viennese Jews who were deported to Nisko. (Edition available in German)",
+        pagination:{
+
+          total: null,
+        },
+        page: 1,
+        items: [],
+        filtered: false,
+        filteredItems: [],
+        facets: {},
+        filters: {
+          Type: "",
+          Creator: "",
+          Subject: "",
+          Person: "",
+          Organisation: "",
+          Place: ""
+        },
+        loading: false,
+        getUnitsOnScroll: () => {
+          DigitalEditionsData.value.VWIN.loading = true;
+          fetchVWINitems(searchTerm.value, DigitalEditionsData.value.VWIN.page, 10, DigitalEditionsData.value.VWIN.filters)
+          .then((newUnits)=>{
+            if(Object.values(DigitalEditionsData.value.VWIN.filters).map(v=>v).some(v=> v!=="")){
+              newUnits.data.records.forEach(newItem => {
+              if (!DigitalEditionsData.value.VWIN.filteredItems.some(item => item.id === newItem.id)) {
+                DigitalEditionsData.value.VWIN.filteredItems.push(newItem)
+              }
+            })
+            } else {
+              newUnits.data.records.forEach(newItem => {
+              if (!DigitalEditionsData.value.VWIN.items.some(item => item.id === newItem.id)) {
+                DigitalEditionsData.value.VWIN.items.push(newItem)
+              }
+            })
+              }
+          DigitalEditionsData.value.VWIN.facets = newUnits.data.facets
+          DigitalEditionsData.value.VWIN.pagination['total'] = newUnits.data.total
+          DigitalEditionsData.value.VWIN.page++
+          DigitalEditionsData.value.VWIN.loading = false
+          })
+        },
+        isFiltered: () => {
+          if(Object.entries(DigitalEditionsData.value.VWIN.filters).map(v=>v[0]).some(v=> DigitalEditionsData.value.VWIN.filters[v]!=="")){
+            return true
+          } else {
+            return false
+          }
+        },
+      },
       })
 
     const handleFilter = (val, type, edition) => {
@@ -354,6 +408,7 @@ export default {
       DigitalEditionsData.value.ETE.getUnitsOnScroll()
       DigitalEditionsData.value.DRE.getUnitsOnScroll()
       DigitalEditionsData.value.BGFE.getUnitsOnScroll()
+      DigitalEditionsData.value.VWIN.getUnitsOnScroll()
     });
 
     const loading = ref(true)
@@ -390,6 +445,7 @@ export default {
     DigitalEditionsData.value.ETE.getUnitsOnScroll()
     DigitalEditionsData.value.DRE.getUnitsOnScroll()
     DigitalEditionsData.value.BGFE.getUnitsOnScroll()
+    DigitalEditionsData.value.VWIN.getUnitsOnScroll()
 
     return {
       loading,

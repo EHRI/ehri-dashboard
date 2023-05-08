@@ -49,6 +49,8 @@ export default {
         link.value = `https://diplomatic-reports.ehri-project.eu/document/${item.value.element_texts.find(e => e.element.name == 'Identifier').text}`
       } else if (edition.value ==="BGFE"){
         link.value = `https://begrenzte-flucht.ehri-project.eu/document/${item.value.element_texts.find(e => e.element.name == 'Identifier').text}`
+      } else if (edition.value ==="VWIN"){
+        link.value = `https://nisko-transports.ehri-project.eu/document/${item.value.element_texts.find(e => e.element.name == 'Identifier').text}`
       }
     }
 
