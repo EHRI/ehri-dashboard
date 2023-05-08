@@ -7,7 +7,7 @@
 import { toRef,ref, watch } from "vue";
 import {
  fetchFacetedPortalSearch,
-  fetchBlogPosts, fetchETEitems, fetchBGFitems, fetchDRitems
+  fetchBlogPosts, fetchETEitems, fetchBGFitems, fetchDRitems,fetchVWINitems
 } from "../services/EHRIGetters";
 import LoadingComponent from "./LoadingComponent.vue";
 import DocumentBlog from "./DocumentBlog.vue";
@@ -168,7 +168,9 @@ export default {
                   //7
                 fetchDRitems(searchTerm.value, 1, 1),
                   //8
-                fetchBGFitems(searchTerm.value,1,1)
+                fetchBGFitems(searchTerm.value,1,1),
+                  // 9
+                fetchVWINitems(searchTerm.value,1,1)
               ]
           ).then(data => {
             const docUnitData = ref(data[0])
@@ -180,13 +182,14 @@ export default {
             const ETEData = ref(data[6])
             const DRData = ref(data[7])
             const BGFData = ref(data[8])
+            const VWINData = ref(data[9])
 
             getDBLength(+DBData.value.headers["x-wp-total"])
 
             // To get the sum of the count of all Editions
             const digitalEditionsTotal = ref(+ETEData.value.data.total+
                 +DRData.value.data.total +
-                +BGFData.value.data.total)
+                +BGFData.value.data.total +VWINData.value.data.total)
 
             getDigitalEditionsLength(digitalEditionsTotal.value)
 
