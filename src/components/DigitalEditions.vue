@@ -111,11 +111,9 @@
 <script>
 import { toRef, ref, watch, computed } from "vue";
 import {
-  fetchETEitems,
-  fetchDRitems,
-  fetchBGFitems,
-  fetchVWINitems,
+  fetchEditionItems,
 } from "../services/EHRIGetters.js";
+import { editionsConfig } from "../services/editionsConfig.js"
 import LoadingComponent from "./LoadingComponent.vue";
 import DigitalEditionsFilter from "./DigitalEditionsFilter.vue";
 import Chart from "./DigitalEditionsChart.vue";
@@ -137,217 +135,55 @@ export default {
     const el = ref(null)
     const filterKey = ref(0)
     const showFilterBar = ref(false);
+    const DigitalEditionsData = ref({});
 
-    const DigitalEditionsData = ref({
-      ETE: {
-        edition: "ETE",
-        title: "Early Holocaust Testimony Edition",
-        description: "This edition, for the first time, brings together samples of early testmonies of Jewish witnesses and survivors taken before the 1960s.",
-        pagination:{
+    const generateEdition = (editionKey, config) => {
+      return {
+        edition: editionKey,
+        title: config.title,
+        description: config.description,
+        pagination: {
           total: null,
         },
         page: 1,
         items: [],
         filteredItems: [],
         facets: {},
-        filters: {
-          Archive: "",
-          Creator: "",
-          Subject: "",
-          Person: "",
-          Organisation: "",
-          Place: ""
-        },
+        filters: { ...config.filters },
         loading: false,
+        apiEndpoint: config.apiEndpoint,
         getUnitsOnScroll: () => {
-          DigitalEditionsData.value.ETE.loading = true;
-          fetchETEitems(searchTerm.value, DigitalEditionsData.value.ETE.page, 10, DigitalEditionsData.value.ETE.filters)
-          .then((newUnits)=>{
-            if(Object.values(DigitalEditionsData.value.ETE.filters).map(v=>v).some(v=> v!=="")){
-              newUnits.data.records.forEach(newItem => {
-              if (!DigitalEditionsData.value.ETE.filteredItems.some(item => item.id === newItem.id)) {
-                DigitalEditionsData.value.ETE.filteredItems.push(newItem)
-              }
-            })
-            } else {
-              newUnits.data.records.forEach(newItem => {
-              if (!DigitalEditionsData.value.ETE.items.some(item => item.id === newItem.id)) {
-                DigitalEditionsData.value.ETE.items.push(newItem)
-              }
-            })
-              }
-          DigitalEditionsData.value.ETE.facets = newUnits.data.facets
-          DigitalEditionsData.value.ETE.pagination['total'] = newUnits.data.total
-          DigitalEditionsData.value.ETE.page++
-          DigitalEditionsData.value.ETE.loading = false
-          })
+          DigitalEditionsData.value[editionKey].loading = true;
+          fetchEditionItems(DigitalEditionsData.value[editionKey].apiEndpoint, searchTerm.value, DigitalEditionsData.value[editionKey].page, 10, DigitalEditionsData.value[editionKey].filters)
+              .then((newUnits) => {
+                if(Object.values(DigitalEditionsData.value[editionKey].filters).map(v=>v).some(v=> v!=="")){
+                  newUnits.data.records.forEach(newItem => {
+                    if (!DigitalEditionsData.value[editionKey].filteredItems.some(item => item.id === newItem.id)) {
+                      DigitalEditionsData.value[editionKey].filteredItems.push(newItem)
+                    }
+                  })
+                } else {
+                  newUnits.data.records.forEach(newItem => {
+                    if (!DigitalEditionsData.value[editionKey].items.some(item => item.id === newItem.id)) {
+                      DigitalEditionsData.value[editionKey].items.push(newItem)
+                    }
+                  })
+                }
+                DigitalEditionsData.value[editionKey].facets = newUnits.data.facets
+                DigitalEditionsData.value[editionKey].pagination['total'] = newUnits.data.total
+                DigitalEditionsData.value[editionKey].page++
+                DigitalEditionsData.value[editionKey].loading = false
+              });
         },
         isFiltered: () => {
-          if(Object.entries(DigitalEditionsData.value.ETE.filters).map(v=>v[0]).some(v=> DigitalEditionsData.value.ETE.filters[v]!=="")){
-            return true
-          } else {
-            return false
-          }
+          return Object.entries(DigitalEditionsData.value[editionKey].filters).some((v) => v[0] !== "" && v[1] !== "");
         },
-      },
-      DRE: {
-        edition: "DRE",
-        title: "Diplomatic Reports Edition",
-        description: "The online edition \"Diplomatic Reports\" focuses on how diplomatic staff reported the persecution and murder of European Jews during World War II.",
-        pagination:{
-          total: null,
-        },
-        page: 1,
-        items: [],
-        filtered: false,
-        filteredItems: [],
-        facets: {},
-        filters: {
-          Coverage: "",
-          Creator: "",
-          Subject: "",
-          Person: "",
-          Organisation: ""
-        },
-        loading: false,
-        getUnitsOnScroll: () => {
-          DigitalEditionsData.value.DRE.loading = true;
-          fetchDRitems(searchTerm.value, DigitalEditionsData.value.DRE.page, 10, DigitalEditionsData.value.DRE.filters)
-          .then((newUnits)=>{
-            if(Object.values(DigitalEditionsData.value.DRE.filters).map(v=>v).some(v=> v!=="")){
-              newUnits.data.records.forEach(newItem => {
-              if (!DigitalEditionsData.value.DRE.filteredItems.some(item => item.id === newItem.id)) {
-                DigitalEditionsData.value.DRE.filteredItems.push(newItem)
-              }
-            })
-            } else {
-              newUnits.data.records.forEach(newItem => {
-              if (!DigitalEditionsData.value.DRE.items.some(item => item.id === newItem.id)) {
-                DigitalEditionsData.value.DRE.items.push(newItem)
-              }
-            })
-              }
-          DigitalEditionsData.value.DRE.facets = newUnits.data.facets
-          DigitalEditionsData.value.DRE.pagination['total'] = newUnits.data.total
-          DigitalEditionsData.value.DRE.page++
-          DigitalEditionsData.value.DRE.loading = false
-          })
-        },
-        isFiltered: () => {
-          if(Object.entries(DigitalEditionsData.value.DRE.filters).map(v=>v[0]).some(v=> DigitalEditionsData.value.DRE.filters[v]!=="")){
-            return true
-          } else {
-            return false
-          }
-        }
-      },
-      BGFE: {
-        edition: "BGFE",
-        title: "BeGrenzte Flucht Edition",
-        description: "The Austrian refugees on the border with Czechoslovakia in the crisis year 1938. (Edition available in German)",
-        pagination:{
+      };
+    };
 
-          total: null,
-        },
-        page: 1,
-        items: [],
-        filtered: false,
-        filteredItems: [],
-        facets: {},
-        filters: {
-          Type: "",
-          Creator: "",
-          Subject: "",
-          Person: "",
-          Organisation: "",
-          Place: ""
-        },
-        loading: false,
-        getUnitsOnScroll: () => {
-          DigitalEditionsData.value.BGFE.loading = true;
-          fetchBGFitems(searchTerm.value, DigitalEditionsData.value.BGFE.page, 10, DigitalEditionsData.value.BGFE.filters)
-          .then((newUnits)=>{
-            if(Object.values(DigitalEditionsData.value.BGFE.filters).map(v=>v).some(v=> v!=="")){
-              newUnits.data.records.forEach(newItem => {
-              if (!DigitalEditionsData.value.BGFE.filteredItems.some(item => item.id === newItem.id)) {
-                DigitalEditionsData.value.BGFE.filteredItems.push(newItem)
-              }
-            })
-            } else {
-              newUnits.data.records.forEach(newItem => {
-              if (!DigitalEditionsData.value.BGFE.items.some(item => item.id === newItem.id)) {
-                DigitalEditionsData.value.BGFE.items.push(newItem)
-              }
-            })
-              }
-          DigitalEditionsData.value.BGFE.facets = newUnits.data.facets
-          DigitalEditionsData.value.BGFE.pagination['total'] = newUnits.data.total
-          DigitalEditionsData.value.BGFE.page++
-          DigitalEditionsData.value.BGFE.loading = false
-          })
-        },
-        isFiltered: () => {
-          if(Object.entries(DigitalEditionsData.value.BGFE.filters).map(v=>v[0]).some(v=> DigitalEditionsData.value.BGFE.filters[v]!=="")){
-            return true
-          } else {
-            return false
-          }
-        },
-      },
-      VWIN: {
-        edition: "VWIN",
-        title: "Die Nisko-Deportationen 1939",
-        description: "This edition brings together documents from several archives on the deportation and the fate of the almost 1,600 Viennese Jews who were deported to Nisko. (Edition available in German)",
-        pagination:{
-
-          total: null,
-        },
-        page: 1,
-        items: [],
-        filtered: false,
-        filteredItems: [],
-        facets: {},
-        filters: {
-          Type: "",
-          Creator: "",
-          Subject: "",
-          Person: "",
-          Organisation: "",
-          Place: ""
-        },
-        loading: false,
-        getUnitsOnScroll: () => {
-          DigitalEditionsData.value.VWIN.loading = true;
-          fetchVWINitems(searchTerm.value, DigitalEditionsData.value.VWIN.page, 10, DigitalEditionsData.value.VWIN.filters)
-          .then((newUnits)=>{
-            if(Object.values(DigitalEditionsData.value.VWIN.filters).map(v=>v).some(v=> v!=="")){
-              newUnits.data.records.forEach(newItem => {
-              if (!DigitalEditionsData.value.VWIN.filteredItems.some(item => item.id === newItem.id)) {
-                DigitalEditionsData.value.VWIN.filteredItems.push(newItem)
-              }
-            })
-            } else {
-              newUnits.data.records.forEach(newItem => {
-              if (!DigitalEditionsData.value.VWIN.items.some(item => item.id === newItem.id)) {
-                DigitalEditionsData.value.VWIN.items.push(newItem)
-              }
-            })
-              }
-          DigitalEditionsData.value.VWIN.facets = newUnits.data.facets
-          DigitalEditionsData.value.VWIN.pagination['total'] = newUnits.data.total
-          DigitalEditionsData.value.VWIN.page++
-          DigitalEditionsData.value.VWIN.loading = false
-          })
-        },
-        isFiltered: () => {
-          if(Object.entries(DigitalEditionsData.value.VWIN.filters).map(v=>v[0]).some(v=> DigitalEditionsData.value.VWIN.filters[v]!=="")){
-            return true
-          } else {
-            return false
-          }
-        },
-      },
-      })
+    for (const editionKey in editionsConfig) {
+      DigitalEditionsData.value[editionKey] = generateEdition(editionKey, editionsConfig[editionKey]);
+    }
 
     const handleFilter = (val, type, edition) => {
       if (type ==='removeAll'){
@@ -405,10 +241,11 @@ export default {
     };
 
     watch(searchTerm, () => {
-      DigitalEditionsData.value.ETE.getUnitsOnScroll()
-      DigitalEditionsData.value.DRE.getUnitsOnScroll()
-      DigitalEditionsData.value.BGFE.getUnitsOnScroll()
-      DigitalEditionsData.value.VWIN.getUnitsOnScroll()
+      for (const editionKey in DigitalEditionsData.value) {
+        if (DigitalEditionsData.value.hasOwnProperty(editionKey)) {
+          DigitalEditionsData.value[editionKey].getUnitsOnScroll();
+        }
+      }
     });
 
     const loading = ref(true)
@@ -442,10 +279,12 @@ export default {
       },
       { distance: 300 }
     )
-    DigitalEditionsData.value.ETE.getUnitsOnScroll()
-    DigitalEditionsData.value.DRE.getUnitsOnScroll()
-    DigitalEditionsData.value.BGFE.getUnitsOnScroll()
-    DigitalEditionsData.value.VWIN.getUnitsOnScroll()
+
+    for (const editionKey in DigitalEditionsData.value) {
+      if (DigitalEditionsData.value.hasOwnProperty(editionKey)) {
+        DigitalEditionsData.value[editionKey].getUnitsOnScroll();
+      }
+    }
 
     return {
       loading,

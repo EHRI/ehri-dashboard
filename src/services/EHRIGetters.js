@@ -116,6 +116,16 @@ export const fetchDBCategories = async () => {
   }
 };
 
+export const fetchEditionItems = async (endpoint, query, page, per_page, filters) => {
+  try {
+    let res = await EHRIServices.getEditionItems(endpoint, query, page, per_page, filters);
+    return res;
+  } catch (err) {
+    // Handle Error Here
+    console.error(err);
+  }
+};
+
 export const fetchETEitems = async (query, page, per_page, filters) => {
   try {
     let res = await EHRIServices.getETEitems(query, page, per_page, filters);
