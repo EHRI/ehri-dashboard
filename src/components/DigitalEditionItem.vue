@@ -2,7 +2,7 @@
   <li>
     <div class="grid grid-cols-9 gap-4 max-h-32 h-32 flex items-center">
       <div class="col-span-9 lg:col-span-6">
-        <h6 v-if="title" class="text-ehri-wine font-sans font-semibold text-sm mb-0 pb-0 overflow-hidden line-clamp-1"><a :href="link" target="_blank" rel="noopener">{{title}}</a></h6>
+        <h6 v-if="title" class="text-ehri-wine font-sans font-semibold text-sm mb-0 pb-0 overflow-hidden line-clamp-1"><a v-if="link" :href="link" target="_blank" rel="noopener">{{title}}</a></h6>
         <h6 v-if="source" class="text-ehri-dark font-sans font-medium opacity-90 text-sm line-clamp-1">{{source}}</h6>
         <span v-if="date" class="lg:hidden text-xs text-ehri-dark font-sans opacity-90" >{{date}}</span>
         <p v-if="source" class="text-sm overflow-hidden line-clamp-2">{{description}}</p>
@@ -34,6 +34,9 @@ export default {
     const source = ref()
     const description = ref()
     const languages = ref([])
+    const url = ref()
+    const regex = /^(https:\/\/[^/]+)\/api\//
+
     const configData = () => {
       languages.value = []
       title.value = item.value.element_texts.find(e => e.element.name == "Title")?item.value.element_texts.find(e => e.element.name == "Title").text: "Title not Found"
@@ -43,14 +46,10 @@ export default {
       item.value.element_texts.filter(e=>e.element.name == "Language")? item.value.element_texts.filter(e=>e.element.name == "Language").forEach(lang => {
         languages.value.push(lang.text)
       }) : null
-      if(edition.value === "ETE"){
-        link.value = `https://early-testimony.ehri-project.eu/document/${item.value.element_texts.find(e => e.element.name == 'Identifier').text}`
-      } else if (edition.value === "DRE"){
-        link.value = `https://diplomatic-reports.ehri-project.eu/document/${item.value.element_texts.find(e => e.element.name == 'Identifier').text}`
-      } else if (edition.value ==="BGFE"){
-        link.value = `https://begrenzte-flucht.ehri-project.eu/document/${item.value.element_texts.find(e => e.element.name == 'Identifier').text}`
-      } else if (edition.value ==="VWIN"){
-        link.value = `https://nisko-transports.ehri-project.eu/document/${item.value.element_texts.find(e => e.element.name == 'Identifier').text}`
+      url.value = item.value.url
+      const match = url.value.match(regex);
+      if (match) {
+        link.value = `${match[1]}/document/${item.value.element_texts.find(e => e.element.name == 'Identifier').text}`;
       }
     }
 
