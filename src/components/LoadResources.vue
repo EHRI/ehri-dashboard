@@ -50,10 +50,14 @@ export default {
         getCount: () => {
           DigitalEditionsData.value[editionKey].loading = true;
           fetchEditionItems(DigitalEditionsData.value[editionKey].apiEndpoint, searchTerm.value, 1, 1)
-              .then((newUnits) => {
-                DigitalEditionsData.value[editionKey].pagination['total'] = newUnits.data.total
-                DigitalEditionsData.value[editionKey].loading = false
-              });
+            .then((newUnits) => {
+              DigitalEditionsData.value[editionKey].pagination['total'] = newUnits.data.total
+              DigitalEditionsData.value[editionKey].loading = false
+            })
+            .catch((error) => {
+                console.error(`Error fetching data for the ${editionKey}:`, error);
+                DigitalEditionsData.value[editionKey].loading = false;
+            });
         },
       };
     };

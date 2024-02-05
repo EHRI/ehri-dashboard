@@ -98,7 +98,7 @@
             class="w-1/4 xl:w-full mx-auto pb-2 z-0"
                 :key="chartKey"
                 v-if="selectedEdition.isFiltered()?selectedEdition['filteredItems'].length:selectedEdition['items'].length"
-                :dataset="selectedEdition['facets']['Subject']">
+                :dataset="selectedEdition['facets']['Subject']?selectedEdition['facets']['Subject']:selectedEdition['facets']['Klíčová slova']">
             </Chart>
             </div>
           </div>
@@ -173,6 +173,10 @@ export default {
                 DigitalEditionsData.value[editionKey].pagination['total'] = newUnits.data.total
                 DigitalEditionsData.value[editionKey].page++
                 DigitalEditionsData.value[editionKey].loading = false
+              })
+              .catch((error) => {
+                console.error(`Error fetching data for the ${editionKey}:`, error);
+                DigitalEditionsData.value[editionKey].loading = false;
               });
         },
         isFiltered: () => {
