@@ -7,8 +7,9 @@
 import { toRef,ref, watch } from "vue";
 import {
  fetchFacetedPortalSearch,
-  fetchBlogPosts, fetchETEitems, fetchBGFitems, fetchDRitems,fetchVWINitems
+  fetchBlogPosts, fetchEditionItems,
 } from "../services/EHRIGetters";
+import { editionsConfig } from "../services/editionsConfig.js"
 import LoadingComponent from "./LoadingComponent.vue";
 import DocumentBlog from "./DocumentBlog.vue";
 import DigitalEditions from "./DigitalEditions.vue";
@@ -36,7 +37,34 @@ export default {
       portalSearchLoading: true,
       digitalEditionsLoading: true
     });
+    const DigitalEditionsData = ref({});
 
+    const generateEdition = (editionKey, config) => {
+      return {
+        edition: editionKey,
+        pagination: {
+          total: null,
+        },
+        loading: false,
+        apiEndpoint: config.apiEndpoint,
+        getCount: () => {
+          DigitalEditionsData.value[editionKey].loading = true;
+          fetchEditionItems(DigitalEditionsData.value[editionKey].apiEndpoint, searchTerm.value, 1, 1)
+            .then((newUnits) => {
+              DigitalEditionsData.value[editionKey].pagination['total'] = newUnits.data.total
+              DigitalEditionsData.value[editionKey].loading = false
+            })
+            .catch((error) => {
+                console.error(`Error fetching data for the ${editionKey}:`, error);
+                DigitalEditionsData.value[editionKey].loading = false;
+            });
+        },
+      };
+    };
+
+    for (const editionKey in editionsConfig) {
+      DigitalEditionsData.value[editionKey] = generateEdition(editionKey, editionsConfig[editionKey]);
+    }
 
     const resultStats = ref({
       DigitalEditions: {
@@ -128,6 +156,11 @@ export default {
     };
 
     const loadData = async () => {
+      for (const editionKey in DigitalEditionsData.value) {
+        if (DigitalEditionsData.value.hasOwnProperty(editionKey)) {
+          DigitalEditionsData.value[editionKey].getCount();
+        }
+      }
       Object.keys(badgesLoading.value).every(
           (key) => (badgesLoading.value[key] = true)
       );
@@ -162,15 +195,6 @@ export default {
                 //Get DB results
                   //5
                 fetchBlogPosts(searchTerm.value,1,1),
-                //Get Digital Editions results
-                  //6
-                fetchETEitems(searchTerm.value, 1,1),
-                  //7
-                fetchDRitems(searchTerm.value, 1, 1),
-                  //8
-                fetchBGFitems(searchTerm.value,1,1),
-                  // 9
-                fetchVWINitems(searchTerm.value,1,1)
               ]
           ).then(data => {
             const docUnitData = ref(data[0])
@@ -179,19 +203,15 @@ export default {
             const histAgentData = ref(data[3])
             const vocabData = ref(data[4])
             const DBData = ref(data[5])
-            const ETEData = ref(data[6])
-            const DRData = ref(data[7])
-            const BGFData = ref(data[8])
-            const VWINData = ref(data[9])
+            const editionsTotal = ref(0)
 
             getDBLength(+DBData.value.headers["x-wp-total"])
 
-            // To get the sum of the count of all Editions
-            const digitalEditionsTotal = ref(+ETEData.value.data.total+
-                +DRData.value.data.total +
-                +BGFData.value.data.total +VWINData.value.data.total)
+            for (const editionKey in DigitalEditionsData.value) {
+              editionsTotal.value += +DigitalEditionsData.value[editionKey].pagination['total']
+            }
 
-            getDigitalEditionsLength(digitalEditionsTotal.value)
+            getDigitalEditionsLength(editionsTotal.value)
 
             var vocabStats = vocabData.value.data.meta.facets.find(h => {
               return h.key == "holderName"

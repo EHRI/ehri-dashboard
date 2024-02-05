@@ -1,5 +1,5 @@
 <template>
-  <DoughnutChart :chartData="data" :options="options"></DoughnutChart>
+  <DoughnutChart v-if="data" :chartData="data" :options="options"></DoughnutChart>
 </template>
 
 <script>
@@ -38,18 +38,22 @@ setup(props) {
       }
   )
 
-  subjects.value = Object.keys(dataset.value).map(c => dataset.value[c])
-  data.value = {
-    labels: Object.keys(dataset.value).map(c => c),
-    datasets: [
-      {
-        label: "Archival Descriptions2",
-        backgroundColor: ['#330033','#731744', '#B7A6B5', '#827280', '#380900', '#683611','#50424F', '#B7A6B5', '#003939', '#006A68', '#AE4249', '#DB774A', '#F5B651', '#F9F871',],
-        data: subjects.value,
-      },
-    ],
-  };
+  if (dataset.value){
+    subjects.value = Object.keys(dataset.value).map(c => dataset.value[c])
 
+    data.value = {
+      labels: Object.keys(dataset.value).map(c => c),
+      datasets: [
+        {
+          label: "Archival Descriptions2",
+          backgroundColor: ['#330033','#731744', '#B7A6B5', '#827280', '#380900', '#683611','#50424F', '#B7A6B5', '#003939', '#006A68', '#AE4249', '#DB774A', '#F5B651', '#F9F871',],
+          data: subjects.value,
+        },
+      ],
+    };
+  } else {
+    data.value = null
+  }
 
   return { data, options,};
 },
