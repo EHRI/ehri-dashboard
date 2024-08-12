@@ -3,7 +3,7 @@
     <button @click="openPopup" class="fixed text-ehri-dark hover:text-ehri-wine">
     <span class="material-symbols-outlined align-top">
     open_in_new
-    </span> Open in new window
+    </span> {{$t('openInNewWindow')}}
   </button>
   <div v-if="viz.length" v-html="viz" class="w-screen"></div>
   </div>

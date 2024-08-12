@@ -1,9 +1,9 @@
 <template>
-  <div class="grid grid-cols-12 lg:grid-cols-8 gap-2 lg:gap-4 h-screen max-w-full overflow-hidden">
+  <div v-if="total" class="grid grid-cols-12 lg:grid-cols-8 gap-2 lg:gap-4 h-screen max-w-full overflow-hidden">
     <!-- SMALL SCREEN UI -->
     <div v-if="!isLargeScreen && !expandFocusedItem" class="lg:hidden h-screen col-span-11 shadow-xl bg-white overflow-hidden px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ holder }}</h4>
-      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1? $t(`portalTypes.EHRIKeywords}`,2):$t(`portalTypes.EHRIKeywords}`,1) }}</h4>
+      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{  $t(`portalTypesDesc.EHRIKeywords`) }}</p>
       <div class="h-full flex flex-col" >
         <ul ref="el" class="h-5/6 overflow-y-auto">
           <VocabularyItemCard v-for="item of items" :key="item.id" :vocObject="item" :selectedItem="selectedVocConceptId" @idChange="(id)=> changeVocConceptId(id)"></VocabularyItemCard>
@@ -28,17 +28,17 @@
           >
             close
           </span>
-          Close
+          {{  $t(`close`)}}
         </span>
-        <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
+        <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">{{  $t(`itemDetails`)}}:</h4>
         <EHRITermDetails v-if="selectedVocConceptId" 
           :selectedVocConceptID="selectedVocConceptId"
       ></EHRITermDetails>
       </div>
     </div>
     <div v-if="isLargeScreen" class="hidden lg:block shadow-xl bg-white lg:h-3/4 lg:col-span-3 overflow-hidden px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ holder }}</h4>
-      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span>  {{ total>1? $t('portalTypes.EHRIKeywords',2):$t('portalTypes.EHRIKeywords',1) }}</h4>
+      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{  $t(`portalTypesDesc.EHRIKeywords`) }}</p>
       <div class="h-4/6 flex flex-col" >
         <ul ref="el" class="overflow-y-scroll">
           <VocabularyItemCard v-for="item of items" :key="item.id" :vocObject="item" :selectedItem="selectedVocConceptId" @idChange="(id)=> changeVocConceptId(id)"></VocabularyItemCard>
@@ -49,12 +49,15 @@
       </div>
     </div>
     <div v-if="isLargeScreen" class="hidden lg:block lg:col-span-5 bg-white shadow-xl h-3/4 pb-7 px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">{{  $t(`itemDetails`)}}</h4>
       <EHRITermDetails v-if="selectedVocConceptId" 
           :selectedVocConceptID="selectedVocConceptId"
       ></EHRITermDetails>
     </div>
-</div>
+  </div>
+  <div v-else>
+    <loading-component class="m-5"></loading-component>
+  </div>
 </template>
 
 <script>

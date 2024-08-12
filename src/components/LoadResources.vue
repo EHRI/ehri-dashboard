@@ -14,6 +14,7 @@ import LoadingComponent from "./LoadingComponent.vue";
 import DocumentBlog from "./DocumentBlog.vue";
 import DigitalEditions from "./DigitalEditions.vue";
 import ResourceTabs from "./ResourceTabs.vue";
+import {useI18n} from "vue-i18n";
 
 export default {
   name: "LoadResources",
@@ -37,6 +38,8 @@ export default {
       portalSearchLoading: true,
       digitalEditionsLoading: true
     });
+    const { t, locale, availableLocales } = useI18n();
+
     const DigitalEditionsData = ref({});
 
     const generateEdition = (editionKey, config) => {
@@ -70,21 +73,18 @@ export default {
       DigitalEditions: {
         component: 'DigitalEditions',
         value: 0,
-        title: 'Online Editions',
-        description: 'The EHRI Online Editions consist of annotated digitized documents from various sources gathered around a theme, and are a new way of presenting digital archival content.'
+        title: 'editions',
       }
         ,
       portalSearchLength: {
         component: "EHRIPortalResource",
         value: 0,
-        title: 'EHRI Portal',
-        description: 'The EHRI portal offers access to information on Holocaust-related archival material held in institutions across Europe and beyond.'
+        title: 'portal',
       },
       DBLength: {
         component: 'EHRIDocumentBlog',
         value: 0,
-        title: 'Document Blog',
-        description: 'The EHRI Document Blog is a space to share ideas about Holocaust-related archival documents, and their presentation and interpretation using digital tools.'
+        title: 'blog',
       }
     })
 
@@ -283,6 +283,9 @@ export default {
         }
       }
     })
+
+
+
 
 
     return {

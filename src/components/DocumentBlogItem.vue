@@ -28,10 +28,10 @@ import moment from 'moment'
 export default {
   name: "DocumentBlogItem",
   props: {
-    BlogPost: Object
+    blogPost: Object
   },
   setup(props) {
-    const post = toRef(props, 'BlogPost')
+    const post = toRef(props, 'blogPost')
     const title = ref("")
     const authors = ref([])
     const pubDate = ref("")

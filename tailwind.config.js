@@ -14,7 +14,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['"Noto Sans"', 'sans-serif'],
-        serif: ['"Barlow"', 'serif'],
+        serif: ['"Barlow"', 'sans-serif'],
       },
       container: {
         padding: "2rem",
@@ -34,7 +34,4 @@ module.exports = {
     variants: {
       extend: {},
     },
-    plugins: [
-      require('@tailwindcss/line-clamp'),
-    ],
   }

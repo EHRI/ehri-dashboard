@@ -6,7 +6,7 @@
           >
             filter_alt
           </span>
-          Filter Results
+          {{$t('filters')}}
       </span>
       <span v-else class="xl:hidden mr-2 cursor-pointer">
               <span
@@ -14,44 +14,44 @@
           >
             close
           </span>
-          Close
+          {{$t('close')}}
       </span>
   </span>
   <div v-if="selectedCategory && !showFilterBar" class="xl:hidden pt-1 px-2">
-          <h5 class="font-sans text-sm text-ehri-purple block font-medium">Active Filters:</h5>
-            <span class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs"
-              @click="handleFilter('')">{{DBCategories.find(c=>c.id==selectedCategory).name.substring(0,20)+"..."}}</span>
-            <div class="flex items-center mt-1 cursor-pointer text-ehri-purple text-sm" id="remove-filter" @click="() => handleFilter('')">
-              <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
-                close
-              </span>
-              <span>Remove All Filters</span>
-            </div>
-        </div>
-  <div class="grid grid-cols-12 sm:grid-cols-8 gap-8 h-screen max-w-full"  v-if="!loadingCategories && pagination.total > 0">
+    <h5 class="font-sans text-sm text-ehri-purple block font-medium">{{$t('activeFilters')}}:</h5>
+      <span class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs"
+        @click="handleFilter('')">{{DBCategories.find(c=>c.id==selectedCategory).name.substring(0,20)+"..."}}</span>
+      <div class="flex items-center mt-1 cursor-pointer text-ehri-purple text-sm" id="remove-filter" @click="() => handleFilter('')">
+        <span class="material-symbols-outlined pointer-events-none text-xs">
+          close
+        </span>
+        <span>{{$t('removeAllFilters')}}</span>
+      </div>
+  </div>
+  <div class="grid grid-cols-12 sm:grid-cols-8 gap-8 h-screen max-w-full"  v-if="paginationReady && pagination.total">
     <div class="h-screen col-span-12 bg-white shadow-xl xl:h-3/4 xl:col-span-6 overflow-hidden px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing 
-        <span v-if="pagination.total" class="font-serif font-extrabold">{{pagination.total}}</span>
-        <LoadingComponent v-else></LoadingComponent> <span>{{ pagination.total>1?' results':' result' }}</span>
-        from the EHRI Document Blog</h4>
-      <p class="font-sans text-ehri-dark text-sm">The EHRI Document Blog is a space to share ideas about Holocaust-related archival documents, and their presentation and interpretation using digital tools.</p>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">
+        <span class="font-serif font-extrabold">{{pagination.total + " "}}</span> 
+        <span> {{ pagination.total>1 ? $t('resultsFrom', 2)  + " ": $t('resultsFrom', 1)  + " "}} </span> 
+        <span class="font-serif font-extrabold"> {{ $t('dataSource.blog') }} </span>
+      </h4>
       <hr class="text-ehri-dark border-4 shadow-md mt-3">
       <div class="pr-1 pt-3 pb-0 h-full">
         <div class="h-5/6">
           <div class="h-full flex flex-col">
             <div class="text-end text-xs text-ehri-dark">
-                <span class="font-medium">Ranking: </span>
+                <span class="font-medium">{{ $t('ranking') }}: </span>
                 <span v-if="orderDesc" class="cursor-pointer"
                       @click="orderDesc = !orderDesc"
-                >&bigtriangledown;Newer to Older</span>
+                >&bigtriangledown;{{ $t('newToOld') }}</span>
                 <span v-else class="cursor-pointer"
                       @click="orderDesc = !orderDesc">
-              &bigtriangleup;Older to Newer
+              &bigtriangleup;{{ $t('oldToNew') }}
               </span>
             </div>
             <ul ref="el" class="h-5/6 overflow-y-auto">
               <li v-for="(post,i) in posts" :key="i">
-                <DocumentBlogItem :BlogPost="post"></DocumentBlogItem>
+                <DocumentBlogItem :blogPost="post"></DocumentBlogItem>
               </li>
               <li v-if="loading" class="w-full flex justify-center items-center py-2">
                 <LoadingComponent></LoadingComponent>
@@ -63,8 +63,8 @@
     </div>
       <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-y-auto', 'text-white','xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4',]">
         <div class="px-4 pt-4">
-          <h4 class="uppercase font-serif font-bold text xl:text-ehri-dark">Filters</h4>
-          <p class="font-sans text-sm font-light mb-4">Choose one or more filters</p>
+          <h4 class="capitalize font-serif font-bold text xl:text-ehri-dark">{{ $t('filters') }}</h4>
+          <p class="font-sans text-sm font-light mb-4">{{ $t('chooseFilters') }}</p>
           <div v-if="!loadingCategories" class="overflow-y-auto h-3/4">
             <DocumentBlogFilter :key="filterKey" :filterName="'Categories'" :filterArray="DBCategories"
                             @filterChange="(e) => {
@@ -76,14 +76,14 @@
         </div>
         <div v-if="selectedCategory" class="px-4 pt-4">
           <hr class="py-1 xl:text-ehri-dark">
-          <h5 class="font-serif text-sm font-extralight">Active Filters:</h5>
+          <h5 class="font-serif text-sm font-extralight">{{ $t('activeFilters') }}: </h5>
             <span class="block mt-1 w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs"
               @click="handleFilter('')">{{DBCategories.find(c=>c.id==selectedCategory).name.substring(0,20)+"..."}}</span>
             <div class="flex items-center my-2 cursor-pointer xl:text-ehri-wine text-sm" id="remove-filter" @click="() => handleFilter('')">
-              <span class="material-symbols-outlined pointer-events-none w-3 h-3 text-xs mr-1">
+              <span class="material-symbols-outlined pointer-events-none text-xs">
                 close
               </span>
-              <span>Remove All Filters</span>
+              <span>{{ $t('removeAllFilters') }}</span>
             </div>
         </div>
       </div>
@@ -114,6 +114,7 @@ export default {
       total: 0,
       totalPages: 1
     });
+    const paginationReady = ref(false); 
     const loading = ref(true);
     const DBCategories = ref([])
     const orderDesc = ref(true)
@@ -125,19 +126,14 @@ export default {
 
     const getCategories = async () => {
       loadingCategories.value = true
-      await fetchDBCategories()
-      .then(res => {
-        if(res.length){
-          DBCategories.value = res.map(c => {
-            return Object(
-          {"id": c.id,
-                  "name": c.name,
-                  "count": c.count
-                }
-            )
-          })
-        }
-      })
+      const res = await fetchDBCategories();
+      if (res.length) {
+        DBCategories.value = res.map(c => ({
+          id: c.id,
+          name: c.name,
+          count: c.count
+        }));
+      }
     }
 
     const getUnitsOnScroll = async () => {
@@ -154,6 +150,7 @@ export default {
         }
         pagination.value["total"] = +newUnits.headers['x-wp-total']
         pagination.value["totalPages"]= +newUnits.headers['x-wp-totalpages']
+        paginationReady.value = true
         if (posts.value.length < pagination.value["total"]){
           page.value++;
         }
@@ -195,6 +192,7 @@ export default {
 
 
     const handleFilter = async (e) => {
+      paginationReady.value = false
       posts.value = [];
       e !== "Categories" ? (selectedCategory.value = +e) : (selectedCategory.value = "");
       page.value = 1;
@@ -231,6 +229,7 @@ export default {
 
 
     watch(searchTerm, () => {
+      paginationReady.value = false
       getCategories()
         .then(() => {
           DBCategories.value.forEach(c => {
@@ -256,7 +255,7 @@ export default {
     })
 
 
-    return { handleFilter, filterKey, loadingCategories,el,selectedCategory, posts, page, pagination, loading, DBCategories, orderDesc, showFilterBar, toggleFilterBar, filterBarClass };
+    return { paginationReady, handleFilter, filterKey, loadingCategories,el,selectedCategory, posts, page, pagination, loading, DBCategories, orderDesc, showFilterBar, toggleFilterBar, filterBarClass };
   },
 };
 </script>

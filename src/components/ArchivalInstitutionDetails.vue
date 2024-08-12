@@ -22,7 +22,7 @@
             </span>
             <a
               :href="webpage" target="_blank" rel="noopener"
-              class="text-ehri-wine"
+              class="text-ehri-wine line-clamp-1"
             >{{ webpage }}
             </a>
         </span>
@@ -41,48 +41,54 @@
   <div class="flex mt-3 mb-1 grid-flow-col auto-cols-max justify-center divide-x-2 divide-ehri-light-grey">
       <button v-if="descInLang.history"
               :class="tabClasses('history')"
+              class="capitalize"
               @click="showDesc('history')">
         <span>
-          History
+          {{$t('history')}}
         </span>
       </button>
       <button v-if="descInLang.geoculturalContext"
               :class="tabClasses('context')"
+              class="capitalize"
               @click="showDesc('context')">
         <span>
-          Context
+          {{$t('context')}}
         </span>
       </button>
       <button v-if="descInLang.holdings"
               :class="tabClasses('holdings')"
+              class="capitalize"
               @click="showDesc('holdings')">
         <span>
-          Holdings
+          {{$t('holdings')}}
         </span>
       </button>
       <button v-if="descInLang.findingAids"
             :class="tabClasses('findingAids')"
+            class="capitalize"
               @click="showDesc('findingAids')">
         <span>
-          Finding Aids
+          {{$t('findingAids')}}
         </span>
       </button>
       <button v-if="descInLang.conditions"
               :class="tabClasses('conditions')"
+              class="capitalize"
               @click="showDesc('conditions')">
         <span>
-          Conditions of Access
+          {{$t('conditionsOfAccess')}}
         </span>
       </button>
       <button v-if="descInLang.openingTimes"
               :class="tabClasses('times')"
+              class="capitalize"
               @click="showDesc('times')">
         <span>
-          Opening Times
+          {{$t('openingTimes')}}
         </span>
       </button>
     </div>
-    <div v-if="clickedDesc && clickedDesc.length>1" class="flex-1 h-56 max-h-56 p-1 mt-4 overflow-y-auto border-2 border-ehri-light-grey">
+    <div v-if="clickedDesc && clickedDesc.length>1" class="flex-1 h-44 max-h-44 p-1 mt-4 overflow-y-auto border-2 border-ehri-light-grey">
         <!-- Show history content if clickedDesc is 'history' -->
         <div v-if="descInLang.history && clickedDesc === 'history'">
           <p class="text-base font-sans text-ehri-dark ">{{ descInLang.history }}</p>
@@ -109,15 +115,15 @@
                 class="mr-1 material-symbols-outlined w-5 h-5 text-ehri-dark align-top"
               >
               link
-        </span> Total Linked Items on the Portal: {{relatedItemsTotal}}</span>
+        </span> {{$t('totalLinkedItemsPortal')}} {{relatedItemsTotal}}</span>
         <span class="inline-block cursor-pointer border-2 text-ehri-wine font-semibold py-1 px-2 rounded border-ehri-wine hover:bg-ehri-wine hover:bg-opacity-10 " v-if="portalLink" >
-      <a :href="portalLink" class="uppercase" target="_blank" rel="noopener">
+      <a :href="portalLink" class="capitalize" target="_blank" rel="noopener">
         <span
                 class="mx-1 material-symbols-outlined w-5 h-5 align-top"
               >
               database
         </span>
-        Go to EHRI Portal
+        {{$t('goToEHRIPortal')}}
         </a>
       </span>
       </div>

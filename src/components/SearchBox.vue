@@ -22,6 +22,7 @@
 <script>
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import {useI18n} from "vue-i18n";
 
 export default {
   name: "SearchBox",
@@ -36,14 +37,16 @@ export default {
 
     const isFocused = ref(false)
 
+    const { t, locale, availableLocales } = useI18n();
+
     const placeholderText = computed(() => {
       if (isFocused.value) {
-          return 'Search across EHRI'
+          return t('searchPlaceholder')
       } else {
           if (routeQuery.value) {
               return routeQuery.value
           } else {
-              return 'Search across EHRI'
+              return t('searchPlaceholder')
           }
       }
   })

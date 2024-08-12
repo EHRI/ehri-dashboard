@@ -10,7 +10,7 @@
               >
                 pin_drop
           </span>
-          Map
+          {{ $t('map') }}
         </span>
       </button>
       <button v-if="vocObject.broader.length||vocObject.narrower.length"
@@ -22,7 +22,7 @@
               >
                 account_tree
           </span>
-          Camp Hierarchy
+          {{ $t('campHierarchy') }}
         </span>
       </button>
     </div>
@@ -37,47 +37,6 @@
     </div>
   </div>
 </template>
-
-<!-- <template>
-<div class="flex flex-col flex-grow">
-  <div class="flex mt-2">
-    <button v-if="lat&&long"
-            :class="historyTabClasses"
-            @click="showDesc('map')">
-      <span class="block mt-1 line-clamp-1">
-        <span
-              class="material-symbols-outlined w-6 h-6 align-top"
-            >
-              pin_drop
-        </span>
-        Map
-      </span>
-    </button>
-    <button v-if="vocObject.broader.length||vocObject.narrower.length"
-            :class="contextTabClasses"
-            @click="showDesc('hierarchy')">
-      <span class="block mt-1 line-clamp-1">
-        <span
-              class="material-symbols-outlined w-6 h-6 align-top"
-            >
-              account_tree
-        </span>
-        Camp Hierarchy
-      </span>
-    </button>
-  </div>
-  <div class="flex flex-col flex-grow h-80 max-h-80 mt-4 overflow-auto border-2 border-ehri-light-grey">
-    <div v-if="clickedDesc === 'map'" >
-      <VocabularyItemDetailsMap  :lat="lat" :long="long" :voc-object="vocObject"/>
-    </div>
-    <div v-if="clickedDesc === 'hierarchy'">
-        <CampHierarchyViz v-if="broaderCamp"  :camp-complex-object="broaderCamp" :selected-camp-object="vocObject"></CampHierarchyViz>
-        <CampHierarchyViz v-else-if="vocObject.narrower && vocObject.narrower.length" :selected-camp-object="vocObject"></CampHierarchyViz>
-    </div>
-
-  </div>
-</div>
-</template> -->
 
 <script>
 import { toRef, ref, onMounted, computed, watch } from "vue";

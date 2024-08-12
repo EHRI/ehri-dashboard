@@ -3,9 +3,10 @@
 </template>
 
 <script>
-import { defineComponent, ref, toRef } from 'vue';
+import { defineComponent, ref, toRef, watch } from 'vue';
 import { DoughnutChart } from 'vue-chart-3';
 import { Chart, registerables } from "chart.js";
+import { useI18n } from 'vue-i18n';
 
 Chart.register(...registerables);
 
@@ -17,6 +18,7 @@ props:
       dataset: Object
     },
 setup(props) {
+  const {t, locale} = useI18n()
   const dataset = toRef(props,'dataset')
   const subjects = ref()
   const data = ref()
@@ -28,7 +30,7 @@ setup(props) {
         plugins: {
           title: {
             display: true,
-            text: 'Subject Distribution',
+            text: t('subjectDistribution'),
           },
           legend: {
             display: false
@@ -54,6 +56,10 @@ setup(props) {
   } else {
     data.value = null
   }
+
+  watch(() => locale.value, () => {
+      options.value.plugins.title.text = t('subjectDistribution');
+    });
 
   return { data, options,};
 },

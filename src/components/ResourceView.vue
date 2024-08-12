@@ -1,5 +1,5 @@
 <template>
-  <div class="col-span-8 h-screen" v-if="component">
+  <div class="col-span-10 h-screen" v-if="component">
     <component :is="component" v-bind="{'searchTerm': searchTerm,}"></component>
   </div>
 </template>
