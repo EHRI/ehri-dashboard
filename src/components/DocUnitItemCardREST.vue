@@ -11,8 +11,8 @@
       </div>
       <div class="hidden md:block col-span-2 col-start-7">
         <a :href="portalLink" target="_blank" rel="noopener">
-          <div class="text-center border border-2 rounded border-ehri-wine hover:bg-ehri-wine hover:text-white font-serif font-bold text-sm text-ehri-wine py-2 px-1 w-3/4">
-            GO TO EHRI PORTAL
+          <div class="text-center capitalize border border-2 rounded border-ehri-wine hover:bg-ehri-wine hover:text-white font-serif font-bold text-sm text-ehri-wine py-2 px-1 w-3/4">
+            {{ $t('goToEHRIPortal') }}
           </div>
         </a>
       </div>

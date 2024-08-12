@@ -2,36 +2,40 @@
   <div class="flex flex-col h-fit h-max-full">
     <div v-if="countryDetails && !loading" class="flex flex-col h-fit h-max-full">
       <div class="flex flex-col flex-1 h-fit h-max-full">
-        <h5 class="font-sans font-semibold text-ehri-wine line-clamp-1">{{countryDetails.name}}</h5>
+        <h5 class="font-sans font-semibold text-ehri-wine line-clamp-1">{{getLocalizedCountryName(countryDetails.identifier.toUpperCase())}}</h5>
       </div>
 <div class="flex-1">
   <div class="flex mt-3 mb-1 grid-flow-col auto-cols-max justify-center divide-x-2 divide-ehri-light-grey">
       <button v-if="countryDetails.history"
               :class="tabClasses('history')"
+              class="capitalize"
               @click="showDesc('history')">
         <span>
-          History
+          {{ $t('history') }}
         </span>
       </button>
       <button v-if="countryDetails.summary"
               :class="tabClasses('summary')"
+              class="capitalize"
               @click="showDesc('summary')">
         <span>
-          Summary
+          {{ $t('summary') }}
         </span>
       </button>
       <button v-if="countryDetails.extensive"
               :class="tabClasses('extensive')"
+              class="capitalize"
               @click="showDesc('extensive')">
         <span>
-          Extensive Summary
+          {{ $t('extensiveSummary') }}
         </span>
       </button>
       <button v-if="countryDetails.situation"
-            :class="tabClasses('situation')"
+              :class="tabClasses('situation')"
+              class="capitalize"
               @click="showDesc('situation')">
         <span>
-          Archival Situation
+          {{ $t('archivalSituation') }}
         </span>
       </button>
     </div>
@@ -57,15 +61,15 @@
                 class="mr-1 material-symbols-outlined w-5 h-5 text-ehri-dark align-top"
               >
               link
-        </span> Total Linked Archival Institutions on the Portal: {{relatedItemsTotal}}</span>
+        </span> {{ $t('totalLinkedArchInst') }}: {{relatedItemsTotal}}</span>
         <span class="inline-block cursor-pointer border-2 text-ehri-wine font-semibold py-1 px-2 rounded border-ehri-wine hover:bg-ehri-wine hover:bg-opacity-10 " v-if="portalLink" >
-      <a :href="portalLink" class="uppercase" target="_blank" rel="noopener">
+      <a :href="portalLink" class="capitalize" target="_blank" rel="noopener">
         <span
                 class="mx-1 material-symbols-outlined w-5 h-5 align-top"
               >
               database
         </span>
-        Go to EHRI Portal
+        {{ $t('goToEHRIPortal') }}
         </a>
       </span>
       </div>
@@ -78,6 +82,7 @@
 import {toRef, ref, watch} from "vue";
 import {fetchFacetedPortalSearch } from "../services/EHRIGetters.js";
 import LoadingComponent from "./LoadingComponent.vue";
+import { useI18n } from "vue-i18n";
 
 export default {
   name: "CountryReportDetails",
@@ -86,6 +91,7 @@ export default {
     selectedCountryID: String
   },
   setup(props) {
+    const {t, locale} = useI18n()
     const countryID = toRef(props,"selectedCountryID")
     const countryDetails = ref()
     const clickedDesc = ref("")
@@ -107,6 +113,11 @@ export default {
     const tabClasses = (d) => {
       // Dynamically apply Tailwind CSS classes to context tab based on clickedDesc value
       return ['px-1.5 pb-1 text-xs font-medium text-ehri-dark hover:text-ehri-wine', clickedDesc.value === d ? 'text-ehri-wine' : 'text-ehri-dark']
+    };
+
+    const getLocalizedCountryName = (iso2Code) => {
+      const displayNames = new Intl.DisplayNames([locale.value], { type: "region" });
+      return displayNames.of(iso2Code);
     };
     
 
@@ -142,7 +153,7 @@ export default {
               }
           )
     })
-    return {relatedItemsTotal, portalLink, countryDetails, showDesc, clickedDesc, loading, tabClasses}
+    return {getLocalizedCountryName, relatedItemsTotal, portalLink, countryDetails, showDesc, clickedDesc, loading, tabClasses}
   }
 }
 </script>

@@ -30,14 +30,16 @@
             <!-- Conditionally show history tab if biographicalHistory exists -->
             <button v-if="descInLang.biographicalHistory"
                     :class="historyTabClasses"
+                    class="capitalize"
                     @click="showDesc('history')">
-              History
+              {{ $t('history') }}
             </button>
             <!-- Conditionally show context tab if generalContext exists -->
             <button v-if="descInLang.generalContext"
                     :class="contextTabClasses"
+                    class="capitalize"
                     @click="showDesc('context')">
-              Context
+                    {{ $t('context') }}
             </button>
           </div>
           <div v-if="descInLang.biographicalHistory||descInLang.generalContext" class="mt-2 h-56 h-max-56 flex-1 p-3 overflow-auto border-2 border-ehri-light-grey">
@@ -58,15 +60,15 @@
                 class="mr-1 material-symbols-outlined w-5 h-5 text-ehri-dark align-top"
               >
               link
-        </span> Total Linked Items on the Portal: {{relatedItemsTotal}}</span>
+        </span> {{ $t('totalLinkedItemsPortal') }}: {{relatedItemsTotal}}</span>
         <span class="inline-block cursor-pointer border-2 text-ehri-wine font-semibold py-1 px-2 rounded border-ehri-wine hover:bg-ehri-wine hover:bg-opacity-10 " v-if="portalLink" >
-      <a :href="portalLink" class="uppercase" target="_blank" rel="noopener">
+      <a :href="portalLink" class="capitalize" target="_blank" rel="noopener">
         <span
                 class="mx-1 material-symbols-outlined w-5 h-5 align-top"
               >
               database
         </span>
-        Go to EHRI Portal
+        {{ $t('goToEHRIPortal') }}
         </a>
       </span>
       </div>
@@ -75,7 +77,7 @@
 </template>
 
 <script>
-import {toRef, ref, watch, computed} from "vue";
+import {toRef, ref, watch, computed, capitalize} from "vue";
 import {fetchHistAgentInfo, fetchRelatedItems} from "../services/EHRIGetters.js";
 
 export default {

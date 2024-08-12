@@ -23,15 +23,15 @@
                 class="mr-1 material-symbols-outlined w-5 h-5 text-ehri-dark align-top"
               >
               link
-        </span> Total Linked Items on the Portal: {{relatedItemsTotal}}</span>
+        </span>{{ $t('totalLinkedItemsPortal') }}: {{relatedItemsTotal}}</span>
         <span class="inline-block cursor-pointer border-2 text-ehri-wine font-semibold py-1 px-2 rounded border-ehri-wine hover:bg-ehri-wine hover:bg-opacity-10 " v-if="portalLink" >
-      <a :href="portalLink" class="uppercase" target="_blank" rel="noopener">
+      <a :href="portalLink" class="capitalize" target="_blank" rel="noopener">
         <span
                 class="mx-1 material-symbols-outlined w-5 h-5 align-top"
               >
               database
         </span>
-        Go to EHRI Portal
+        {{ $t('goToEHRIPortal') }}
         </a>
       </span>
       </div>
@@ -40,54 +40,12 @@
   </div>
 </template>
 
-<!-- <template>
-  <div class="flex flex-col h-fit h-max-full">
-    <div v-if="descInLang && !loading" class="flex flex-col h-fit h-max-full">
-      <div class="flex flex-col flex-1 h-fit h-max-full">
-        <h5 v-if="descInLang" class="font-sans font-semibold text-ehri-wine line-clamp-1">{{descInLang.name}}</h5>
-        <h6 v-if="otherNames.length"
-            class="text-ehri-dark font-sans font-medium opacity-90 text-sm line-clamp-1">{{
-          otherNames.join(', ')
-        }}</h6>
-        <div v-if="langs&&langs.length >1">
-          <select @change="(e)=>changeLang(e.target.value)" class="font-sans text-xs p-1 font-light border border-[1.5px] border-ehri-dark w-full" size="1" :aria-label="'Choose Language'">
-            <option selected disabled>{{ languageNames.of(descInLang.languageCode) }}</option>
-            <option v-for="description in langs" :key="description" :value="description">{{languageNames.of(description)}}</option>
-          </select>
-        </div>
-      </div>
-      <VocabularyItemDetailsViz class="h-80" v-if="(vocObject.broader.length||vocObject.narrower.length)||
-(lat&&long)"
-                  :voc-object="vocObject" :long="long" :lat="lat">
-      </VocabularyItemDetailsViz>
-      <div class="flex flex-col overflow-hidden items-start mt-auto">
-        <span class="mt-2 text-sm font-medium text-ehri-dark block mb-2">
-          <span
-                class="mr-1 material-symbols-outlined w-5 h-5 text-ehri-dark align-top"
-              >
-              link
-        </span> Total Linked Items on the Portal: {{relatedItemsTotal}}</span>
-        <span class="inline-block cursor-pointer border-2 text-ehri-wine font-semibold py-1 px-2 rounded border-ehri-wine hover:bg-ehri-wine hover:bg-opacity-10 " v-if="portalLink" >
-      <a :href="portalLink" class="uppercase" target="_blank" rel="noopener">
-        <span
-                class="mx-1 material-symbols-outlined w-5 h-5 align-top"
-              >
-              database
-        </span>
-        Go to EHRI Portal
-        </a>
-      </span>
-      </div>
-    </div>
-    <LoadingComponent v-else></LoadingComponent>
-</div>
-</template> -->
-
 <script>
 import {toRef, ref, watch } from "vue";
 import {fetchCvocConceptInfo, fetchRelatedItems} from "../services/EHRIGetters.js";
 import LoadingComponent from "./LoadingComponent.vue";
 import VocabularyItemDetailsViz from "./VocabularyItemDetailsViz.vue";
+import { useI18n } from "vue-i18n";
 
 
 export default {
@@ -97,9 +55,10 @@ export default {
     selectedVocConceptID: String,
   },
   setup(props) {
+    const { t,locale} = useI18n();
     const conceptID = toRef(props,"selectedVocConceptID")
     const conceptDetails = ref()
-    const languageNames = new Intl.DisplayNames(['en'], {type: 'language'});
+    const languageNames = ref({})
     const descInLang = ref()
     const otherNames = ref([])
     const changeLang = (lang) => {
@@ -118,6 +77,12 @@ export default {
     }
     const loading = ref(true)
 
+    const getLangNames = (locale) => {
+      languageNames.value = new Intl.DisplayNames([locale], { type: "language" });
+    }
+
+    getLangNames(locale.value)
+
     configData()
 
     fetchCvocConceptInfo(conceptID.value)
@@ -131,8 +96,9 @@ export default {
             long.value = vocObject.value.longitude
             conceptDetails.value = vocObject.value.descriptions
             langs.value = conceptDetails.value.map(l => l.languageCode)
-            descInLang.value = descInLang.value = conceptDetails.value.find(d => d.languageCode==="eng")?
-                          conceptDetails.value.find(d => d.languageCode==="eng"):conceptDetails.value[0]
+            descInLang.value = conceptDetails.value.find(d => d.languageCode === locale.value) ||
+              conceptDetails.value.find(d => d.languageCode === "eng") ||
+              conceptDetails.value[0];
             descInLang.value.altLabel.length?
                 descInLang.value.altLabel.forEach(n =>otherNames.value.push(n)):null
             descInLang.value.hiddenLabel?
@@ -158,8 +124,9 @@ export default {
                       long.value = vocObject.value.longitude
                       conceptDetails.value = vocObject.value.descriptions
                       langs.value = conceptDetails.value.map(l => l.languageCode)
-                      descInLang.value = conceptDetails.value.find(d => d.languageCode==="eng")?
-                          conceptDetails.value.find(d => d.languageCode==="eng"):conceptDetails.value[0]
+                      descInLang.value = conceptDetails.value.find(d => d.languageCode === locale.value) ||
+                        conceptDetails.value.find(d => d.languageCode === "eng") ||
+                        conceptDetails.value[0];
                       descInLang.value.altLabel.length?
                           descInLang.value.altLabel.forEach(n =>otherNames.value.push(n)):null
                       descInLang.value.hiddenLabel?
@@ -171,7 +138,13 @@ export default {
               }
           )
     })
-    return {langs,long, loading,lat, vocObject,relatedItemsTotal,portalLink, languageNames, changeLang, descInLang, otherNames}
+    watch(
+        () => locale.value,
+        (newLocale) => {
+          getLangNames(newLocale)
+        }
+    );
+    return {langs,long,  loading,lat, vocObject,relatedItemsTotal,portalLink, languageNames, changeLang, descInLang, otherNames}
   }
 }
 </script>

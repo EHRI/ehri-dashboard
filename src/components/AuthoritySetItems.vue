@@ -1,9 +1,9 @@
 <template>
-  <div class="grid grid-cols-12 xl:grid-cols-8 gap-2 xl:gap-4 h-screen max-w-full overflow-hidden">
+  <div v-if="total" class="grid grid-cols-12 xl:grid-cols-8 gap-2 xl:gap-4 h-screen max-w-full overflow-hidden">
     <!-- SMALL SCREEN UI -->
     <div v-if="!isLargeScreen && !expandFocusedItem" class="xl:hidden h-screen col-span-11 shadow-xl bg-white overflow-hidden px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ holder }}</h4>
-      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1?$t(`portalTypes.${holder.replace(/\s/g, '')}`,2):$t(`portalTypes.${holder.replace(/\s/g, '')}`,1) }}</h4>
+      <p class="font-sans text-ehri-dark text-xs pb-4">{{ $t(`portalTypesDesc.${holder.replace(/\s/g, '')}`)}}</p>
       <div class="h-full flex flex-col" >
         <ul ref="el" class="h-5/6 overflow-scroll">
           <AuthoritySetItemCard v-for="item of items" :key="item.id" :AuthObject="item" :selectedItem="selectedAuthID" @idChange="(id)=>changeAuthID(id)"></AuthoritySetItemCard>
@@ -28,17 +28,17 @@
           >
             close
           </span>
-          Close
+          {{ $t('close') }}
         </span>
-        <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
+        <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">{{ $t('itemDetails') }}</h4>
         <AuthoritySetDetails v-if="selectedAuthID" :selectedAuthID="selectedAuthID"></AuthoritySetDetails>
       </div>
     </div>
 
     <!-- LARGE SCREEN UI -->
     <div v-if="isLargeScreen" class="hidden xl:block shadow-xl bg-white xl:h-3/4 xl:col-span-3 overflow-hidden px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ holder }}</h4>
-      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span>  {{ total>1?$t(`portalTypes.${holder.replace(/\s/g, '')}`,2):$t(`portalTypes.${holder.replace(/\s/g, '')}`,1) }}</h4>
+      <p class="font-sans text-ehri-dark text-xs pb-4">{{  $t(`portalTypesDesc.${holder.replace(/\s/g, '')}`) }}</p>
       <div class="h-4/6 flex flex-col" >
         <ul ref="el" class="overflow-y-scroll">
           <AuthoritySetItemCard v-for="item of items" :key="item.id" :AuthObject="item" :selectedItem="selectedAuthID" @idChange="(id)=>changeAuthID(id)"></AuthoritySetItemCard>
@@ -49,9 +49,12 @@
       </div>
     </div>
     <div class="hidden xl:block xl:col-span-5 bg-white shadow-xl h-3/4 pb-7 px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">{{ $t('itemDetails') }} </h4>
       <AuthoritySetDetails v-if="selectedAuthID" :selectedAuthID="selectedAuthID"></AuthoritySetDetails>
     </div>
+  </div>
+  <div v-else>
+    <loading-component class="m-5"></loading-component>
   </div>
 </template>
 
@@ -62,6 +65,7 @@ import AuthoritySetDetails from "./AuthoritySetDetails.vue";
 import { useInfiniteScroll } from '@vueuse/core'
 import {fetchFacetedPortalSearch} from "../services/EHRIGetters";
 import LoadingComponent from "./LoadingComponent.vue";
+
 
 export default {
   name: "AuthoritySetItems",
@@ -77,7 +81,6 @@ export default {
     const CBQuery = toRef(props, 'searchTerm')
     const holderFilter = toRef(props, 'holder')
     const typeFilter = toRef(props, 'type')
-    const desc = toRef(props, 'desc')
     const page = ref(1)
     const el = ref(null)
     const filters = ref(new Object())
@@ -94,6 +97,7 @@ export default {
       screenWidth.value = window.innerWidth;
     });
 
+    
     holderFilter.value ? filters.value['holder']=encodeURIComponent(holderFilter.value) : null
     typeFilter.value ? filters.value['type']= typeFilter.value: null
 
@@ -114,6 +118,7 @@ export default {
       selectedAuthID.value = id
       expandFocusedItem.value = true
     }
+
 
     const getUnitsOnScroll = async () => {
       loading.value = true;
@@ -144,7 +149,7 @@ export default {
       })
     })
 
-    return { isLargeScreen, expandFocusedItem, focusedItemClass, toggleFocusedItemClass, total, items, el, selectedAuthID, changeAuthID, loading, desc };
+    return { isLargeScreen, expandFocusedItem, focusedItemClass, toggleFocusedItemClass, total, items, el, selectedAuthID, changeAuthID, loading};
   },
 };
 </script>

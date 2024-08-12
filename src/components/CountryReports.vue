@@ -6,7 +6,7 @@
         >
           filter_alt
         </span>
-        Filter Results
+        {{ $t('filters') }}
     </span>
     <span v-else class="xl:hidden mr-2 cursor-pointer">
             <span
@@ -14,7 +14,7 @@
         >
           close
         </span>
-        Close
+        {{ $t('close') }}
     </span>
 </span>
 <div class="grid grid-cols-12 sm:grid-cols-8 gap-2 gap-4 h-screen max-w-full">
@@ -25,10 +25,8 @@
   <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-y-auto', 'text-white','xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4']">
     <div class="" :key="typeFilterKey">
       <div class="px-4 pt-4">
-        <h4 class="uppercase font-serif font-bold text xl:text-ehri-dark">Filters</h4>
-        <p class="font-sans text-sm font-light mb-4">Choose one or more filters</p>
         <EHRIPortalTypeFilter
-        filter-name="ITEM TYPE"
+        filter-name="itemType"
         :key="typeFilterKey"
         :selectedType="'Country'"
         :filter-array="sortedTypes"

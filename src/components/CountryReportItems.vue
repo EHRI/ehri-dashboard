@@ -1,9 +1,9 @@
 <template>
-  <div class="grid grid-cols-12 xl:grid-cols-8 gap-2 xl:gap-4 h-screen max-w-full">
+  <div v-if="total" class="grid grid-cols-12 xl:grid-cols-8 gap-2 xl:gap-4 h-screen max-w-full">
     <!-- SMALL SCREEN UI -->
     <div v-if="!isLargeScreen && !expandFocusedItem" class="xl:hidden h-screen col-span-11 shadow-xl bg-white overflow-hidden px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ total>1?'Country Reports':'Country Report' }}</h4>
-      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1?$t('portalTypes.Country',2):$t('portalTypes.Country',1)}}</h4>
+      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ $t('portalTypesDesc.Country') }}</p>
       <div class="h-5/6 flex flex-col" >
         <ul ref="el" class="h-5/6 overflow-y-auto">
           <CountryReportItemCard v-for="item of items" :key="item.id" :countryObject="item" :selectedItem="selectedCountryID" @idChange="(id)=>changeCountryID(id)"></CountryReportItemCard>
@@ -28,9 +28,9 @@
           >
             close
           </span>
-          Close
+          {{$t('close')}}
         </span>
-        <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
+        <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">{{$t('itemDetails')}}:</h4>
         <CountryReportDetails v-if="selectedCountryID" :selectedCountryID="selectedCountryID"></CountryReportDetails>
       </div>
     </div>
@@ -38,8 +38,8 @@
 
     <!-- LARGE SCREEN UI -->
     <div v-if="isLargeScreen" class="hidden xl:block shadow-xl bg-white xl:h-3/4 xl:col-span-3 overflow-hidden px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Showing <span class="font-serif font-extrabold">{{total}}</span> {{ total>1?'Country Reports':'Country Report' }}</h4>
-      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ desc }}</p>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1?$t('portalTypes.Country',2):$t('portalTypes.Country',1) }}</h4>
+      <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ $t('portalTypesDesc.Country')  }}</p>
       <div class="h-5/6 max-h-5/6 flex flex-col" >
         <ul ref="el" class="hidden xl:block h-4/6 overflow-y-auto">
           <CountryReportItemCard v-for="item of items" :key="item.id" :countryObject="item" :selectedItem="selectedCountryID" @idChange="(id)=>changeCountryID(id)"></CountryReportItemCard>
@@ -50,9 +50,12 @@
       </div>
     </div>
     <div class="hidden xl:block xl:col-span-5 bg-white shadow-xl h-3/4 pb-7 px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">Item Details:</h4>
+      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">{{ $t('itemDetails') }}</h4>
       <CountryReportDetails v-if="selectedCountryID" :selectedCountryID="selectedCountryID"></CountryReportDetails>
     </div>
+  </div>
+  <div v-else>
+    <loading-component class="m-5"></loading-component>
   </div>
 </template>
 
