@@ -37,7 +37,7 @@ export default {
 
     const isFocused = ref(false)
 
-    const { t, locale, availableLocales } = useI18n();
+    const { t } = useI18n();
 
     const placeholderText = computed(() => {
       if (isFocused.value) {
