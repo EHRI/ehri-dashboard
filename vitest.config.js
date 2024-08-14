@@ -9,7 +9,6 @@ export default defineConfig({
     environment: 'jsdom',
     alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
-        // '@/assets': '/src/__mocks__/fileMock.js'  // mock all assets in this directory
     }
   }
 })
