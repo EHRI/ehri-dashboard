@@ -40,7 +40,7 @@
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span>  {{ total>1? $t('portalTypes.EHRIKeywords',2):$t('portalTypes.EHRIKeywords',1) }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{  $t(`portalTypesDesc.EHRIKeywords`) }}</p>
       <div class="h-4/6 flex flex-col" >
-        <ul ref="el" class="overflow-y-scroll">
+        <ul ref="el" class="overflow-y-scroll h-full">
           <VocabularyItemCard v-for="item of items" :key="item.id" :vocObject="item" :selectedItem="selectedVocConceptId" @idChange="(id)=> changeVocConceptId(id)"></VocabularyItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
             <LoadingComponent></LoadingComponent>

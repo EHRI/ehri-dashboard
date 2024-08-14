@@ -41,7 +41,7 @@
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1?$t(`portalTypes.${type}`,2): $t(`portalTypes.${type}`,1)}}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ $t(`portalTypesDesc.${type}`)}}</p>
       <div class="h-4/6 flex flex-col" >
-        <ul ref="el" class="hidden xl:block overflow-y-auto">
+        <ul ref="el" class="h-5/6 hidden xl:block overflow-y-auto">
           <ArchivalInstitutionItemCard v-for="item of items" :key="item.id" :repoObject="item" :selectedItem="selectedRepoID" @idChange="(id)=>changeRepoID(id)"></ArchivalInstitutionItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
             <LoadingComponent></LoadingComponent>

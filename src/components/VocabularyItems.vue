@@ -40,7 +40,7 @@
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{   total>1? $t(`portalTypes.${holder.replace(/\s/g, '')}`,2):$t(`portalTypes.${holder.replace(/\s/g, '')}`,1) }}</h4>
       <p class="font-sans text-ehri-dark text-xs pb-4">{{  $t(`portalTypesDesc.${holder.replace(/\s/g, '')}`) }}</p>
       <div class="h-4/6 flex flex-col" >
-        <ul ref="el" class="overflow-y-auto">
+        <ul ref="el" class="overflow-y-auto h-4/6">
           <VocabularyItemCard v-for="item of items" :key="item.id" :vocObject="item" :selectedItem="selectedVocConceptId" @idChange="(id)=> changeVocConceptId(id)"></VocabularyItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
             <LoadingComponent></LoadingComponent>
