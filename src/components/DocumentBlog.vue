@@ -164,7 +164,10 @@ export default {
     useInfiniteScroll(
       el,
       async () => {
-        await getUnitsOnScroll();
+        if (posts.value.length < pagination.value["total"]) 
+        {
+          await getUnitsOnScroll();
+        }
       },
       { distance: 300 }
     );

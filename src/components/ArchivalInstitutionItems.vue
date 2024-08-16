@@ -40,8 +40,8 @@
     <div v-if="isLargeScreen" class="hidden xl:block shadow-xl bg-white xl:h-3/4 xl:col-span-3 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1?$t(`portalTypes.${type}`,2): $t(`portalTypes.${type}`,1)}}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ $t(`portalTypesDesc.${type}`)}}</p>
-      <div class="h-4/6 flex flex-col" >
-        <ul ref="el" class="h-5/6 hidden xl:block overflow-y-auto">
+      <div class="h-5/6 flex flex-col" >
+        <ul ref="el" class="h-full hidden xl:block overflow-y-auto">
           <ArchivalInstitutionItemCard v-for="item of items" :key="item.id" :repoObject="item" :selectedItem="selectedRepoID" @idChange="(id)=>changeRepoID(id)"></ArchivalInstitutionItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
             <LoadingComponent></LoadingComponent>
@@ -132,14 +132,18 @@ export default {
         }
       })
       total.value = newUnits.data.meta.total
-      page.value++
+      if (items.value.length < total.value){
+        page.value++
+      }
       loading.value = false;
     }
 
     useInfiniteScroll(
       el,
       async () => {
+        if (items.value.length < total.value){
         await getUnitsOnScroll()
+        }
       },
       { distance: 300 }
     )

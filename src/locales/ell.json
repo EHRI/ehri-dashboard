@@ -21,7 +21,6 @@
     },
     "displaying": "Εμφάνιση",
     "resultsFrom": "αποτέλεσμα από | αποτελέσματα από",
-    "archDescriptions": "Αρχειακές Περιγραφές",
     "filters": "Φίλτρα",
     "close": "Κλείσιμο",
     "chooseFilters": "Επιλέξτε ένα ή περισσότερα φίλτρα",
@@ -81,6 +80,6 @@
     "before1913": "Πριν το 1913",
     "after1946": "Μετά το 1946",
     "onlineEdition": "Ψηφιακή Έκδοση",
-    "subjectDistribution": "Κατανομή Θεμάτων",
+    "topSubjects": "Κορυφαία Θέματα",
     "allBlogCategories": "Όλες"
 }

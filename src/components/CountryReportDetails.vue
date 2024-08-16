@@ -111,7 +111,7 @@ export default {
     configData()
 
     const tabClasses = (d) => {
-      // Dynamically apply Tailwind CSS classes to context tab based on clickedDesc value
+      // Dynamically apply Tailwind CSS classes
       return ['px-1.5 pb-1 text-xs font-medium text-ehri-dark hover:text-ehri-wine', clickedDesc.value === d ? 'text-ehri-wine' : 'text-ehri-dark']
     };
 

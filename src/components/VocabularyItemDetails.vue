@@ -15,7 +15,7 @@
         </div>
       </div>
       <VocabularyItemDetailsViz class="h-72" v-if="(vocObject.broader.length||vocObject.narrower.length)|| (lat&&long)"
-                  :voc-object="vocObject" :long="long" :lat="lat">
+                  :voc-object="vocObject" :long="long" :lat="lat" :lang="descInLang.languageCode">
       </VocabularyItemDetailsViz>
       <div class="flex flex-col flex-1 w-fit">
         <span class="mt-2 text-sm font-medium text-ehri-dark block mb-2">

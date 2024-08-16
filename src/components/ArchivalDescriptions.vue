@@ -43,7 +43,7 @@
         <div v-if="!loadingDocUnits" class="h-full">
           <div :key="listKey" class="h-full">
               <Suspense>
-                <DocUnitItemsRest :search-term="docUnitQuery" :holder="holderFilter" :country="countryFilter" :language="langFilter" :dates="dateFilter"></DocUnitItemsRest>
+                <DocUnitItemsRest :search-term="docUnitQuery" :holder="holderFilter" :country="countryFilter" :language="langFilter" :dates="dateFilter" :total="pagination.total"></DocUnitItemsRest>
                 <template #fallback>
                   <LoadingComponent></LoadingComponent>
                 </template>
@@ -151,7 +151,6 @@ export default {
     const listKey = ref(0)
     const languageNames = new Intl.DisplayNames(['en'], {type: 'language'});
     const countryNames = new Intl.DisplayNames(['en'], {type: 'region'});
-    const docUnits = ref([]);
     const loadingDocUnits = ref(true);
     const page = ref(1)
     const pagination = ref({
@@ -207,7 +206,6 @@ export default {
       fetchFacetedDocUnits(docUnitQuery.value, 1, null, 1)
           .then((res) => {
             configStats(res.data.meta.facets)
-            docUnits.value = res.data.data
             page.value = 1
             configPagination(res.data.meta)
             loadingDocUnits.value = false
@@ -222,7 +220,6 @@ export default {
       fetchFacetedDocUnits(docUnitQuery.value, 1, null, 1)
           .then((res) => {
             configStats(res.data.meta.facets)
-            docUnits.value = res.data.data
             page.value = 1
             configPagination(res.data.meta)
             loadingDocUnits.value = false
@@ -276,7 +273,6 @@ export default {
       countryCounts.value.clear()
       langCounts.value.clear()
       dateCounts.value.clear()
-      docUnits.value = []
       filteredUnits.value = []
       filterValue.value = ""
       filtered.value = false
@@ -317,7 +313,6 @@ export default {
 
     getAllDocUnits(1).then(
         (res) => {
-          docUnits.value = res
           if(pagination.value['total']===0){
             loadingDocUnits.value = false
           } else {
@@ -369,7 +364,6 @@ export default {
       filteredUnits,
       pagination,
       loadingDocUnits,
-      docUnits,
       page,
       holderFilter,
       langFilter,

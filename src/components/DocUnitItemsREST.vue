@@ -25,7 +25,8 @@ export default {
     holder: String,
     country: String,
     language: String,
-    dates: String
+    dates: String,
+    total: Number,
   },
   setup(props) {
     const items = ref([]);
@@ -34,6 +35,7 @@ export default {
     const countryFilter = toRef(props, "country");
     const langFilter = toRef(props, "language");
     const dateFilter = toRef(props, "dates");
+    const totalItems = toRef(props, "total")
     const page = ref(1);
     const el = ref(null);
     const filters = ref(new Object());
@@ -48,13 +50,17 @@ export default {
       loading.value = true;
       const newUnits = await fetchFacetedDocUnits(docUnitQuery.value, page.value, filters.value, 10);
       items.value.push(...newUnits.data.data);
-      page.value++;
+      if (items.value.length < totalItems.value){
+        page.value++;
+      }
       loading.value = false;
     };
     useInfiniteScroll(
       el,
       async () => {
-        await getUnitsOnScroll();
+        if (items.value.length < totalItems.value){
+          await getUnitsOnScroll();
+        }
       },
       { distance: 300 }
     );

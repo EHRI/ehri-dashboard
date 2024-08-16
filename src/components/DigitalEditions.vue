@@ -70,7 +70,7 @@
           class="w-1/4 xl:w-full mx-auto pb-2 z-0"
               :key="chartKey"
               v-if="selectedEdition.isFiltered()?selectedEdition['filteredItems'].length:selectedEdition['items'].length"
-              :dataset="selectedEdition['facets']['Subject']?selectedEdition['facets']['Subject']:selectedEdition['facets']['Klíčová slova']">
+              :dataset="selectedEdition['facets']['Subject']?selectedEdition['facets']['Subject']:selectedEdition['facets']['Klíčová slova']?selectedEdition['facets']['Klíčová slova']:null">
         </Chart>
         <h4 class="capitalize font-serif font-bold text xl:text-ehri-dark">{{ $t('filters') }}</h4>
         <p v-if="!selectedEdition.isFiltered()" class="font-sans text-sm font-light mb-4">{{ $t('chooseFilters') }}</p>
@@ -155,32 +155,35 @@ export default {
         filters: { ...config.filters },
         loading: false,
         apiEndpoint: config.apiEndpoint,
-        getUnitsOnScroll: () => {
+        getUnitsOnScroll: async ()=> {
+        try {
           DigitalEditionsData.value[editionKey].loading = true;
-          fetchEditionItems(DigitalEditionsData.value[editionKey].apiEndpoint, searchTerm.value, DigitalEditionsData.value[editionKey].page, 10, DigitalEditionsData.value[editionKey].filters)
-              .then((newUnits) => {
-                if(Object.values(DigitalEditionsData.value[editionKey].filters).map(v=>v).some(v=> v!=="")){
-                  newUnits.data.records.forEach(newItem => {
-                    if (!DigitalEditionsData.value[editionKey].filteredItems.some(item => item.id === newItem.id)) {
-                      DigitalEditionsData.value[editionKey].filteredItems.push(newItem)
-                    }
-                  })
-                } else {
-                  newUnits.data.records.forEach(newItem => {
-                    if (!DigitalEditionsData.value[editionKey].items.some(item => item.id === newItem.id)) {
-                      DigitalEditionsData.value[editionKey].items.push(newItem)
-                    }
-                  })
-                }
-                DigitalEditionsData.value[editionKey].facets = newUnits.data.facets
-                DigitalEditionsData.value[editionKey].pagination['total'] = newUnits.data.total
-                DigitalEditionsData.value[editionKey].page++
-                DigitalEditionsData.value[editionKey].loading = false
-              })
-              .catch((error) => {
-                console.error(`Error fetching data for the ${editionKey}:`, error);
-                DigitalEditionsData.value[editionKey].loading = false;
-              });
+          const newUnits = await fetchEditionItems(
+            DigitalEditionsData.value[editionKey].apiEndpoint,
+            searchTerm.value,
+            DigitalEditionsData.value[editionKey].page,
+            10,
+            DigitalEditionsData.value[editionKey].filters
+          );
+          
+          const targetItems = Object.values(DigitalEditionsData.value[editionKey].filters).some(v => v !== "")
+            ? DigitalEditionsData.value[editionKey].filteredItems
+            : DigitalEditionsData.value[editionKey].items;
+
+          newUnits.data.records.forEach(newItem => {
+            if (!targetItems.some(item => item.id === newItem.id)) {
+              targetItems.push(newItem);
+            }
+          });
+
+          DigitalEditionsData.value[editionKey].facets = newUnits.data.facets;
+          DigitalEditionsData.value[editionKey].pagination.total = newUnits.data.total;
+          DigitalEditionsData.value[editionKey].page++;
+        } catch (error) {
+          console.error(`Error fetching data for the ${editionKey}:`, error);
+        } finally {
+          DigitalEditionsData.value[editionKey].loading = false;
+        }
         },
         isFiltered: () => {
           return Object.entries(DigitalEditionsData.value[editionKey].filters).some((v) => v[0] !== "" && v[1] !== "");
@@ -250,7 +253,7 @@ export default {
     watch(searchTerm, () => {
       for (const editionKey in DigitalEditionsData.value) {
         if (DigitalEditionsData.value.hasOwnProperty(editionKey)) {
-          DigitalEditionsData.value[editionKey].getUnitsOnScroll();
+          DigitalEditionsData.value[editionKey].getUnitsOnScroll()
         }
       }
     });
@@ -282,9 +285,11 @@ export default {
     useInfiniteScroll(
       el,
       async () => {
-        await selectedEdition.value.getUnitsOnScroll()
+        if (selectedEdition.value.page <= Math.ceil(selectedEdition.value.pagination.total / 10)) {
+          await selectedEdition.value.getUnitsOnScroll()
+        }
       },
-      { distance: 300 }
+      { distance: 10 }
     )
 
     for (const editionKey in DigitalEditionsData.value) {

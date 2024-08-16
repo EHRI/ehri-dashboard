@@ -39,7 +39,7 @@
     <div v-if="isLargeScreen" class="hidden lg:block shadow-xl bg-white lg:h-3/4 lg:col-span-3 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span>  {{ total>1? $t('portalTypes.EHRIKeywords',2):$t('portalTypes.EHRIKeywords',1) }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{  $t(`portalTypesDesc.EHRIKeywords`) }}</p>
-      <div class="h-4/6 flex flex-col" >
+      <div class="h-5/6 flex flex-col" >
         <ul ref="el" class="overflow-y-scroll h-full">
           <VocabularyItemCard v-for="item of items" :key="item.id" :vocObject="item" :selectedItem="selectedVocConceptId" @idChange="(id)=> changeVocConceptId(id)"></VocabularyItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
@@ -132,14 +132,18 @@ export default {
           }
         })
         total.value = newUnits.data.meta.total
-        page.value++
+        if (items.value.length < total.value){
+          page.value++
+        }
         loading.value = false;
       }
 
       useInfiniteScroll(
         el,
         async () => {
-          await getUnitsOnScroll()
+          if (items.value.length < total.value){
+            await getUnitsOnScroll()
+          }
         },
         { distance: 300 }
       )
