@@ -63,6 +63,7 @@ import SearchBox from "@/components/SearchBox.vue"
 import LoadResources from "./LoadResources.vue";
 import { useMainStore } from "../stores/mainStore";
 import {useI18n} from "vue-i18n";
+import { useRoute, useRouter } from "vue-router";
 
 export default {
   name: "MainSidebar",
@@ -71,7 +72,7 @@ export default {
     const key = ref(1);
     const showSidebar = ref(false);
     const { t, locale, availableLocales } = useI18n();
-
+    const router = useRouter();
     const languageNames = ref({})
     const store = useMainStore();
 
@@ -82,8 +83,7 @@ export default {
     getLangNames(locale.value)
 
     const handle = () => {
-      store.setSearchTerm("")
-      key.value += 1
+      router.push({ name: 'home', params: { query: "" } }); // Update the route
     };
 
 
