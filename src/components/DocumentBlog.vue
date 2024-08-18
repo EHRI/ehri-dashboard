@@ -61,34 +61,34 @@
       </div>
     </div>
     </div>
-      <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-y-auto', 'text-white','xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4',]">
-        <div class="px-4 pt-4">
-          <h4 class="capitalize font-serif font-bold text xl:text-ehri-dark">{{ $t('filters') }}</h4>
-          <p class="font-sans text-sm font-light mb-4">{{ $t('chooseFilters') }}</p>
-          <div v-if="!loadingCategories" class="overflow-y-auto h-3/4">
-            <DocumentBlogFilter :key="filterKey" :filterName="'Categories'" :filterArray="DBCategories"
-                            @filterChange="(e) => {
-                handleFilter(e)
-              }"
-        >
-          </DocumentBlogFilter>
-          </div>
-        </div>
-        <div v-if="selectedCategory" class="px-4 pt-4">
-          <hr class="py-1 xl:text-ehri-dark">
-          <h5 class="font-serif text-sm font-extralight">{{ $t('activeFilters') }}: </h5>
-            <span class="block mt-1 w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs"
-              @click="handleFilter('')">{{DBCategories.find(c=>c.id==selectedCategory).name.substring(0,20)+"..."}}</span>
-            <div class="flex items-center my-2 cursor-pointer xl:text-ehri-wine text-sm" id="remove-filter" @click="() => handleFilter('')">
-              <span class="material-symbols-outlined pointer-events-none text-xs">
-                close
-              </span>
-              <span>{{ $t('removeAllFilters') }}</span>
-            </div>
+    <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-y-auto', 'text-white','xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4',]">
+      <div class="px-4 pt-4">
+        <h4 class="capitalize font-serif font-bold text xl:text-ehri-dark">{{ $t('filters') }}</h4>
+        <p class="font-sans text-sm font-light mb-4">{{ $t('chooseFilters') }}</p>
+        <div v-if="!loadingCategories" class="overflow-y-auto h-3/4">
+          <DocumentBlogFilter :key="filterKey" :filterName="'Categories'" :filterArray="DBCategories"
+                          @filterChange="(e) => {
+              handleFilter(e)
+            }"
+      >
+        </DocumentBlogFilter>
         </div>
       </div>
+      <div v-if="selectedCategory" class="px-4 pt-4">
+        <hr class="py-1 xl:text-ehri-dark">
+        <h5 class="font-serif text-sm font-extralight">{{ $t('activeFilters') }}: </h5>
+          <span class="block mt-1 w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs"
+            @click="handleFilter('')">{{DBCategories.find(c=>c.id==selectedCategory).name.substring(0,20)+"..."}}</span>
+          <div class="flex items-center my-2 cursor-pointer xl:text-ehri-wine text-sm" id="remove-filter" @click="() => handleFilter('')">
+            <span class="material-symbols-outlined pointer-events-none text-xs">
+              close
+            </span>
+            <span>{{ $t('removeAllFilters') }}</span>
+          </div>
+      </div>
     </div>
-    <LoadingComponent v-else></LoadingComponent>
+  </div>
+  <LoadingComponent v-else></LoadingComponent>
 </template>
 
 <script>

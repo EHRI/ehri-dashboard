@@ -15,10 +15,9 @@
           <p class="break font-sans font-light text-base text-justify text-white mx-auto py-2">
             {{ $t("description") }}
           </p>
-          <SearchBox :key="key" class="pt-4" @queryChange="(t) => {getQueryValue(t)}"></SearchBox>
+          <SearchBox></SearchBox>
           <h5 class="font-sans text-white font-semibold mt-5">{{$t("sources")}}</h5>
-          <LoadResources class="sm:hidden" @data-source-change="(d)=>{emitDataSourceChange(d)}"
-                         :query-value="routeQuery?routeQuery:query"></LoadResources>
+          <LoadResources class="sm:hidden"></LoadResources>
           <div class="flex justify-center items-center mt-4">
             <select v-model="$i18n.locale" class="bg-ehri-light-grey text-ehri-purple">
               <option v-for="locale in availableLocales" :key="locale" :value="locale">{{ languageNames.of(locale) }}</option>
@@ -40,10 +39,9 @@
       </div>
 
       <div class="pt-4">
-        <SearchBox :key="key" @queryChange="(t) => {getQueryValue(t)}"></SearchBox>
+        <SearchBox></SearchBox>
         <h5 class="font-sans text-white font-semibold mt-5">{{ $t("sources") }}</h5>
-        <LoadResources class="hidden sm:block" @data-source-change="(d)=>{emitDataSourceChange(d)}"
-                       :query-value="routeQuery?routeQuery:query">
+        <LoadResources class="hidden sm:block">
         </LoadResources>
         <div class="flex justify-center items-center mt-4">
           <span class="mr-2 material-symbols-outlined text-white">
@@ -63,30 +61,19 @@ import { ref, computed, watch } from "vue";
 import logo from "@/assets/ehri_logo.png"
 import SearchBox from "@/components/SearchBox.vue"
 import LoadResources from "./LoadResources.vue";
-import { useRoute, useRouter } from "vue-router";
+import { useMainStore } from "../stores/mainStore";
 import {useI18n} from "vue-i18n";
 
 export default {
   name: "MainSidebar",
   components: { SearchBox, LoadResources },
-  emits: ["dataSourceChange"],
-  setup(props, ctx){
-    const route = useRoute()
-    const router = useRouter();
-    const query = ref("")
+  setup(){
     const key = ref(1);
     const showSidebar = ref(false);
     const { t, locale, availableLocales } = useI18n();
 
     const languageNames = ref({})
-
-    const routeQuery = computed(()=> {
-      query.value = route.params.query
-    })
-
-    const getQueryValue = (t) => {
-      query.value = t
-    }
+    const store = useMainStore();
 
     const getLangNames = (locale) => {
       languageNames.value = new Intl.DisplayNames([locale], { type: "language" });
@@ -95,37 +82,10 @@ export default {
     getLangNames(locale.value)
 
     const handle = () => {
-      query.value = ""
-      routeQuery.value = ""
+      store.setSearchTerm("")
       key.value += 1
-      router.push({
-        name: "home",
-        params: { query: "" },
-        replace: false,
-      })
     };
 
-    const emitDataSourceChange = (dataSource) =>{
-      ctx.emit("dataSourceChange", (dataSource))
-      if (query.value) {
-        router.push({
-          name: "home",
-          params: { query: query.value },
-          replace: true,
-        });
-      } else {
-        if(!routeQuery.value){
-          router.push({ name: "home", replace: true });
-        } else {
-          router.push({
-            name: "home",
-            params: { query: routeQuery.value },
-            replace: true,
-          });
-        }
-
-      }
-    }
 
     const sidebarClass = computed(() => {
       return showSidebar.value
@@ -151,11 +111,6 @@ export default {
       sidebarClass,
       toggleSidebar,
       logo,
-      route,
-      emitDataSourceChange,
-      getQueryValue,
-      query,
-      routeQuery,
       handle,
       key}
   }

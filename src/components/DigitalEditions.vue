@@ -30,8 +30,8 @@
                 <span>{{ $t('removeAllFilters') }}</span>
               </div>
   </div>
-  <div class="grid grid-cols-12 sm:grid-cols-8 gap-8 h-screen max-w-full"  v-if="!loading">
-    <div class="h-screen col-span-12 bg-white shadow-xl xl:h-3/4 xl:col-span-6 overflow-hidden px-7">
+  <div class="grid grid-cols-12 sm:grid-cols-8 h-screen max-w-full"  v-if="!loading">
+    <div class="h-5/6 col-span-12 bg-white shadow-xl xl:h-3/4 xl:col-span-6 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">
         <span v-if="selectedEdition.pagination.total" class="font-serif font-extrabold">{{selectedEdition.pagination.total + " "}}</span> 
         <LoadingComponent v-else></LoadingComponent> 

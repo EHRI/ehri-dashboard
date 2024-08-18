@@ -21,32 +21,29 @@
 </template>
 
 <script>
-import { toRef, ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { usePortalResourceStore } from "../stores/portalResourceStore";
 
 export default {
   name: "EHRIPortalTypeFilter",
-  props: {
-    filterName: String,
-    filterArray: Array,
-    selectedType: String
-  },
   emits: ["filterChange"],
-  setup(props, ctx) {
+  setup() {
     const { t } = useI18n();
-    const filterName = toRef(props, "filterName");
-    const filterArray = toRef(props, "filterArray");
-    const selectedType = toRef(props, "selectedType");
+    const store = usePortalResourceStore();
+    const filterName = ref('itemType');
+    const filterArray = computed(() => store.sortedTypes.filter(([, value]) => value.value > 0));
+    const selectedType = computed(() => store.selectedType);
 
     const onChange = (e) => {
-      ctx.emit("filterChange", e.target.value);
+      store.setSelectedType(e.target.value);
     };
 
     const translatedFilterName = computed(() =>
       t(`filterNames.${filterName.value}`)
     );
 
-    const translatedTypeName = (id) => t(`portalTypes.${id}`,2);
+    const translatedTypeName = (id) => t(`portalTypes.${id}`, 2);
 
     return {
       filterArray,

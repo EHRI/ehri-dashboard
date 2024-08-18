@@ -23,16 +23,9 @@
     </VocabularyItems>
   </div>
   <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-y-auto', 'text-white','xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4']">
-    <div :key="typeFilterKey">
+    <div>
       <div class="px-4 pt-4">
-        <EHRIPortalTypeFilter
-        filter-name="itemType"
-        :key="typeFilterKey"
-        :selectedType="'EHRICamps'"
-        :filter-array="sortedTypes"
-        @filterChange="(e) => {
-          handle(e,'typeFilter')}"
-        >
+        <EHRIPortalTypeFilter>
         </EHRIPortalTypeFilter>
       </div>
     </div>
@@ -53,11 +46,9 @@ export default {
     searchTerm: String,
     sortedTypes: Array,
   },
-  emits: ['portalType'],
-  setup(props, ctx){
+  setup(props){
     const campQuery = toRef(props, 'searchTerm')
     const sortedTypes = toRef(props, 'sortedTypes')
-    const typeFilterKey = ref(0)
     const facets = ref({
       type: "CvocConcept",
       holder: "EHRI Camps",
@@ -65,10 +56,6 @@ export default {
     })
     const showFilterBar = ref(false);
 
-    const handle = (val, type) => {
-      type=="typeFilter"?ctx.emit('portalType',val):null
-      typeFilterKey.value+=1
-    }
 
     const filterBarClass = computed(() => {
             return showFilterBar.value
@@ -83,7 +70,7 @@ export default {
 
 
 
-    return { showFilterBar, filterBarClass, toggleFilterBar, campQuery, sortedTypes, handle, facets, typeFilterKey}
+    return { showFilterBar, filterBarClass, toggleFilterBar, campQuery, sortedTypes, facets }
 
   }
 }

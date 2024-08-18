@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import App from '../src/App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { createI18n } from 'vue-i18n';
+import { createPinia } from 'pinia';
 import eng from '@/locales/eng.json'
 import Home from '@/views/Home.vue'
 
@@ -34,9 +35,10 @@ vi.mock('chart.js', () => ({
 
 describe('App.vue', () => {
   it('renders without crashing', () => {
+    const pinia = createPinia();
     const wrapper = mount(App, {
       global: {
-        plugins: [router, i18n],
+        plugins: [router, i18n, pinia],
       },
     });
     expect(wrapper.exists()).toBe(true);

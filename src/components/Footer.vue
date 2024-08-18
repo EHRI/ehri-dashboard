@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
   <footer class="absolute w-full mx-auto bottom-0">
     <div class="">
       <a href="https://facebook.com/EHRIproject" target="_blank" rel="noopener noreferrer" title="Link to the EHRI Project Facebook Page" class="text-2xl text-ehri-dark hover:text-ehri-purple">
@@ -37,4 +37,4 @@ export default {
     return {flag}
   }
 }
-</script> -->
+</script>

@@ -1,10 +1,10 @@
 <template>
   <div v-if="total" class="grid grid-cols-12 xl:grid-cols-8 gap-2 xl:gap-4 h-screen max-w-full">
     <!-- SMALL SCREEN UI -->
-    <div v-if="!isLargeScreen && !expandFocusedItem" class="xl:hidden h-screen col-span-11 shadow-xl bg-white overflow-hidden px-7">
+    <div v-if="!isLargeScreen && !expandFocusedItem" class="xl:hidden h-5/6 col-span-11 shadow-xl bg-white overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1?$t(`portalTypes.${type}`,2): $t(`portalTypes.${type}`,1)}}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ $t(`portalTypesDesc.${type}`) }}</p>
-      <div class="h-full flex flex-col" >
+      <div class="h-5/6 flex flex-col" >
         <ul ref="el" class="h-5/6 overflow-y-auto">
           <ArchivalInstitutionItemCard v-for="item of items" :key="item.id" :repoObject="item" :selectedItem="selectedRepoID" @idChange="(id)=>changeRepoID(id)"></ArchivalInstitutionItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">

@@ -1,16 +1,16 @@
 <template>
   <div class="grid grid-cols-8 gap-4">
-    <div class="col-span-8" v-if="selectedType">
-      <component :is="portalTypeMappings[selectedType]" v-bind="{'searchTerm': searchTerm, 'sortedTypes': sortedTypes}" @portalType="(t) => { getPortalType(t) }"></component>
+    <div class="col-span-8" v-if="!isLoading">
+      <component :is="portalTypeMappings[selectedType]" :searchTerm="searchTerm" :sortedTypes="sortedTypes"></component>
     </div>
     <LoadingComponent class="col-span-8" v-else></LoadingComponent>
-    <SelectPortalType :search-term="searchTerm" @portalType="(t) => { getPortalType(t) }" @sortedTypes="(s) => { getSortedTypes(s) }"></SelectPortalType>
   </div>
 </template>
 
 <script>
-import { ref } from "vue"
-import SelectPortalType from "./SelectPortalType.vue";
+import { computed, watch } from "vue";
+import { usePortalResourceStore } from "../stores/portalResourceStore";
+import { useMainStore } from "../stores/mainStore";
 import EHRICamps from "./EHRICamps.vue";
 import ArchivalDescriptions from "./ArchivalDescriptions.vue";
 import CorporateBodies from "./CorporateBodies.vue";
@@ -21,43 +21,44 @@ import EHRITerms from "./EHRITerms.vue";
 import CountryReports from "./CountryReports.vue";
 import LoadingComponent from "./LoadingComponent.vue";
 
-
 export default {
   name: "EHRIPortalResource",
   components: {
-    LoadingComponent, SelectPortalType, EHRICamps,
-  ArchivalDescriptions, CorporateBodies, Personalities, EHRIGhettos, ArchivalInstitutions,
-  EHRITerms, CountryReports},
-  props:{
-    searchTerm: {
-      type: String
-    }
+    LoadingComponent, EHRICamps,
+    ArchivalDescriptions, CorporateBodies, Personalities, EHRIGhettos, ArchivalInstitutions,
+    EHRITerms, CountryReports
   },
-  setup(props){
-    const searchTerm = props.searchTerm
-    const selectedType = ref("")
-    const portalTypeMappings = {
-      DocumentaryUnit: ArchivalDescriptions,
-      Repository: ArchivalInstitutions,
-      EHRICorporateBodies: CorporateBodies,
-      EHRIPersonalities: Personalities,
-      Country: CountryReports,
-      EHRICamps: EHRICamps,
-      EHRIGhettos: EHRIGhettos,
-      EHRIKeywords: EHRITerms,
-    }
-    const sortedTypes = ref([]) 
-    const getPortalType = (t) => {
-      selectedType.value = t
-    }
+  setup() {
+    const mainStore = useMainStore();
+    const store = usePortalResourceStore();
+    const searchTerm = computed(() => mainStore.searchTerm);
+    const selectedType = computed(() => store.selectedType);
+    const sortedTypes = computed(() => store.sortedTypes);
+    const isLoading = computed(() => store.isLoading);
 
-    const getSortedTypes = (s) => {
-      sortedTypes.value = s
-    }
+    watch(searchTerm, (newTerm) => {
+      store.fetchPortalResourceTypes(newTerm);
+    }, { immediate: true });
 
-    return {searchTerm, getPortalType, getSortedTypes, portalTypeMappings, selectedType, sortedTypes}
+
+    return {
+      searchTerm,
+      portalTypeMappings: {
+        DocumentaryUnit: ArchivalDescriptions,
+        Repository: ArchivalInstitutions,
+        EHRICorporateBodies: CorporateBodies,
+        EHRIPersonalities: Personalities,
+        Country: CountryReports,
+        EHRICamps: EHRICamps,
+        EHRIGhettos: EHRIGhettos,
+        EHRIKeywords: EHRITerms,
+      },
+      selectedType,
+      sortedTypes,
+      isLoading
+    };
   }
-}
+};
 </script>
 
 <style scoped>
