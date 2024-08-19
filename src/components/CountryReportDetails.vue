@@ -40,7 +40,6 @@
       </button>
     </div>
     <div v-if="clickedDesc && clickedDesc.length>1" class="flex-1 h-56 max-h-56 p-1 mt-4 overflow-auto border-2 border-ehri-light-grey">
-        <!-- Show history content if clickedDesc is 'history' -->
         <div v-if="countryDetails.history && clickedDesc === 'history'">
           <p class="text-base font-sans text-ehri-dark ">{{ countryDetails.history }}</p>
         </div>
@@ -111,7 +110,7 @@ export default {
     configData()
 
     const tabClasses = (d) => {
-      // Dynamically apply Tailwind CSS classes to context tab based on clickedDesc value
+      // Dynamically apply Tailwind CSS classes
       return ['px-1.5 pb-1 text-xs font-medium text-ehri-dark hover:text-ehri-wine', clickedDesc.value === d ? 'text-ehri-wine' : 'text-ehri-dark']
     };
 

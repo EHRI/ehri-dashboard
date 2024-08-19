@@ -28,7 +28,7 @@
     </div>
     <div class="flex flex-col flex-grow h-80 max-h-80 mt-4 overflow-auto border-2 border-ehri-light-grey">
       <div v-if="clickedDesc === 'map'" class="w-full">
-        <VocabularyItemDetailsMap  :lat="lat" :long="long" :voc-object="vocObject"/>
+        <VocabularyItemDetailsMap  :lat="lat" :long="long" :voc-object="vocObject" :lang="lang"/>
       </div>
       <div v-if="clickedDesc === 'hierarchy'" class="h-full">
           <CampHierarchyViz v-if="broaderCamp"  :camp-complex-object="broaderCamp" :selected-camp-object="vocObject"></CampHierarchyViz>
@@ -58,11 +58,16 @@ export default {
     lat: {
       type: Number,
       default: null
+    },
+    lang: {
+      type: String,
+      default: null
     }
   },
   setup(props) {
     const long = toRef(props, "long")
     const lat = toRef(props, "lat")
+    const lang = toRef(props, "lang")
     const vocObject = toRef(props, "vocObject");
     const broaderCamp = ref();
 
@@ -112,9 +117,7 @@ export default {
                     "hierarchy":""
     });
 
-    //
-
-    return { lat, long, vocObject, broaderCamp, clickedDesc, showDesc, historyTabClasses, contextTabClasses};
+    return { lat, long, lang, vocObject, broaderCamp, clickedDesc, showDesc, historyTabClasses, contextTabClasses};
   },
 };
 </script>

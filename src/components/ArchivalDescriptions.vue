@@ -31,19 +31,18 @@
             </div>
   </div>
   <div  v-if="pagination.total" class="grid grid-cols-12 sm:grid-cols-8 gap-4 h-screen max-w-full">
-    <div class="h-screen col-span-12 bg-white shadow-xl xl:h-3/4 xl:col-span-5 overflow-hidden px-7">
+    <div class="h-5/6 col-span-12 bg-white shadow-xl xl:h-3/4 xl:col-span-5 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">
         <span  class="font-serif font-extrabold">{{pagination.total}} </span>
-        <!-- <LoadingComponent v-else></LoadingComponent>  -->
         {{ pagination.total>1?$t('portalTypes.DocumentaryUnit',2):$t('portalTypes.DocumentaryUnit',1) }}
       </h4>
       <p class="font-sans text-ehri-dark text-sm">{{ $t('portalTypesDesc.DocumentaryUnit') }}</p>
       <hr class="text-ehri-dark border-4 shadow-md mt-3">
-      <div class="pt-3 pb-0 h-full">
+      <div class="pt-3 pb-0 h-5/6">
         <div v-if="!loadingDocUnits" class="h-full">
           <div :key="listKey" class="h-full">
               <Suspense>
-                <DocUnitItemsRest :search-term="docUnitQuery" :holder="holderFilter" :country="countryFilter" :language="langFilter" :dates="dateFilter"></DocUnitItemsRest>
+                <DocUnitItemsRest :search-term="docUnitQuery" :holder="holderFilter" :country="countryFilter" :language="langFilter" :dates="dateFilter" :total="pagination.total"></DocUnitItemsRest>
                 <template #fallback>
                   <LoadingComponent></LoadingComponent>
                 </template>
@@ -59,12 +58,8 @@
       <div v-if="!loadingDocUnits" class="h-full flex flex-col">
         <div class="px-4 pt-4 flex-shrink-0">
           <EHRIPortalTypeFilter
-          filter-name="itemType"
           :key="typeFilterKey"
           :selectedType="'DocumentaryUnit'"
-          :filter-array="sortedTypes"
-          @filterChange="(e) => {
-            handle(e,'typeFilter')}"
           >
           </EHRIPortalTypeFilter>
           <OverviewCountryStats :key="countryFilterKey" class="mb-2" :dataset="stats.countries"></OverviewCountryStats>
@@ -143,15 +138,13 @@ export default {
     searchTerm: String,
     sortedTypes: Array,
   },
-  emits: ["portalType"],
-  setup(props, ctx) {
+  setup(props) {
     const { t, locale } = useI18n();
     const docUnitQuery = toRef(props, 'searchTerm')
     const sortedTypes = toRef(props, 'sortedTypes')
     const listKey = ref(0)
     const languageNames = new Intl.DisplayNames(['en'], {type: 'language'});
     const countryNames = new Intl.DisplayNames(['en'], {type: 'region'});
-    const docUnits = ref([]);
     const loadingDocUnits = ref(true);
     const page = ref(1)
     const pagination = ref({
@@ -189,8 +182,6 @@ export default {
 
     const handle = (val, type) => {
       filtered.value = false;
-
-      type=="typeFilter"?ctx.emit('portalType',val):null
       type=="holderFilter"&&val!="Institutions"?holderFilter.value=val:val=="Institutions"?holderFilter.value=null:null
       type=="countryFilter"&&val!="Countries"?countryFilter.value=val:val=="Countries"?countryFilter.value=null:null
       type=="langFilter"&&val!="Languages"?langFilter.value=val:val=="Languages"?langFilter.value=null:null
@@ -207,7 +198,6 @@ export default {
       fetchFacetedDocUnits(docUnitQuery.value, 1, null, 1)
           .then((res) => {
             configStats(res.data.meta.facets)
-            docUnits.value = res.data.data
             page.value = 1
             configPagination(res.data.meta)
             loadingDocUnits.value = false
@@ -222,7 +212,6 @@ export default {
       fetchFacetedDocUnits(docUnitQuery.value, 1, null, 1)
           .then((res) => {
             configStats(res.data.meta.facets)
-            docUnits.value = res.data.data
             page.value = 1
             configPagination(res.data.meta)
             loadingDocUnits.value = false
@@ -276,7 +265,6 @@ export default {
       countryCounts.value.clear()
       langCounts.value.clear()
       dateCounts.value.clear()
-      docUnits.value = []
       filteredUnits.value = []
       filterValue.value = ""
       filtered.value = false
@@ -317,7 +305,6 @@ export default {
 
     getAllDocUnits(1).then(
         (res) => {
-          docUnits.value = res
           if(pagination.value['total']===0){
             loadingDocUnits.value = false
           } else {
@@ -369,7 +356,6 @@ export default {
       filteredUnits,
       pagination,
       loadingDocUnits,
-      docUnits,
       page,
       holderFilter,
       langFilter,

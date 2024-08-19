@@ -41,7 +41,7 @@
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1?$t('portalTypes.Country',2):$t('portalTypes.Country',1) }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ $t('portalTypesDesc.Country')  }}</p>
       <div class="h-5/6 max-h-5/6 flex flex-col" >
-        <ul ref="el" class="hidden xl:block h-4/6 overflow-y-auto">
+        <ul ref="el" class="hidden xl:block h-5/6 overflow-y-auto">
           <CountryReportItemCard v-for="item of items" :key="item.id" :countryObject="item" :selectedItem="selectedCountryID" @idChange="(id)=>changeCountryID(id)"></CountryReportItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
             <LoadingComponent></LoadingComponent>
@@ -135,14 +135,18 @@ export default {
         }
       })
       total.value = newUnits.data.meta.total
-      page.value++
+      if (items.value.length < total.value){
+        page.value++
+      }
       loading.value = false;
     }
 
     useInfiniteScroll(
       el,
       async () => {
-        await getUnitsOnScroll()
+        if (items.value.length < total.value){
+          await getUnitsOnScroll()
+        }
       },
       { distance: 300 }
     )

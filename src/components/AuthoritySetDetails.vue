@@ -62,9 +62,9 @@
               link
         </span> {{ $t('totalLinkedItemsPortal') }}: {{relatedItemsTotal}}</span>
         <span class="inline-block cursor-pointer border-2 text-ehri-wine font-semibold py-1 px-2 rounded border-ehri-wine hover:bg-ehri-wine hover:bg-opacity-10 " v-if="portalLink" >
-      <a :href="portalLink" class="capitalize" target="_blank" rel="noopener">
+      <a :href="portalLink" class="capitalize flex items-center" target="_blank" rel="noopener">
         <span
-                class="mx-1 material-symbols-outlined w-5 h-5 align-top"
+                class="mr-1 material-symbols-outlined w-5 h-5 align-top"
               >
               database
         </span>
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import {toRef, ref, watch, computed, capitalize} from "vue";
+import {toRef, ref, watch, computed } from "vue";
 import {fetchHistAgentInfo, fetchRelatedItems} from "../services/EHRIGetters.js";
 
 export default {

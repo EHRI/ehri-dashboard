@@ -25,14 +25,7 @@
   <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-y-auto', 'text-white','xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4']">
     <div class="" :key="typeFilterKey">
       <div class="px-4 pt-4">
-        <EHRIPortalTypeFilter
-        filter-name="itemType"
-        :key="typeFilterKey"
-        :selectedType="'Country'"
-        :filter-array="sortedTypes"
-        @filterChange="(e) => {
-          handle(e,'typeFilter')}"
-        >
+        <EHRIPortalTypeFilter>
         </EHRIPortalTypeFilter>
       </div>
     </div>
@@ -54,8 +47,7 @@ export default {
     searchTerm: String,
     sortedTypes: Array,
   },
-  emits: ['portalType'],
-  setup(props, ctx){
+  setup(props){
     const countryQuery = toRef(props, 'searchTerm')
     const sortedTypes = toRef(props, 'sortedTypes')
     const facets = ref({
@@ -64,12 +56,6 @@ export default {
     })
     const showFilterBar = ref(false);
 
-    const typeFilterKey = ref(0)
-
-    const handle = (val, type) => {
-      type=="typeFilter"?ctx.emit('portalType',val):null
-      typeFilterKey.value+=1
-    }
 
     const filterBarClass = computed(() => {
             return showFilterBar.value
@@ -82,7 +68,7 @@ export default {
       showFilterBar.value = !showFilterBar.value;
     };
 
-    return { showFilterBar, filterBarClass, toggleFilterBar, countryQuery, facets, sortedTypes, typeFilterKey, handle}
+    return { showFilterBar, filterBarClass, toggleFilterBar, countryQuery, facets, sortedTypes }
   }
 }
 </script>

@@ -26,7 +26,6 @@ export default {
     });
 
     const changeAuthID = (id)=> {
-      console.log("clicked" +id)
       ctx.emit('idChange', id)
     }
 

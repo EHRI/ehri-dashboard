@@ -2,10 +2,12 @@
     font-family: 'Material Symbols Outlined';
     font-style: normal;
     font-weight: 100 700;
-    src: url('./fonts/Material_Symbols_Outlined/MaterialSymbolsOutlined.ttf') format('truetype-variations');
+    src: url('./fonts/Material_Symbols_Outlined/material-symbols-outlined.woff2') format('woff2');
+    font-display: swap;
   }
 
 .material-symbols-outlined {
+    font-family: 'Material Symbols Outlined';
     font-weight: normal;
     font-style: normal;
     font-size: 24px;
@@ -19,71 +21,69 @@
     -webkit-font-smoothing: antialiased;
   }
 
-.material-symbols-outlined { font-family: 'Material Symbols Outlined'; }
-
 @font-face {
     font-family: 'Barlow';
-    src: url('./fonts/Barlow/Barlow-Regular.ttf') format('truetype');
+    src: url('./fonts/Barlow/Barlow-Regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
   
 @font-face {
     font-family: 'Barlow';
-    src: url('./fonts/Barlow/Barlow-Thin.ttf') format('truetype');
+    src: url('./fonts/Barlow/Barlow-Thin.woff2') format('woff2');
     font-weight: 100;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
 
 @font-face {
     font-family: 'Barlow';
-    src: url('./fonts/Barlow/Barlow-Light.ttf') format('truetype');
+    src: url('./fonts/Barlow/Barlow-Light.woff2') format('woff2');
     font-weight: 300;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
 
 @font-face {
     font-family: 'Barlow';
-    src: url('./fonts/Barlow/Barlow-LightItalic.ttf') format('truetype');
+    src: url('./fonts/Barlow/Barlow-LightItalic.woff2') format('woff2');
     font-weight: 300;
     font-style: italic;
-    font-display: fallback;
+    font-display: swap;
   }
 
 @font-face {
     font-family: 'Barlow';
-    src: url('./fonts/Barlow/Barlow-ExtraLight.ttf') format('truetype');
+    src: url('./fonts/Barlow/Barlow-ExtraLight.woff2') format('woff2');
     font-weight: 200;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
     }
 
 @font-face {
     font-family: 'Barlow';
-    src: url('./fonts/Barlow/Barlow-ExtraBold.ttf') format('truetype');
+    src: url('./fonts/Barlow/Barlow-ExtraBold.woff2') format('woff2');
     font-weight: 800;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
 
   @font-face {
     font-family: 'Barlow';
-    src: url('./fonts/Barlow/Barlow-Bold.ttf') format('truetype');
+    src: url('./fonts/Barlow/Barlow-Bold.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
 
 
   @font-face {
     font-family: 'Barlow';
-    src: url('./fonts/Barlow/Barlow-Medium.ttf') format('truetype');
+    src: url('./fonts/Barlow/Barlow-Medium.woff2') format('woff2');
     font-weight: 500;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
   
   @font-face {
@@ -91,7 +91,7 @@
     src: url('./fonts/Noto_Sans/static/NotoSans-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
     
   @font-face {
@@ -99,7 +99,7 @@
     src: url('./fonts/Noto_Sans/static/NotoSans-SemiBold.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
 
   @font-face {
@@ -107,7 +107,7 @@
     src: url('./fonts/Noto_Sans/static/NotoSans-Medium.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
 
   @font-face {
@@ -115,7 +115,7 @@
     src: url('./fonts/Noto_Sans/static/NotoSans-ExtraLight.ttf') format('truetype');
     font-weight: 200;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
 
   @font-face {
@@ -123,7 +123,7 @@
     src: url('./fonts/Noto_Sans/static/NotoSans-Light.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }
 
   @font-face {
@@ -131,5 +131,5 @@
     src: url('./fonts/Noto_Sans/static/NotoSans-Thin.ttf') format('truetype');
     font-weight: 100;
     font-style: normal;
-    font-display: fallback;
+    font-display: swap;
   }

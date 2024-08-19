@@ -1,33 +1,51 @@
 <script>
-import { RouterView } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
 import MainSidebar from './components/MainSidebar.vue';
-import { ref } from 'vue';
+import Home from './views/Home.vue';
+import { useMainStore } from './stores/mainStore';
+import { watch, computed } from 'vue';
+import LoadingComponent from './components/LoadingComponent.vue';
 
 export default {
-  components: {MainSidebar},
-  setup(){
-    const dataSource = ref()
+  components: { MainSidebar, Home, LoadingComponent },
+  setup() {
+    const store = useMainStore();
+    const route = useRoute();
+    const isLoading = computed(() => store.isLoading);
+    const dataSource = computed(() => store.dataSource);
 
-    const getDataSource = (d) => {
-      dataSource.value = d
-    }
 
-    return { getDataSource, dataSource }
+    watch(
+      () => route.params.query,
+      (newQuery) => {
+        store.setSearchTerm(newQuery || ''); 
+      }
+    );
+
+    return { dataSource, isLoading };
   }
 };
 </script>
 
 <template>
   <div class="grid grid-cols-12 min-h-screen h-screen xl:max-h-screen xl:overflow-hidden bg-ehri-light-grey">
-    <MainSidebar @data-source-change="(d)=>{getDataSource(d)}" class="col-span-12 fixed top-0 sm:relative sm:col-span-4 xl:col-span-3"></MainSidebar>
-    <router-view v-if="dataSource" class="col-span-12 mt-16 sm:mt-0 px-4 overflow-auto xl:overflow-hidden sm:col-span-8 xl:col-span-9 xl:px-9" :key="$route.fullPath" :dataSourceValue="dataSource"></router-view>
-    <div class="w-full bg-ehri-dark py-0.5 fixed bottom-0">
-        <p class="text-center text-ehri-beige font-light text-xs"><a href="https://www.ehri-project.eu/" target="_blank" rel="noopener noreferrer">&copy; Copyright EHRI Consortium
-            {{new Date().getFullYear()}}</a></p>
+    <MainSidebar class="col-span-12 fixed top-0 sm:relative sm:col-span-4 xl:col-span-3"></MainSidebar>
+    <router-view :key="$route.fullPath">
+      <Home class="col-span-12 mt-16 sm:mt-0 px-4 overflow-auto xl:overflow-hidden sm:col-span-8 xl:col-span-9 xl:px-9" v-if="!isLoading" :dataSource="dataSource"></Home>
+      <LoadingComponent v-else class="col-span-12 mt-16 sm:mt-0 px-4 overflow-auto xl:overflow-hidden sm:col-span-8 xl:col-span-9 xl:px-9"></LoadingComponent>
+    </router-view>
+    <div class="w-full bg-ehri-dark py-1 px-4 fixed bottom-0 flex justify-between items-center">
+      <p class="text-ehri-beige font-light text-xs">
+          <a href="https://portal.ehri-project.eu/data-policy" target="_blank" rel="noopener noreferrer" class="hover:underline">EHRI Data Policy</a>
+      </p>
+      <p class="text-ehri-beige font-light text-xs">
+        <a href="https://www.ehri-project.eu/" target="_blank" rel="noopener noreferrer" class="hover:underline">
+          &copy; Copyright EHRI Consortium {{ new Date().getFullYear() }}
+        </a>
+      </p>
     </div>
   </div>
 </template>
 
 <style scoped>
-
 </style>

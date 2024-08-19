@@ -23,16 +23,9 @@
       </VocabularyItems>
     </div>
     <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-y-auto', 'text-white','xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4']">
-      <div :key="typeFilterKey">
+      <div>
         <div class="px-4 pt-4">
-          <EHRIPortalTypeFilter
-          filter-name="itemType"
-          :key="typeFilterKey"
-          :selectedType="'EHRIGhettos'"
-          :filter-array="sortedTypes"
-          @filterChange="(e) => {
-            handle(e,'typeFilter')}"
-          >
+          <EHRIPortalTypeFilter>
           </EHRIPortalTypeFilter>
         </div>
       </div>
@@ -54,22 +47,15 @@ export default {
     searchTerm: String,
     sortedTypes: Array,
   },
-  emits: ['portalType'],
-  setup(props, ctx){
+  setup(props){
     const ghettoQuery = toRef(props, 'searchTerm')
     const sortedTypes = toRef(props, 'sortedTypes')
-    const typeFilterKey = ref(0)
     const facets = ref({
       type: "CvocConcept",
       holder: "EHRI Ghettos",
       desc: "EHRI Authority list of Ghettos in Nazi-occupied Europe. This authority list is based on the Encyclopedia of Ghettos of Yad Vashem and the Encyclopedia of Camps and Ghettos of the USHMM."
     })
     const showFilterBar = ref(false);
-
-    const handle = (val, type) => {
-      type=="typeFilter"?ctx.emit('portalType',val):null
-      typeFilterKey.value+=1
-    }
 
     const filterBarClass = computed(() => {
             return showFilterBar.value
@@ -81,7 +67,7 @@ export default {
       showFilterBar.value = !showFilterBar.value;
     };
         
-    return {showFilterBar, filterBarClass, toggleFilterBar, ghettoQuery, sortedTypes, handle, facets, typeFilterKey}
+    return {showFilterBar, filterBarClass, toggleFilterBar, ghettoQuery, sortedTypes, facets}
 
   }
 }
