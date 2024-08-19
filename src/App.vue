@@ -5,6 +5,7 @@ import Home from './views/Home.vue';
 import { useMainStore } from './stores/mainStore';
 import { watch, computed } from 'vue';
 import LoadingComponent from './components/LoadingComponent.vue';
+import flag from './assets/eu_logo.svg';
 
 export default {
   components: { MainSidebar, Home, LoadingComponent },
@@ -22,7 +23,7 @@ export default {
       }
     );
 
-    return { dataSource, isLoading };
+    return { dataSource, isLoading, flag };
   }
 };
 </script>
@@ -34,13 +35,19 @@ export default {
       <Home class="col-span-12 mt-16 sm:mt-0 px-4 overflow-auto xl:overflow-hidden sm:col-span-8 xl:col-span-9 xl:px-9" v-if="!isLoading" :dataSource="dataSource"></Home>
       <LoadingComponent v-else class="col-span-12 mt-16 sm:mt-0 px-4 overflow-auto xl:overflow-hidden sm:col-span-8 xl:col-span-9 xl:px-9"></LoadingComponent>
     </router-view>
-    <div class="w-full bg-ehri-dark py-1 px-4 fixed bottom-0 flex justify-between items-center">
-      <p class="text-ehri-beige font-light text-xs">
+    <div class="w-full bg-ehri-dark px-2 py-1 sm:py-1 sm:px-4 fixed bottom-0 flex flex-col sm:flex-row justify-between text-center items-center sm:space-y-0">
+      <p class="text-ehri-beige font-light text-xs sm:flex-1 sm:text-left">
           <a href="https://portal.ehri-project.eu/data-policy" target="_blank" rel="noopener noreferrer" class="hover:underline">EHRI Data Policy</a>
       </p>
-      <p class="text-ehri-beige font-light text-xs">
+      <p class="text-ehri-beige font-light text-xs sm:flex-1 sm:text-center">
         <a href="https://www.ehri-project.eu/" target="_blank" rel="noopener noreferrer" class="hover:underline">
           &copy; Copyright EHRI Consortium {{ new Date().getFullYear() }}
+        </a>
+      </p>
+      <p class="text-ehri-beige font-light text-xs flex items-center sm:flex-1 sm:justify-end">
+        <a href="https://cordis.europa.eu/project/id/871111" target="_blank" rel="noopener noreferrer" class="inline-block hover:underline flex items-center">
+          Funded by the European Commission
+          <img :src="flag" alt="EHRI is funded by the European Commission." class="sm:pl-1 h-4 md:h-4 ml-1">
         </a>
       </p>
     </div>
