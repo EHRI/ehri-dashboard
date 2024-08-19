@@ -30,6 +30,13 @@ async function setupI18n() {
   app.use(i18n)
   app.use(router)
   app.mount('#app')
+  
+  // Inject Plausible analytics script in production
+  if (import.meta.env.PROD) {
+    const script = document.getElementById('plausible-script')
+    script.src = 'https://plausible.io/js/script.js'
+    script.setAttribute('data-domain', 'dashboard.ehri-project.eu')
+  }
 }
 
 setupI18n()

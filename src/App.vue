@@ -15,7 +15,7 @@ export default {
     const isLoading = computed(() => store.isLoading);
     const dataSource = computed(() => store.dataSource);
 
-
+    
     watch(
       () => route.params.query,
       (newQuery) => {
