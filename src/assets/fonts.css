@@ -88,7 +88,7 @@
   
   @font-face {
     font-family: 'Noto Sans';
-    src: url('./fonts/Noto_Sans/static/NotoSans-Regular.ttf') format('truetype');
+    src: url('./fonts/Noto_Sans/static/noto-sans-v36-cyrillic_cyrillic-ext_greek_latin_latin-ext-regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -96,7 +96,7 @@
     
   @font-face {
     font-family: 'Noto Sans';
-    src: url('./fonts/Noto_Sans/static/NotoSans-SemiBold.ttf') format('truetype');
+    src: url('./fonts/Noto_Sans/static/noto-sans-v36-cyrillic_cyrillic-ext_greek_latin_latin-ext-600.woff2') format('woff2');
     font-weight: 600;
     font-style: normal;
     font-display: swap;
@@ -104,7 +104,7 @@
 
   @font-face {
     font-family: 'Noto Sans';
-    src: url('./fonts/Noto_Sans/static/NotoSans-Medium.ttf') format('truetype');
+    src: url('./fonts/Noto_Sans/static/noto-sans-v36-cyrillic_cyrillic-ext_greek_latin_latin-ext-500.woff2') format('woff2');
     font-weight: 500;
     font-style: normal;
     font-display: swap;
@@ -112,7 +112,7 @@
 
   @font-face {
     font-family: 'Noto Sans';
-    src: url('./fonts/Noto_Sans/static/NotoSans-ExtraLight.ttf') format('truetype');
+    src: url('./fonts/Noto_Sans/static/noto-sans-v36-cyrillic_cyrillic-ext_greek_latin_latin-ext-200.woff2') format('woff2');
     font-weight: 200;
     font-style: normal;
     font-display: swap;
@@ -120,7 +120,7 @@
 
   @font-face {
     font-family: 'Noto Sans';
-    src: url('./fonts/Noto_Sans/static/NotoSans-Light.ttf') format('truetype');
+    src: url('./fonts/Noto_Sans/static/noto-sans-v36-cyrillic_cyrillic-ext_greek_latin_latin-ext-300.woff2') format('woff2');
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -128,7 +128,7 @@
 
   @font-face {
     font-family: 'Noto Sans';
-    src: url('./fonts/Noto_Sans/static/NotoSans-Thin.ttf') format('truetype');
+    src: url('./fonts/Noto_Sans/static/noto-sans-v36-cyrillic_cyrillic-ext_greek_latin_latin-ext-100.woff2') format('woff2');
     font-weight: 100;
     font-style: normal;
     font-display: swap;
