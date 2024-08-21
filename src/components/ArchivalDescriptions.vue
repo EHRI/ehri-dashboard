@@ -1,124 +1,114 @@
 <template>
-  <span class="flex justify-center bg-ehri-purple py-2 text-white xl:hidden col-span-12 text-ehri-dark font-sans " @click="toggleFilterBar">
-    <span v-if="!showFilterBar" class="xl:hidden mr-2 cursor-pointer">
-            <span
-          class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
-        >
-          filter_alt
-        </span>
-       {{ $t('filters') }} 
-    </span>
-    <span v-else class="xl:hidden mr-2 cursor-pointer">
-            <span
-          class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
-        >
-          close
-        </span>
-        {{ $t('close') }} 
-    </span>
-  </span>
-  <div v-if="filtered && !showFilterBar" class="xl:hidden pt-1 px-2">
-          <h5 class="font-sans text-sm text-ehri-purple block font-medium">{{ $t('activeFilters') }}: </h5>
-            <span class="inline w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="holderFilter" @click="handle('Institutions','holderFilter')">{{holderFilter.length>25?holderFilter.substring(0,25)+'...':holderFilter}}</span>
-            <span class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="langFilter" @click="handle('','langFilter')">{{getLocalizedLangName(langFilter)}}</span>
-            <span class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="countryFilter" @click="handle('','countryFilter')">{{countryNames.of(countryFilter.toUpperCase())}}</span>
-            <span class="inline mt-1 w-fit cursor-pointer border border-ehri-dark rounded-full bg-ehri-dark text-white mr-1 px-2 py-0.5 text-xs" v-if="dateFilter" @click="handle('','dateFilter')">{{getLocalizedDateName(dateFilter).length>25?getLocalizedDateName(dateFilter).substring(0,25)+'...':getLocalizedDateName(dateFilter)}}</span>
-            <div class="flex items-center mt-1 cursor-pointer text-ehri-purple text-sm" id="remove-filter" @click="(e) => handle(e,'removeAll')">
-              <span class="material-symbols-outlined pointer-events-none text-xs">
-                close
-              </span>
-              <span>{{ $t('removeAllFilters') }}</span>
-            </div>
-  </div>
-  <div  v-if="pagination.total" class="grid grid-cols-12 sm:grid-cols-8 gap-4 h-screen max-w-full">
-    <div class="h-5/6 col-span-12 bg-white shadow-xl xl:h-3/4 xl:col-span-5 overflow-hidden px-7">
-      <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">
-        <span  class="font-serif font-extrabold">{{pagination.total}} </span>
-        {{ pagination.total>1?$t('portalTypes.DocumentaryUnit',2):$t('portalTypes.DocumentaryUnit',1) }}
-      </h4>
-      <p class="font-sans text-ehri-dark text-sm">{{ $t('portalTypesDesc.DocumentaryUnit') }}</p>
-      <hr class="text-ehri-dark border-4 shadow-md mt-3">
-      <div class="pt-3 pb-0 h-5/6">
-        <div v-if="!loadingDocUnits" class="h-full">
-          <div :key="listKey" class="h-full">
-              <Suspense>
-                <DocUnitItemsRest :search-term="docUnitQuery" :holder="holderFilter" :country="countryFilter" :language="langFilter" :dates="dateFilter" :total="pagination.total"></DocUnitItemsRest>
-                <template #fallback>
-                  <LoadingComponent></LoadingComponent>
-                </template>
-              </Suspense>
-          </div>
-        </div>
-        <div v-else class="h-full w-full flex justify-center items-center">
-          <LoadingComponent></LoadingComponent>
-        </div>
-      </div>
-    </div> 
-    <div :class="[filterBarClass, 'bg-ehri-purple', 'text-white', 'xl:text-ehri-dark', 'xl:col-span-3', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4', 'flex', 'flex-col']">
-      <div v-if="!loadingDocUnits" class="h-full flex flex-col">
-        <div class="px-4 pt-4 flex-shrink-0">
-          <EHRIPortalTypeFilter
-          :key="typeFilterKey"
-          :selectedType="'DocumentaryUnit'"
+    <span class="col-span-12 flex justify-center bg-ehri-purple py-2 text-white xl:hidden col-span-12 font-sans" @click="toggleFilterBar">
+      <span v-if="!showFilterBar" class="xl:hidden mr-2 cursor-pointer">
+          <span
+            class="material-symbols-outlined text-white pointer-events-none align-bottom"
           >
-          </EHRIPortalTypeFilter>
-          <OverviewCountryStats :key="countryFilterKey" class="mb-2" :dataset="stats.countries"></OverviewCountryStats>
-          <h4 class="capitalize font-serif font-bold xl:text-ehri-dark">{{ $t('filters') }}</h4>
-          <p v-if="!filtered" class="font-sans text-sm font-light">{{ $t('chooseFilters') }}</p>
-          <div v-if="filtered">
-              <h5 class="font-sans text-sm font-light">{{ $t('activeFilters') }}:</h5>
-              <span class="w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="holderFilter" @click="handle('Institutions','holderFilter')">{{holderFilter.length>25?holderFilter.substring(0,25)+'...':holderFilter}}</span>
-              <span class="w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="langFilter" @click="handle('','langFilter')">{{ getLocalizedLangName(langFilter)}} </span>
-              <span class=" w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="countryFilter" @click="handle('','countryFilter')">{{getLocalizedCountryName(countryFilter.toUpperCase())}}</span>
-              <span class="w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="dateFilter" @click="handle('','dateFilter')">{{getLocalizedDateName(dateFilter).length>25?getLocalizedDateName(dateFilter).substring(0,25)+'...':getLocalizedDateName(dateFilter)}}</span>
-              <div class="flex items-center my-2 cursor-pointer xl:text-ehri-wine text-sm" id="remove-filter" @click="(e) => handle(e,'removeAll')">
-                <span class="material-symbols-outlined pointer-events-none text-xs">
-                  close
-                </span>
-                <span>{{ $t('removeAllFilters') }}</span>
-              </div>
+            filter_alt
+          </span>
+        {{ $t('filters') }} 
+        <span v-if="filtered && !showFilterBar" class="xl:hidden mr-2 cursor-pointer">
+          ({{ (holderFilter ? 1 : 0) + (langFilter ? 1 : 0) + (countryFilter ? 1 : 0) + (dateFilter ? 1 : 0) }})
+        </span>
+      </span>
+      <span v-else class="xl:hidden mr-2 cursor-pointer">
+              <span
+            class="material-symbols-outlined text-white pointer-events-none align-bottom"
+          >
+            close
+          </span>
+          {{ $t('close') }} 
+      </span>
+  </span>
+    <div  v-if="pagination.total" class="grid grid-cols-12 sm:grid-cols-8 sm:gap-0 h-screen xl:gap-4 max-w-full">
+      <div class="col-span-12 bg-white shadow-xl h-screen xl:h-3/4 xl:col-span-5 xl:overflow-hidden">
+        <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4 px-4">
+          <span  class="font-serif font-extrabold">{{pagination.total}} </span>
+          {{ pagination.total>1?$t('portalTypes.DocumentaryUnit',2):$t('portalTypes.DocumentaryUnit',1) }}
+        </h4>
+        <p class="font-sans text-ehri-dark text-sm px-4">{{ $t('portalTypesDesc.DocumentaryUnit') }}</p>
+        <hr class="text-ehri-dark border-4 shadow-md mt-3 mx-4">
+        <div class="pt-3 pb-0 h-full">
+          <div v-if="!loadingDocUnits" class="h-full">
+            <div :key="listKey" class="h-full">
+                <Suspense>
+                  <DocUnitItemsRest :search-term="docUnitQuery" :holder="holderFilter" :country="countryFilter" :language="langFilter" :dates="dateFilter" :total="pagination.total"></DocUnitItemsRest>
+                  <template #fallback>
+                    <LoadingComponent></LoadingComponent>
+                  </template>
+                </Suspense>
+            </div>
           </div>
-          <hr class="hidden xl:block text-ehri-dark border-b-4 shadow-md pb-0 mb-0"/>
+          <div v-else class="h-full w-full flex justify-center items-center">
+            <LoadingComponent></LoadingComponent>
+          </div>
         </div>
-        <div class="overflow-y-auto flex-grow">
-          <div class="px-4 pb-6">
-            <ArchivalDescriptionFilter
-              filter-name="countries"
-              :key="countryFilterKey"
-              :filter-array="stats.countries"
-              @filterChange="(e) => {
-                handle(e,'countryFilter')}"
+      </div> 
+      <div :class="[filterBarClass, 'bg-ehri-purple', 'text-white', 'xl:text-ehri-dark', 'xl:col-span-3', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4', 'flex', 'flex-col']">
+        <div v-if="!loadingDocUnits" class="h-full flex flex-col">
+          <div class="px-4 pt-4 flex-shrink-0">
+            <EHRIPortalTypeFilter
+            :key="typeFilterKey"
+            :selectedType="'DocumentaryUnit'"
             >
-            </ArchivalDescriptionFilter>
-            <ArchivalDescriptionFilter
-                filter-name="institutions"
-                :key="repoFilterKey"
-                :filter-array="stats.holders"
-                @filterChange="(e) => {handle(e,'holderFilter')}"
-            >
-            </ArchivalDescriptionFilter>
-            <ArchivalDescriptionFilter
-                filter-name="languages"
-                :key="langFilterKey"
-                :filter-array="stats.langs"
-                @filterChange="(e) => {handle(e,'langFilter')}"
-            >
-            </ArchivalDescriptionFilter>
-            <ArchivalDescriptionFilter
-                filter-name="dates"
-                :key="dateFilterKey"
-                :filter-array="stats.dates"
-                @filterChange="(e) => {handle(e,'dateFilter')}"
-            >
-            </ArchivalDescriptionFilter>
+            </EHRIPortalTypeFilter>
+            <OverviewCountryStats :key="countryFilterKey" class="mb-2" :dataset="stats.countries"></OverviewCountryStats>
+            <h4 class="capitalize font-serif font-bold xl:text-ehri-dark">{{ $t('filters') }}</h4>
+            <p v-if="!filtered" class="font-sans text-sm font-light">{{ $t('chooseFilters') }}</p>
+            <div v-if="filtered">
+                <h5 class="font-sans text-sm font-light">{{ $t('activeFilters') }}:</h5>
+                <span class="w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="holderFilter" @click="handle('Institutions','holderFilter')">{{holderFilter.length>25?holderFilter.substring(0,25)+'...':holderFilter}}</span>
+                <span class="w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="langFilter" @click="handle('','langFilter')">{{ getLocalizedLangName(langFilter)}} </span>
+                <span class=" w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="countryFilter" @click="handle('','countryFilter')">{{getLocalizedCountryName(countryFilter.toUpperCase())}}</span>
+                <span class="w-fit cursor-pointer border rounded-full xl:border-ehri-dark bg-white text-ehri-dark xl:bg-ehri-dark xl:text-white mr-1 px-2 py-0.5 text-xs" v-if="dateFilter" @click="handle('','dateFilter')">{{getLocalizedDateName(dateFilter).length>25?getLocalizedDateName(dateFilter).substring(0,25)+'...':getLocalizedDateName(dateFilter)}}</span>
+                <div class="flex items-center my-2 cursor-pointer xl:text-ehri-wine text-sm" id="remove-filter" @click="(e) => handle(e,'removeAll')">
+                  <span class="material-symbols-outlined pointer-events-none text-xs">
+                    close
+                  </span>
+                  <span>{{ $t('removeAllFilters') }}</span>
+                </div>
+            </div>
+            <hr class="hidden xl:block text-ehri-dark border-b-4 shadow-md pb-0 mb-0"/>
+          </div>
+          <div class="overflow-y-auto flex-grow">
+            <div class="px-4 pb-6">
+              <ArchivalDescriptionFilter
+                filter-name="countries"
+                :key="countryFilterKey"
+                :filter-array="stats.countries"
+                @filterChange="(e) => {
+                  handle(e,'countryFilter')}"
+              >
+              </ArchivalDescriptionFilter>
+              <ArchivalDescriptionFilter
+                  filter-name="institutions"
+                  :key="repoFilterKey"
+                  :filter-array="stats.holders"
+                  @filterChange="(e) => {handle(e,'holderFilter')}"
+              >
+              </ArchivalDescriptionFilter>
+              <ArchivalDescriptionFilter
+                  filter-name="languages"
+                  :key="langFilterKey"
+                  :filter-array="stats.langs"
+                  @filterChange="(e) => {handle(e,'langFilter')}"
+              >
+              </ArchivalDescriptionFilter>
+              <ArchivalDescriptionFilter
+                  filter-name="dates"
+                  :key="dateFilterKey"
+                  :filter-array="stats.dates"
+                  @filterChange="(e) => {handle(e,'dateFilter')}"
+              >
+              </ArchivalDescriptionFilter>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div v-else>
-    <loading-component class="m-5"></loading-component>
-  </div>
+    <div v-else>
+      <loading-component class="m-5"></loading-component>
+    </div>
 </template> 
 
 <script>

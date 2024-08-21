@@ -1,5 +1,5 @@
 <template>
-  <span class="flex justify-center bg-ehri-purple py-2 text-white xl:hidden col-span-12 text-ehri-dark font-sans " @click="toggleFilterBar">
+  <span class="col-span-12 mb-0 flex justify-center bg-ehri-purple py-2 text-white xl:hidden font-sans" @click="toggleFilterBar">
     <span v-if="!showFilterBar" class="xl:hidden mr-2 cursor-pointer">
             <span
           class="material-symbols-outlined text-ehri-white pointer-events-none align-bottom"
@@ -17,8 +17,8 @@
         {{ $t('close') }} 
     </span>
 </span>
-<div class="grid grid-cols-12 sm:grid-cols-8 gap-2 gap-4 h-screen max-w-full">
-  <div class="h-full col-span-12 xl:h-full xl:col-span-6 overflow-hidden">
+<div class="grid grid-cols-12 sm:grid-cols-8 sm:gap-0 h-screen xl:gap-4 max-w-full">
+  <div class="col-span-12 bg-white shadow-xl h-screen xl:h-3/4 xl:col-span-6 xl:overflow-hidden">
       <AuthoritySetItems :search-term="CBQuery" :holder="facets.holder" :type="facets.type" :desc="facets.desc">
       </AuthoritySetItems>
     </div>

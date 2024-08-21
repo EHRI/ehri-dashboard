@@ -14,20 +14,20 @@
           </select>
         </div>
         <div v-if="descInLang.addresses[0].webpage.length">
-          <span class="block mt-1 line-clamp-1 text-sm text-ehri-dark" v-for="webpage in descInLang.addresses[0].webpage">
+          <span class="block mt-1 line-clamp-1 text-sm text-ehri-dark flex items-center" v-for="webpage in descInLang.addresses[0].webpage">
             <span
-                  class="material-symbols-outlined text-sm w-5 h-5 align-top"
+                  class="material-symbols-outlined text-sm w-5 h-5 align-top mr-1"
                 >
                 link
             </span>
             <a
               :href="webpage" target="_blank" rel="noopener"
-              class="text-ehri-wine line-clamp-1"
+              class="text-ehri-wine truncate"
             >{{ webpage }}
             </a>
         </span>
         </div>
-        <span class="block mt-1 line-clamp-1 text-sm text-ehri-dark" v-if="descInLang.addresses.length &&
+        <span class="block mt-1 line-clamp-1 text-sm text-ehri-dark truncate" v-if="descInLang.addresses.length &&
             descInLang.addresses[0].street">
             <span
                   class="material-symbols-outlined text-sm w-5 h-5 align-top "

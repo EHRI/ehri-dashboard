@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-full h-max-full">
     <div v-if="descInLang && !loading" class="flex flex-col">
-      <div class="flex flex-col flex-1">
+      <div class="flex flex-col">
         <h5 v-if="descInLang" class="font-sans font-semibold text-ehri-wine line-clamp-1">{{descInLang.name}}</h5>
         <h6 v-if="otherNames.length"
             class="text-ehri-dark font-sans font-medium opacity-90 text-sm line-clamp-1">{{

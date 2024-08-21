@@ -1,6 +1,6 @@
 <template>
-  <div class="h-full flex flex-col">
-      <ul v-if="items.length > 0" ref="el" class="h-5/6 overflow-y-auto">
+  <div class="flex flex-col h-screen xl:3/4 overflow-hidden">
+      <ul v-if="items.length > 0" ref="el" class="h-4/6 sm:h-5/6 xl:h-3/6 overflow-y-auto overscroll-auto px-4">
         <DocUnitItemCardREST v-for="item of items" :key="item.id" :doc-unit-object="item"></DocUnitItemCardREST>
         <li v-if="loading" class="w-full flex justify-center items-center py-2">
           <LoadingComponent></LoadingComponent>

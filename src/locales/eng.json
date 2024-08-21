@@ -2,6 +2,7 @@
     "title": "EHRI Dashboard",
     "description": "Search for Holocaust-related information across the EHRI Portal, Document Blog and Online Editions.",
     "sources": "DATA SOURCES",
+    "search": "Search",
     "searchPlaceholder": "Search across EHRI",
     "dataSource": {
         "portal": "EHRI Portal",

@@ -4,8 +4,8 @@
     <div v-if="!isLargeScreen && !expandFocusedItem" class="xl:hidden h-screen col-span-11 shadow-xl bg-white overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1?$t('portalTypes.Country',2):$t('portalTypes.Country',1)}}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ $t('portalTypesDesc.Country') }}</p>
-      <div class="h-5/6 flex flex-col" >
-        <ul ref="el" class="h-5/6 overflow-y-auto">
+      <div class="flex flex-col h-screen xl:5/6 overflow-hidden" >
+        <ul ref="el" class="h-4/6 overflow-y-auto overscroll-auto px-4">
           <CountryReportItemCard v-for="item of items" :key="item.id" :countryObject="item" :selectedItem="selectedCountryID" @idChange="(id)=>changeCountryID(id)"></CountryReportItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
             <LoadingComponent></LoadingComponent>
@@ -35,13 +35,12 @@
       </div>
     </div>
 
-
     <!-- LARGE SCREEN UI -->
     <div v-if="isLargeScreen" class="hidden xl:block shadow-xl bg-white xl:h-3/4 xl:col-span-3 overflow-hidden px-7">
       <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4"><span class="font-serif font-extrabold">{{total}}</span> {{ total>1?$t('portalTypes.Country',2):$t('portalTypes.Country',1) }}</h4>
       <p class="font-sans text-ehri-dark text-xs text-justify pb-4">{{ $t('portalTypesDesc.Country')  }}</p>
-      <div class="h-5/6 max-h-5/6 flex flex-col" >
-        <ul ref="el" class="hidden xl:block h-5/6 overflow-y-auto">
+      <div class="h-4/6 flex flex-col">
+        <ul ref="el" class="h-full hidden xl:block overflow-y-auto">
           <CountryReportItemCard v-for="item of items" :key="item.id" :countryObject="item" :selectedItem="selectedCountryID" @idChange="(id)=>changeCountryID(id)"></CountryReportItemCard>
           <li v-if="loading" class="w-full flex justify-center items-center py-2">
             <LoadingComponent></LoadingComponent>

@@ -16,6 +16,12 @@
         :placeholder="placeholderText"
       />
     </div>
+    <button
+      type="submit"
+      class="ml-2 px-4 py-2 border border-1 border-white bg-white text-ehri-purple font-light text-sm capitalize hover:bg-ehri-purple hover:text-white"
+    >
+      {{ $t('search') }}
+    </button>
   </form>
 </template>
 

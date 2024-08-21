@@ -1,8 +1,8 @@
 <template>
   <div class="bg-ehri-purple z-10 sm:z-0">
     <div class="flex flex-row place-content-between items-center">
-      <img :src="logo" class="h-16 ml-2 sm:hidden cursor-pointer" alt="EHRI logo" @click="handle"/>
-      <h1 class="mt-2 sm:hidden text-white font-serif font-bold text-center text-xl cursor-pointer" @click="handle">{{$t('title').toUpperCase()}}</h1>
+      <img :src="logo" class="h-16 pl-2 sm:hidden cursor-pointer" alt="EHRI logo" @click="handle"/>
+      <h1 class="flex mx-0 items-center mt-2 sm:hidden text-white font-serif font-bold text-center text-xl cursor-pointer" @click="handle">{{$t('title').toUpperCase()}}</h1>
       <span @click="toggleSidebar" class="sm:hidden mr-2 text-white cursor-pointer">
         <span class="material-symbols-outlined pointer-events-none align-bottom">
           search
@@ -12,7 +12,7 @@
     <div class="flex-grow-0 px-6 flex-shrink-0 shadow-xl sm:hidden overflow-hidden">
       <div :class="sidebarClass">
         <div class="sm:hidden bg-ehri-purple mt-2 pb-3">
-          <p class="break font-sans font-light text-base text-justify text-white mx-auto py-2">
+          <p class="break font-sans font-light text-base text-justify text-pretty text-white mx-auto py-2">
             {{ $t("description") }}
           </p>
           <SearchBox></SearchBox>
@@ -33,7 +33,7 @@
       <div class="text-center">
         <img :src="logo" class="h-24 mt-2 mx-auto cursor-pointer" alt="EHRI logo" @click="handle"/>
         <h1 class="mt-2 text-white font-serif font-bold text-center text-xl">{{ $t('title').toUpperCase() }}</h1>
-        <p class="break font-sans font-light text-base text-left text-white mx-auto mb-5">
+        <p class="break font-sans font-light text-base text-justify text-pretty text-white mx-auto mb-5">
           {{ $t("description") }}
         </p>
       </div>

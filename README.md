@@ -3,7 +3,11 @@
 
 The EHRI Dashboard lets you search for Holocaust-related information across the EHRI Portal, Document Blog and Online Editions.
 
+![EHRI Dashboard Screenshot](EHRI_Dashboard_Screenshot.png)
+
 The project is built with Vue 3 and Vite and uses Tailwind CSS for styling.
+
+
 
 ## Contributing to the project
 

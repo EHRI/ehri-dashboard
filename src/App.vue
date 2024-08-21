@@ -29,11 +29,11 @@ export default {
 </script>
 
 <template>
-  <div class="grid grid-cols-12 min-h-screen h-screen xl:max-h-screen xl:overflow-hidden bg-ehri-light-grey">
-    <MainSidebar class="col-span-12 fixed top-0 sm:relative sm:col-span-4 xl:col-span-3"></MainSidebar>
+  <div class="grid grid-cols-12 min-h-screen sm:h-screen overflow-hidden xl:max-h-screen bg-ehri-light-grey">
+    <MainSidebar class="col-span-12 fixed sm:overflow-hidden top-0 sm:relative sm:col-span-4 xl:col-span-3"></MainSidebar>
     <router-view :key="$route.fullPath">
-      <Home class="col-span-12 mt-16 sm:mt-0 px-4 overflow-auto xl:overflow-hidden sm:col-span-8 xl:col-span-9 xl:px-9" v-if="!isLoading" :dataSource="dataSource"></Home>
-      <LoadingComponent v-else class="col-span-12 mt-16 sm:mt-0 px-4 overflow-auto xl:overflow-hidden sm:col-span-8 xl:col-span-9 xl:px-9"></LoadingComponent>
+      <Home class="col-span-12 mt-16 sm:mt-0 px-0 overflow-y-auto xl:overflow-hidden sm:col-span-8 xl:col-span-9 sm:px-4 md:px-9" v-if="!isLoading" :dataSource="dataSource"></Home>
+      <LoadingComponent v-else class="col-span-12 mt-16 sm:mt-0 px-2 overflow-y-auto sm:overflow-hidden sm:col-span-8 xl:col-span-9 xl:px-9"></LoadingComponent>
     </router-view>
     <div class="w-full bg-ehri-dark px-2 py-1 sm:py-1 sm:px-4 fixed bottom-0 flex flex-col sm:flex-row justify-between text-center items-center sm:space-y-0">
       <p class="text-ehri-beige font-light text-xs sm:flex-1 sm:text-left">
