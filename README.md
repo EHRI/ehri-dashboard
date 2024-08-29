@@ -44,6 +44,18 @@ npm run dev
 npm run build
 ```
 
+### Compile and Minify for Staging
+
+```sh
+npm run build:staging
+```
+
+### Preview the build locally
+
+```sh
+npm run preview
+```
+
 ### To run tests and check if the changes you made make the app not compile and render
 
 ```sh
@@ -84,11 +96,11 @@ To add a new language to the EHRI Dashboard, follow these steps:
 
 1. **Create a new locale file**:
    - Navigate to the `src/locales` directory.
-   - Copy an existing locale file that is in a language you understand (e.g., `src/locales/eng.json`), paste it in the same directory and rename it to the language code you want to add (e.g., `fra.json` for French).
-   - Be sure to use the correct language code. The code should be in its 3-letter form. Consult the [ISO 639-2 language codes](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes) Wikipedia page for the correct code.
+   - Copy an existing locale file that is in a language you understand (e.g., `src/locales/en.json`), paste it in the same directory and rename it to the language code you want to add (e.g., `fr.json` for French).
+   - Be sure to use the correct language code. The code should be in its 2-letter form. Consult the [ISO 639-1 language codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) Wikipedia page for the correct code.
 
 2. **Add translations**:
-   - Populate the new JSON file with the necessary translations. Use the existing locale files (e.g., `src/locales/eng.json` and `src/locales/ell.json`) as a reference. While translating, it helps to have a look at the online version of the EHRI Dashboard as a reference as well to get a sense of where the text you are translating will be shown.
+   - Populate the new JSON file with the necessary translations. Use the existing locale files (e.g., `src/locales/en.json` and `src/locales/el.json`) as a reference. While translating, it helps to have a look at the online version of the EHRI Dashboard as a reference as well to get a sense of where the text you are translating will be shown.
    - Sometimes, a translation may not be needed (e.g., the title of the EHRI Dashboard may be kept in English). In that case, you can keep the original text in English.
    - Make sure to retain the same structure as the existing locale files and that you carefully use quotation marks to ensure that the JSON file is valid. There are online tools that can help you validate your JSON file.
 

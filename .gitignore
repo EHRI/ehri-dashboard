@@ -14,7 +14,6 @@ dist-ssr
 coverage
 *.local
 .vite/
-.env
 
 /cypress/videos/
 /cypress/screenshots/
@@ -28,3 +27,6 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# Ignore all .env files
+.env*
