@@ -23,7 +23,7 @@
       </VocabularyItems>
     </div>
     <div :class="[filterBarClass, 'bg-ehri-purple', 'overflow-y-auto', 'text-white','xl:text-ehri-dark', 'xl:col-span-2', 'col-span-12', 'xl:order-last', 'order-first', 'xl:bg-white', 'shadow-xl', 'xl:h-3/4']">
-      <div :key="typeFilterKey">
+      <div>
         <div class="px-4 pt-4">
           <EHRIPortalTypeFilter>
           </EHRIPortalTypeFilter>

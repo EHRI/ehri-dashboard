@@ -46,7 +46,7 @@ export default {
         }
       }
       if (selectedCamp.value.narrower && selectedCamp.value.narrower.length) {
-        vizData.value["name"] = selectedCamp.value["descriptions"][0]["name"];
+        vizData.value["name"] = selectedCamp.value["allDescriptions"][0]["name"];
         vizData.value["identifier"] = selectedCamp.value.id;
         selectedCamp.value.narrower.forEach((c) => {
           let tempObj = {
@@ -72,7 +72,7 @@ export default {
     const openPopup = () => {
       const newWindow = window.open("","","width=screen,height=screen");
       newWindow.document.write(viz.value);
-      newWindow.document.title = selectedCamp.value.descriptions[0].name + " Hierarchy Visualisation";
+      newWindow.document.title = selectedCamp.value.allDescriptions[0].name + " Hierarchy Visualisation";
     };
 
     createViz();

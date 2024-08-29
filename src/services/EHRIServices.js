@@ -208,10 +208,10 @@ export default {
       variables: { id: id },
     });
   },
-  getCvocConceptInfo(query) {
+  getCvocConceptInfo(query, lang) {
     return ehriPortal.post("graphql", {
       query: `
-        query CvocConceptInfo($id: ID!) {
+        query CvocConceptInfo($id: ID!, $lang: String) {
           CvocConcept(id: $id) {
             id
             identifier
@@ -219,7 +219,13 @@ export default {
             seeAlso
             latitude
             longitude
-            descriptions {
+            description(lang: $lang) {
+              languageCode
+              name
+              altLabel
+              hiddenLabel
+            }
+            allDescriptions: descriptions {
               languageCode
               name
               altLabel
@@ -264,7 +270,7 @@ export default {
             }
           }
         }`,
-      variables: { id: query },
+      variables: { id: query, lang: lang },
     });
   },
   getRelatedItems(id, page, facets){

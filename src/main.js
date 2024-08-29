@@ -13,7 +13,7 @@ async function setupI18n() {
   
   const i18n = createI18n({
     legacy: false, 
-    locale: 'eng', 
+    locale: 'en', 
     globalInjection: true,
     messages,
   })
@@ -31,11 +31,16 @@ async function setupI18n() {
   app.use(router)
   app.mount('#app')
   
-  // Inject Plausible analytics script in production
-  if (import.meta.env.PROD) {
+  // Inject Plausible analytics script and set meta tags based on environment
+  const domain = import.meta.env.VITE_APP_DOMAIN
+  const fullDomain = `https://${domain}`
+  if (import.meta.env.PROD || import.meta.env.STAGING) {
     const script = document.getElementById('plausible-script')
     script.src = 'https://plausible.io/js/script.js'
-    script.setAttribute('data-domain', 'dashboard.ehri-project.eu')
+    script.setAttribute('data-domain', domain)
+
+    // Update meta tags
+    document.querySelector('meta[property="og:url"]').setAttribute('content', fullDomain)
   }
 }
 

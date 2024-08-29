@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "build:prod": "vite build --mode production",
+    "build:staging": "vite build --mode staging"
   },
   "dependencies": {
     "@vue/test-utils": "^2.4.6",

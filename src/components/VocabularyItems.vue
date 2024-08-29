@@ -13,7 +13,7 @@
         </ul>
       </div>
     </div>
-    <div :class="[focusedItemClass,'flex', 'h-screen', 'xl:hidden', 'shadow-xl', ]">
+    <div v-if="!isLargeScreen" :class="[focusedItemClass,'flex', 'h-screen', 'xl:hidden', 'shadow-xl', ]">
       <span v-if="!expandFocusedItem" class="cursor-pointer flex justify-center align-middle items-center" @click="toggleFocusedItemClass">
         <span
             class="material-symbols-outlined text-white pointer-events-none"
@@ -31,7 +31,7 @@
           {{ $t('close') }} 
         </span>
         <h4 class="font-sans text-ehri-dark font-extralight text-xl mt-4">{{ $t('itemDetails') }}:</h4>
-        <VocabularyItemDetails v-if="selectedVocConceptId" :selectedVocConceptID="selectedVocConceptId"></VocabularyItemDetails>
+        <VocabularyItemDetails  v-if="selectedVocConceptId" :selectedVocConceptID="selectedVocConceptId"></VocabularyItemDetails>
       </div>
     </div>
 

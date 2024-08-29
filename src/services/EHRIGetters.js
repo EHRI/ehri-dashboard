@@ -63,9 +63,9 @@ export const fetchRepos = async () => {
   }
 }
 
-export const fetchCvocConceptInfo = async (id) => {
+export const fetchCvocConceptInfo = async (id, languageCode) => {
   try {
-    let res = await EHRIServices.getCvocConceptInfo(id);
+    let res = await EHRIServices.getCvocConceptInfo(id, languageCode);
     return res.data;
   } catch (err) {
     console.error(err);

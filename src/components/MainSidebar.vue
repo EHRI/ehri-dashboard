@@ -83,7 +83,7 @@ export default {
     getLangNames(locale.value)
 
     const handle = () => {
-      router.push({ name: 'home', params: { query: "" } }); // Update the route
+      router.push({ name: 'home', params: { query: "" } }); 
     };
 
 

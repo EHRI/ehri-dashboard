@@ -1,15 +1,15 @@
 import { mount } from '@vue/test-utils'
 import SearchComponent from '@/components/SearchBox.vue'
 import { createI18n } from 'vue-i18n';
-import eng from '@/locales/eng.json'
+import en from '@/locales/en.json'
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/views/Home.vue'
 
 const i18n = createI18n({
     legacy: false,
-    locale: 'eng',
-    fallbackLocale: 'eng',
-    messages: {eng}
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: {en}
 });
 
 const router = createRouter({

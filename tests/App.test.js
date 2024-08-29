@@ -4,7 +4,7 @@ import App from '../src/App.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import { createI18n } from 'vue-i18n';
 import { createPinia } from 'pinia';
-import eng from '@/locales/eng.json'
+import en from '@/locales/en.json'
 import Home from '@/views/Home.vue'
 
 const router = createRouter({
@@ -21,9 +21,9 @@ const router = createRouter({
 
 const i18n = createI18n({
   legacy: false,
-  locale: 'eng',
-  fallbackLocale: 'eng',
-  messages: {eng}
+  locale: 'en',
+  fallbackLocale: 'en',
+  messages: {en}
 });
 
 vi.mock('chart.js', () => ({
