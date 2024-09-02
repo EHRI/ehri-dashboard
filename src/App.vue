@@ -46,7 +46,7 @@ export default {
       </p>
       <p class="text-ehri-beige font-light text-xs flex items-center sm:justify-end">
         <a href="https://cordis.europa.eu/project/id/871111" target="_blank" rel="noopener noreferrer" class="inline-flex items-center hover:underline">
-          <img :src="flag" alt="EHRI is funded by the European Commission." class="h-9 mr-2 hidden sm:block">
+          <!-- <img :src="flag" alt="EHRI is funded by the European Commission." class="h-9 mr-2 hidden sm:block"> -->
           Funded by the European Commission
         </a>
       </p>
