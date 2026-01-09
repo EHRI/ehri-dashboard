@@ -29,4 +29,9 @@ export const editionsConfig = {
     description: "The Austrian refugees on the border with Czechoslovakia in the crisis year 1938. (Edition available in Czech)",
     apiEndpoint: "https://uzavrit-hranice.ehri-project.eu/api/",
   },
+  TS: {
+    title: "The Sunflower",
+    description: "The online edition “The Sunflower. History and Reception of a Literary Holocaust Testimony” presents archival sources on the birth and afterlife of Simon Wiesenthal’s book “The Sunflower” (1969/70) – a crucial text of Holocaust education for more than half a century.",
+    apiEndpoint: "https://the-sunflower.ehri-project.eu/api/",
+  },
 };
