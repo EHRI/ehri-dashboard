@@ -12,7 +12,7 @@
     <div class="flex-grow-0 px-6 flex-shrink-0 shadow-xl sm:hidden overflow-hidden">
       <div :class="sidebarClass">
         <div class="sm:hidden bg-ehri-purple mt-2 pb-3">
-          <p class="break font-sans font-light text-base text-justify text-pretty text-white mx-auto py-2">
+          <p class="break font-sans font-light text-base text-pretty text-white mx-auto py-2">
             {{ $t("description") }}
           </p>
           <SearchBox></SearchBox>
@@ -58,7 +58,7 @@
 
 <script>
 import { ref, computed, watch } from "vue";
-import logo from "@/assets/ehri_logo.png"
+import logo from "@/assets/ehri_logo.svg"
 import SearchBox from "@/components/SearchBox.vue"
 import LoadResources from "./LoadResources.vue";
 import { useMainStore } from "../stores/mainStore";
