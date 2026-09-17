@@ -1,5 +1,7 @@
 import EHRIServices from "./EHRIServices";
 
+const emptyEditionSearchResult = () => ({ data: { total: 0, records: [], facets: {} } });
+
 export const fetchFacetedPortalSearch = async (query, page, facets, limit) => {
   try {
     let res = await EHRIServices.getFacetedPortalSearch(query, page, facets, limit);
@@ -96,7 +98,6 @@ export const fetchEditionItems = async (endpoint, query, page, per_page, filters
     return res;
   } catch (err) {
     console.error(err);
+    return emptyEditionSearchResult();
   }
 };
-
-

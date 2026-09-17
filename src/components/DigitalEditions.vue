@@ -271,7 +271,7 @@ export default {
         )
         if(selectedEdition.value['items']&&selectedEdition.value['items'].length){
           return false
-        } else {
+        } else if(sortedDEResultsNonNull.value.length) {
           selectedEdition.value = DigitalEditionsData.value[sortedDEResultsNonNull.value[0][0]]
         }
         loading.value = false

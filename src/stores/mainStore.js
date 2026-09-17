@@ -71,13 +71,14 @@ export const useMainStore = defineStore('main', {
         const totalPortalSearchLength = docUnitData.data.meta.total + countryData.data.meta.total + repoData.data.meta.total + histAgentData.data.meta.total + vocabData.data.meta.total;
         this.setPortalSearchLength(totalPortalSearchLength);
 
-        // Load editions data
-        const editionsData = {};
-        for (const [editionKey, config] of Object.entries(editionsConfig)) {
-          const data = await fetchEditionItems(config.apiEndpoint, searchTerm, 1, 1);
-          editionsData[editionKey] = data.data.total;
-        }
-        this.resultStats.DigitalEditions.value = Object.values(editionsData).reduce((acc, curr) => acc + curr, 0);
+        // Load editions data in parallel, so one slow/unreachable site can't
+        // hold up the rest
+        const editionTotals = await Promise.all(
+          Object.values(editionsConfig).map((config) =>
+            fetchEditionItems(config.apiEndpoint, searchTerm, 1, 1).then((data) => data.data.total)
+          )
+        );
+        this.resultStats.DigitalEditions.value = editionTotals.reduce((acc, curr) => acc + curr, 0);
 
         // Determine the resultStats item with the highest value
         const resultStatsArray = Object.values(this.resultStats);
