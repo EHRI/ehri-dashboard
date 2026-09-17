@@ -104,31 +104,22 @@ export default {
   }
   ,
   getEditionItems(endpoint, query, page, per_page, filters){
+    let filterParams = ""
     if(filters){
       const mapf = new Map(Object.entries(filters))
-      var filterParams = ""
       mapf.forEach((k,v)=> {
         filterParams += `&f[]=${v}:${k}`
       })
-      return axios.get(endpoint+`search?${filterParams}`, {
-        params: {
-          q: query,
-          page: page,
-          per_page: per_page?per_page:5,
-          details: 1
-        },
-      })
-    } else {
-      let filterParams = ""
-      return axios.get(endpoint+`search?${filterParams}`, {
-        params: {
-          q: query,
-          page: page,
-          per_page: per_page?per_page:5,
-          details: 1
-        },
-      })
     }
+    return axios.get(endpoint+`search?${filterParams}`, {
+      timeout: 10000,
+      params: {
+        q: query,
+        page: page,
+        per_page: per_page?per_page:5,
+        details: 1
+      },
+    })
   }
   ,
   getHistAgentInfo(query){
